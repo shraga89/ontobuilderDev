@@ -1,0 +1,365 @@
+<project name="OntoBuilder" default="Build With GUI">
+	
+	<property name="app.name" value="OntoBuilder"/>
+	<property name="app.vendor" value="Technion - Israel Institute of Technology"/>
+	<property name="app.version" value="2.2"/>
+
+	<!-- Directories -->
+	<property name="target.dir" value="OntoBuilder"/>
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="src.core.dir" value="${src.dir}/core"/>
+	<property name="build.core.dir" value="${build.dir}/core"/>
+	<property name="src.io.dir" value="${src.dir}/io"/>
+	<property name="build.io.dir" value="${build.dir}/io"/>
+	<property name="src.gui.dir" value="${src.dir}/gui"/>
+	<property name="build.gui.dir" value="${build.dir}/gui"/>
+	<property name="src.matching.dir" value="${src.dir}/matching"/>
+	<property name="build.matching.dir" value="${build.dir}/matching"/>
+	<property name="src.extraction.webform.dir" value="${src.dir}/extraction_webform"/>
+	<property name="build.extraction.webform.dir" value="${build.dir}/extraction_webform"/>
+	<property name="lib.dir" value="${target.dir}/lib"/>
+	<!-- Project Directories -->
+	<property name="core.dir" value="../ontobuilder.core"/>
+	<property name="io.dir" value="../ontobuilder.io"/>
+	<property name="gui.dir" value="../ontobuilder.gui"/>
+	<property name="matching.dir" value="../ontobuilder.matching"/>
+	<property name="extraction.webform.dir" value="../ontobuilder.extraction.webform"/>
+	<!-- JAR File Names -->
+	<property name="core.jar" value="${target.dir}/ontobuilder.core.jar"/>
+	<property name="io.jar" value="${target.dir}/ontobuilder.io.jar"/>
+	<property name="gui.jar" value="${target.dir}/ontobuilder.gui.jar"/>
+	<property name="matching.jar" value="${target.dir}/ontobuilder.matching.jar"/>
+	<property name="extraction.webform.jar" value="${target.dir}/ontobuilder.extraction.webform.jar"/>
+	
+	<property name="batch.file.gui" value="${target.dir}/OntoBuilder.bat"/>
+	
+	<path id="libraries.ref" description="Path with all the libraries">
+	    <fileset dir="${lib.dir}" includes="*.jar"/>
+  	</path>
+	
+	<path id="all.jars.ref" description="Path with the application JAR files and all the libraries">
+		<path refid="libraries.ref" />
+	    <fileset dir="${target.dir}" includes="*.jar"/>
+  	</path>
+	
+	<tstamp/> <!-- Initialize the timestamp variables -->
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Clean              
+          Clean all the directories
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Clean All">
+        <delete dir="${build.dir}" />
+    	<delete dir="${src.dir}" />
+    	<delete dir="${target.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${src.dir}" />
+		<mkdir dir="${target.dir}" />
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Core - Copy
+          Copy the relevant files from the core project                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Core - Copy" depends="Clean All">
+    	<copy todir="${src.core.dir}" description="Copy source files and embeded resources">
+    		<fileset dir="${core.dir}/src" />
+    		<fileset dir="${core.dir}/resources" />
+    	</copy>
+    	<copy todir="${lib.dir}" description="Copy libraries">
+    		<fileset dir="${core.dir}/lib" />
+    	</copy>
+    	<copy todir="${target.dir}/dtds" description="Copy DTD fiels">
+    		<fileset dir="${core.dir}/dtds"></fileset>
+    	</copy>
+    	<copy todir="${target.dir}/xsd" description="Copy XSD fiels">
+    		<fileset dir="${core.dir}/xsd"></fileset>
+    	</copy>
+    	<copy todir="${target.dir}/config" description="Copy only common configuration files">
+    		<fileset dir="${core.dir}/config">
+    			<include name="*.*" />
+    			<exclude name="*/**/*" /> <!-- Exclude sub-directories-->
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Core - Compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Core - Compile" depends="Core - Copy">
+    	<mkdir dir="${build.core.dir}"/>
+    	<javac srcdir="${src.core.dir}"
+         	destdir="${build.core.dir}"
+         	classpathref="libraries.ref"
+         	debug="on"
+		/>
+    	<copy todir="${build.core.dir}">
+    		<fileset dir="${src.core.dir}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Core - Jar              
+          Create the JAR file of the OntoBuilder core
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Core - Jar" depends="Core - Compile">
+    	<jar destfile="${core.jar}" basedir="${build.core.dir}">
+    		<manifest>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Build-Date" value="${TODAY}"/>
+    			<attribute name="Specification-Title" value="${app.name} - Core"/>
+    			<attribute name="Specification-Vendor" value="${app.vendor}"/>
+    			<attribute name="Implementation-Title" value="${app.name} - Core"/>
+    			<attribute name="Implementation-Vendor" value="${app.vendor}"/>
+    		</manifest>
+    	</jar>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Matching - Copy                     
+          Copy the relevant files from the matching project 
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Matching - Copy" depends="Clean All">
+    	<copy todir="${src.matching.dir}" description="Copy source files and embeded resources">
+    		<fileset dir="${matching.dir}/src" />
+    	</copy>
+    	<copy todir="${target.dir}/config/matching" description="Copy only matching configuration files">
+    		<fileset dir="${core.dir}/config/matching">
+    			<include name="*.*" />
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Matching - Compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Matching - Compile" depends="Matching - Copy, Core - Jar">
+    	<mkdir dir="${build.matching.dir}"/>
+    	<javac srcdir="${src.matching.dir}"
+         	destdir="${build.matching.dir}"
+         	classpathref="all.jars.ref"
+         	debug="on"
+		/>
+    	<copy todir="${build.matching.dir}">
+    		<fileset dir="${src.matching.dir}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Matching - Jar              
+          Create the JAR file of the OntoBuilder Matching
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Matching - Jar" depends="Matching - Compile">
+    	<jar destfile="${matching.jar}" basedir="${build.matching.dir}">
+    		<manifest>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Build-Date" value="${TODAY}"/>
+    			<attribute name="Specification-Title" value="${app.name} - Matching"/>
+    			<attribute name="Specification-Vendor" value="${app.vendor}"/>
+    			<attribute name="Implementation-Title" value="${app.name} - Matching"/>
+    			<attribute name="Implementation-Vendor" value="${app.vendor}"/>
+    		</manifest>
+    	</jar>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: IO - Copy                     
+          Copy the relevant files from the io project 
+         - - - - - - - - - - - - - - - - - -->
+    <target name="IO - Copy" depends="Clean All">
+    	<copy todir="${src.io.dir}" description="Copy source files and embeded resources">
+    		<fileset dir="${io.dir}/src" />
+    	</copy>
+    	<copy todir="${target.dir}/config/io" description="Copy only io configuration files">
+    		<fileset dir="${core.dir}/config/io">
+    			<include name="*.*" />
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: IO - Compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="IO - Compile" depends="IO - Copy, Core - Jar, Matching - Jar">
+    	<mkdir dir="${build.io.dir}"/>
+    	<javac srcdir="${src.io.dir}"
+         	destdir="${build.io.dir}"
+         	classpathref="all.jars.ref"
+         	debug="on"
+		/>
+    	<copy todir="${build.io.dir}">
+    		<fileset dir="${src.io.dir}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: IO - Jar              
+          Create the JAR file of the OntoBuilder IO
+         - - - - - - - - - - - - - - - - - -->
+    <target name="IO - Jar" depends="IO - Compile">
+    	<jar destfile="${io.jar}" basedir="${build.io.dir}">
+    		<manifest>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Build-Date" value="${TODAY}"/>
+    			<attribute name="Specification-Title" value="${app.name} - IO"/>
+    			<attribute name="Specification-Vendor" value="${app.vendor}"/>
+    			<attribute name="Implementation-Title" value="${app.name} - IO"/>
+    			<attribute name="Implementation-Vendor" value="${app.vendor}"/>
+    		</manifest>
+    	</jar>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: WebForm Extraction - Copy                     
+          Copy the relevant files from the WebForm Extraction project 
+         - - - - - - - - - - - - - - - - - -->
+    <target name="WebForm Extraction - Copy" depends="Clean All">
+    	<copy todir="${src.extraction.webform.dir}" description="Copy source files and embeded resources">
+    		<fileset dir="${extraction.webform.dir}/src" />
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: WebForm Extraction - Compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="WebForm Extraction - Compile" depends="WebForm Extraction - Copy, Core - Jar">
+    	<mkdir dir="${build.extraction.webform.dir}"/>
+    	<javac srcdir="${src.extraction.webform.dir}"
+         	destdir="${build.extraction.webform.dir}"
+         	classpathref="all.jars.ref"
+         	debug="on"
+		/>
+    	<copy todir="${build.extraction.webform.dir}">
+    		<fileset dir="${src.extraction.webform.dir}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: WebForm Extraction - Jar              
+          Create the JAR file of the OntoBuilder WebForm Extraction
+         - - - - - - - - - - - - - - - - - -->
+    <target name="WebForm Extraction - Jar" depends="WebForm Extraction - Compile">
+    	<jar destfile="${extraction.webform.jar}" basedir="${build.extraction.webform.dir}">
+    		<manifest>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Build-Date" value="${TODAY}"/>
+    			<attribute name="Specification-Title" value="${app.name} - WebForm Extraction"/>
+    			<attribute name="Specification-Vendor" value="${app.vendor}"/>
+    			<attribute name="Implementation-Title" value="${app.name} - WebForm Extraction"/>
+    			<attribute name="Implementation-Vendor" value="${app.vendor}"/>
+    		</manifest>
+    	</jar>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: GUI - Copy
+          Copy the relevant files from the GUI project                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="GUI - Copy" depends="Clean All">
+    	<copy todir="${src.gui.dir}" description="Copy source files and embeded resources">
+    		<fileset dir="${gui.dir}/src" />
+    		<fileset dir="${gui.dir}/resources" />
+    	</copy>
+    	<copy todir="${lib.dir}" description="Copy libraries">
+    		<fileset dir="${gui.dir}/lib" />
+    	</copy>
+    	<copy todir="${target.dir}/config/gui" description="Copy only gui configuration files">
+    		<fileset dir="${core.dir}/config/gui">
+    			<include name="*.*" />
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: GUI - Compile                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="GUI - Compile" depends="GUI - Copy, Core - Jar, IO - Jar, Matching - Jar, WebForm Extraction - Jar">
+    	<mkdir dir="${build.gui.dir}"/>
+    	<javac srcdir="${src.gui.dir}"
+         	destdir="${build.gui.dir}"
+         	classpathref="all.jars.ref"
+         	debug="on"
+		/>
+    	<copy todir="${build.gui.dir}">
+    		<fileset dir="${src.gui.dir}">
+    			<exclude name="**/*.java"/>
+    		</fileset>
+    	</copy>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: GUI - Jar              
+          Create the JAR file of the OntoBuilder GUI
+         - - - - - - - - - - - - - - - - - -->
+    <target name="GUI - Jar" depends="GUI - Compile">
+    	<jar destfile="${gui.jar}" basedir="${build.gui.dir}">
+    		<manifest>
+    			<attribute name="Built-By" value="${user.name}"/>
+    			<attribute name="Build-Date" value="${TODAY}"/>
+    			<attribute name="Specification-Title" value="${app.name} - GUI"/>
+    			<attribute name="Specification-Vendor" value="${app.vendor}"/>
+    			<attribute name="Implementation-Title" value="${app.name} - GUI"/>
+    			<attribute name="Implementation-Vendor" value="${app.vendor}"/>
+    		</manifest>
+    	</jar>
+    </target>
+	
+	<!-- ================================= 
+          target: Build Without GUI              
+         ================================= -->
+    <target name="Build Without GUI" depends="Core - Jar, IO - Jar, Matching - Jar, WebForm Extraction - Jar" description="Build the OntoBuilder Application without the GUI">
+    	<delete dir="${src.dir}"/>
+    	<delete dir="${build.dir}"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: Create GUI batch file                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="Create GUI batch file">
+    	
+    	<fileset id="appendJars" dir="${target.dir}">
+	        <include name="*.jar" />
+	        <include name="lib/*.jar" />
+	    </fileset>
+	    <pathconvert property="prependJars" refid="appendJars" pathsep=";" />
+    	
+    	<dirset id="targetDir" dir="${target.dir}">
+    		<exclude name="**/*"/>
+    	</dirset>
+    	<pathconvert property="targetDirPath" refid="targetDir" pathsep=";" />
+    	
+    	<property name="main.class" value="ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder"/>
+	
+    	<echo file="${batch.file.gui}" append="false" 
+    		message="@echo off ${line.separator}" />
+    	<echo file="${batch.file.gui}" append="true" 
+    		message="echo ${app.name} v${app.version} ${line.separator}" />
+    	<echo file="${batch.file.gui}" append="true" 
+    		message="java -classpath ${prependJars} ${main.class} ${line.separator}" />
+    	<echo file="${batch.file.gui}" append="true" 
+    		message="echo on ${line.separator}" />
+    	
+    	<replace file="${batch.file.gui}" token="${targetDirPath}${file.separator}"/>
+    	
+    </target>
+
+	
+	<!-- ================================= 
+          target: Build With GUI              
+         ================================= -->
+    <target name="Build With GUI" depends="GUI - Jar, Create GUI batch file" description="Build the OntoBuilder Application with the GUI">
+    	<delete dir="${src.dir}"/>
+    	<delete dir="${build.dir}"/>
+    </target>
+
+	
+</project>

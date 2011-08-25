@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.extraction.webform"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.io"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.matching"/>
+	<classpathentry kind="lib" path="lib/cbeans.jar"/>
+	<classpathentry kind="lib" path="lib/hypertree.jar"/>
+	<classpathentry kind="lib" path="lib/jhall.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="lib/cobra.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-0.7.4.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-0.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cutils.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_16"/>
+	<classpathentry kind="lib" path="lib/jgraph.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
