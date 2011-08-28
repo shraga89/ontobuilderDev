@@ -2104,7 +2104,6 @@ public class OntologyMetaTopKWizard
         matchInformation.setMetaAlgorithm(metaAlg);
         matchInformation.setOriginalCandidateTerms(mmatrix.getTargetTerms());
         matchInformation.setOriginalTargetTerms(mmatrix.getCandidateTerms());
-        matchInformation.setMatchMatrix(mmatrix.transpose());
         matchInformation.setMatrix(mmatrix);
         final MatchInformationGui matchInformationGui = new MatchInformationGui(matchInformation);
         // Information

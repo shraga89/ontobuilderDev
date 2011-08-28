@@ -135,8 +135,9 @@ public class DomainEntryGui extends OntologyObjectGui
             }
         });
 
-        Vector<Object> classes = (Vector<Object>) model.getClasses(true);
-        classes.add(0, "               ");
+        Vector<OntologyClass> classes = model.getClasses(true);
+        //classes.add(0, "               ");
+        classes.add(0, new OntologyClass("               ")); 
         final ComboBox cmbTermClass = new ComboBox(classes);
         cmbTermClass.setEnabled(false);
         cmbTermClass.setSelectedIndex(0);

@@ -1933,9 +1933,10 @@ public class OntologyGui extends JPanel
             NodeHyperTree classesNode = new NodeHyperTree(
                 PropertiesHandler.getResourceString("ontology.classes"), NodeHyperTree.CLASS);
             root.add(classesNode);
-            for (Iterator<Object> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
+            for (Iterator<OntologyClass> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
             {
-                classesNode.add(((OntologyClassGui) i.next()).getHyperTreeNode(showProperties));
+            	OntologyClassGui tmp = new OntologyClassGui(i.next());
+                classesNode.add(tmp.getHyperTreeNode(showProperties));
             }
         }
 
@@ -2028,7 +2029,7 @@ public class OntologyGui extends JPanel
     {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
             PropertiesHandler.getResourceString("ontology.classes"));
-        for (Iterator<Object> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
+        for (Iterator<OntologyClass> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
         {
             OntologyClass c = (OntologyClass) i.next();
             DefaultMutableTreeNode classNode = new DefaultMutableTreeNode(c);
@@ -2151,7 +2152,7 @@ public class OntologyGui extends JPanel
             DefaultMutableTreeNode classesNode = new DefaultMutableTreeNode(
                 PropertiesHandler.getResourceString("ontology.classes"));
             root.add(classesNode);
-            for (Iterator<Object> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
+            for (Iterator<OntologyClass> i = ontologyCore.getClasses(false).iterator(); i.hasNext();)
             {
                 classesNode.add(OntologyObjectGuiFactory.getOntologyObjectGui((OntologyClass) i.next()).getTreeBranch());
             }
