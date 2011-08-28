@@ -278,8 +278,6 @@ public class TermValueAlgorithm extends AbstractAlgorithm
             // haggai
             matchInformation.setMatrix(termAndValueMatchMatrix);
             // gabi
-            matchInformation.setMatchMatrix(matchMatrix);
-            // matchInformation.setMatchTable1(matchTable);
             matchInformation.setOriginalTargetTerms(originalTargetTerms);
             matchInformation.setOriginalCandidateTerms(originalCandidateTerms);
 

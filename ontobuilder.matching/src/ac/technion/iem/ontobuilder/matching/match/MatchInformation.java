@@ -47,15 +47,14 @@ public class MatchInformation
     protected int totalCandidateTerms;
     protected Algorithm algorithm;
     protected MetaAlgorithm metaAlgorithm;
-    protected double[][] matchMatrix;
-    protected ArrayList<?> originalTargetTerms;
-    protected ArrayList<?> originalCandidateTerms;
+    protected ArrayList<Term> originalTargetTerms;
+    protected ArrayList<Term> originalCandidateTerms;
 
     protected MatchMatrix match_Matrix;
 
     /**
-     * Default constructor allocates matches, target mismatches and candidate mismatches arrays
-     * lists. also creates an empty matchMatrix
+     *@deprecated Impossible constructor, retained for backwards compatability
+     *Cannot allocate a match matrix without knowing the cnadidate and target ontologies sizes. 
      */
     public MatchInformation()
     {
@@ -63,8 +62,23 @@ public class MatchInformation
         mismatchesTargetOntology = new ArrayList<Mismatch>();
         mismatchesCandidateOntology = new ArrayList<Mismatch>();
         // gabi - 5/3 adding to MatchInformation the MatchMatrix
-        matchMatrix = new double[totalCandidateTerms][totalTargetTerms];
+      //matchMatrix = new double[totalCandidateTerms][totalTargetTerms];
+        match_Matrix = new MatchMatrix();
     }
+   
+    /**
+     * Reasonable constructor 
+     * allocates matches, target mismatches and candidate mismatches arrays lists. also creates an empty matchMatrix
+     */
+    public MatchInformation(Ontology cand, Ontology targ)
+    {
+    	this();
+    	this.setCandidateOntology(cand);
+    	this.setTargetOntology(targ);
+    	//matchMatrix = new double[totalCandidateTerms][totalTargetTerms];
+    	match_Matrix = new MatchMatrix(totalCandidateTerms,totalTargetTerms,originalCandidateTerms,originalTargetTerms); 
+    }
+
 
     /**
      * @returns {@link MatchMatrix} - holds the confidence match matrix and terms of 2 ontologies
@@ -100,50 +114,36 @@ public class MatchInformation
         mismatchesTargetOntology.addAll(newMatch.getMismatchesTargetOntology());
         mismatchesCandidateOntology.clear();
         mismatchesCandidateOntology.addAll(newMatch.getMismatchesCandidateOntology());
-        for (int i = 0; i < matchMatrix.length; i++)
-        {
-            for (int j = 0; j < matchMatrix[i].length; j++)
-            {
-                matchMatrix[i][j] = newMatch.getMatchMatrix()[i][j];
-            }
-        }
+        match_Matrix.copyWithEmptyMatrix(newMatch.getMatrix());
+        match_Matrix.setMatchConfidenceMatrix(newMatch.getMatrix().getMatchMatrix());
+
 
     }
 
     // end gabi
 
     /**
-     * Assumes the matrix provided fits to the ontologies stored at the MatchMatrix object
-     * 
-     * @param matrix - a confidence match matrix
-     */
-    public void setMatchMatrix(double matrix[][])
-    {
-        matchMatrix = matrix;
-    }
-
-    /**
      * @return double[][] - a confidence match matrix
      */
     public double[][] getMatchMatrix()
     {
-        return matchMatrix;
+        return match_Matrix.getMatchMatrix();
     }
 
     /**
      * @param targetTerms - a list of terms of the target ontology
      */
-    public void setOriginalTargetTerms(ArrayList<?> targetTerms)
+    public void setOriginalTargetTerms(ArrayList<Term> targetTerms)
     {
-        originalTargetTerms = new ArrayList<Object>(targetTerms);
+        originalTargetTerms = new ArrayList<Term>(targetTerms);
     }
 
     /**
      * @param CandidateTerms - a list of terms of the candidate ontology
      */
-    public void setOriginalCandidateTerms(ArrayList<?> CandidateTerms)
+    public void setOriginalCandidateTerms(ArrayList<Term> CandidateTerms)
     {
-        originalCandidateTerms = new ArrayList<Object>(CandidateTerms);
+        originalCandidateTerms = new ArrayList<Term>(CandidateTerms);
     }
 
     /**
@@ -939,4 +939,16 @@ public class MatchInformation
         return null;
     }
     // end gabi
+    
+    /**
+     * returns a clone of this match information object
+     */
+    public MatchInformation clone()
+    {
+    	MatchInformation cloned = new MatchInformation(candidateOntology,targetOntology);
+    	cloned.setMatrix(getMatrix());
+    	cloned.updateFromMatch(this);
+    	return cloned;
+    	
+    }
 }

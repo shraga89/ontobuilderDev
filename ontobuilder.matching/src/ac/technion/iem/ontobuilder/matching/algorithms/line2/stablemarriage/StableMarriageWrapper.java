@@ -29,7 +29,7 @@ public class StableMarriageWrapper
 
     private StableMarriage m_StableMarriage;
     private static double EPSILON = 0.0000000000001;
-    private String m_sAlgorithmName;
+    private MatchingAlgorithmsNamesEnum m_sAlgorithmName;
 
     /**
      * Constructs a default StableMarriageWrapper
@@ -45,19 +45,11 @@ public class StableMarriageWrapper
         m_MenSet = new Hashtable<Man, TreeMap<?, ?>>();
         m_WomenSet = new Hashtable<Woman, TreeMap<?, ?>>();
         m_StableMarriage = new StableMarriage();
-        m_sAlgorithmName = MatchingAlgorithmsNamesEnum.TERM.getName();
+        m_sAlgorithmName = MatchingAlgorithmsNamesEnum.TERM;
 
     }
 
-    /**
-     * Set the algorithm name
-     * 
-     * @param sAlgorithmName the name to set
-     */
-    public void setAlgorithmName(String sAlgorithmName)
-    {
-        m_sAlgorithmName = sAlgorithmName;
-    }
+
 
     /**
      * Runs the algorithm

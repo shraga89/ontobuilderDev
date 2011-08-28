@@ -63,7 +63,7 @@ public class TopK
                 Ontology targetOntology = fileHandler.readOntologyXMLFile(topKpUtils
                     .getTargetOntologyXMLFilePath());
                 MatchInformation match = obw.loadMatchAlgorithm(
-                    MatchingAlgorithmsNamesEnum.getAllNames()[topKpUtils.getMatchAlgorithm()]).match(
+                    MatchingAlgorithmsNamesEnum.values()[topKpUtils.getMatchAlgorithm()]).match(
                     candidateOntology, targetOntology);
                 smw = new SchemaMatchingsWrapper(match.getMatrix());
                 SchemaTranslator st = null;

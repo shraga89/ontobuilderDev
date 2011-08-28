@@ -73,10 +73,10 @@ public final class OntoBuilderWrapper extends OntoBuilder
      * @return the algorithm instance
      * @throws AlgorithmException
      */
-    public AbstractAlgorithm loadMatchAlgorithm(String algorithmToUse) throws AlgorithmException
+    public AbstractAlgorithm loadMatchAlgorithm(MatchingAlgorithmsNamesEnum algorithmToUse) throws AlgorithmException
     {
         return (AbstractAlgorithm) AlgorithmUtilities.getAlgorithmsInstance(
-        	getAlgorithmsFile(), algorithmToUse);
+        	getAlgorithmsFile(), algorithmToUse.getName());
     }
 
     /**
@@ -171,6 +171,7 @@ public final class OntoBuilderWrapper extends OntoBuilder
     public MatchInformation matchOntologies(Ontology candidateOntology, Ontology targetOntology,
         String algorithmToUse) throws OntoBuilderWrapperException
     {
+    	//Change this to work with the enum instead of the string
         try
         {
             algorithm = AlgorithmUtilities.getAlgorithmsInstance(getAlgorithmsFile(),

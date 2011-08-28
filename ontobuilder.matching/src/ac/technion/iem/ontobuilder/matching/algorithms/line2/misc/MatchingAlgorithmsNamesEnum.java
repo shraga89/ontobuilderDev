@@ -13,6 +13,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.misc;
  */
 public enum MatchingAlgorithmsNamesEnum
 {
+	//TODO - move this class to first line matchers
     TERM("Term Match"), 
     VALUE("Value Match"), 
     TERM_VALUE_COMBINED("Term and Value Match"), 
