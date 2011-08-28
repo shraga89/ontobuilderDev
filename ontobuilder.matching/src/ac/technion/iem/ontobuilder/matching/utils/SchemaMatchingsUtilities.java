@@ -489,12 +489,12 @@ public final class SchemaMatchingsUtilities
                             }
                         }
                     }
-                    pairs[i] = new MatchedAttributePair(candTerm, targetTerm);
+                    pairs[i] = new MatchedAttributePair(candTerm,targetTerm,1.0);
                     if (candId != null && candId.length() > 0 && targetId != null &&
                         targetId.length() > 0)
                     {
-                        pairs[i].id1 = Long.parseLong("" + targetId);
-                        pairs[i].id2 = Long.parseLong("" + candId);
+                        pairs[i].id1 = Long.parseLong("" + candId);
+                        pairs[i].id2 = Long.parseLong("" + targetId);
                     }
                 }
             }
