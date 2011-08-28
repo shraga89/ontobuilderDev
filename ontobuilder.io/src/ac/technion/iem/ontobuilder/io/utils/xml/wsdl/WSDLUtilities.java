@@ -156,7 +156,7 @@ public final class WSDLUtilities
     public static void discover(EEE05Challenge challenge, Vector<Ontology> inputOntologies,
         Vector<Ontology> outputOntologies) throws Exception
     {
-        TermAlgorithm matcher = (TermAlgorithm) obw.loadMatchAlgorithm(MatchingAlgorithmsNamesEnum.TERM.getName());
+        TermAlgorithm matcher = (TermAlgorithm) obw.loadMatchAlgorithm(MatchingAlgorithmsNamesEnum.TERM);
         MatchInformation match;
         SchemaMatchingsWrapper smw;
         double score;
