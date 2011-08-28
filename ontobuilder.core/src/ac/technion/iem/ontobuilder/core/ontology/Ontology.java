@@ -678,8 +678,8 @@ public class Ontology extends OntologyObject
     {
         if (name == null || isLight)
             return null;
-        Vector<Object> classes = getClasses(true);
-        for (Iterator<Object> i = classes.iterator(); i.hasNext();)
+        Vector<OntologyClass> classes = getClasses(true);
+        for (Iterator<OntologyClass> i = classes.iterator(); i.hasNext();)
         {
             OntologyClass ontologyClass = (OntologyClass) i.next();
             if (ontologyClass.getName().equals(name))
@@ -688,9 +688,9 @@ public class Ontology extends OntologyObject
         return null;
     }
 
-    public Vector<Object> getClasses(boolean includeSubClasses)
+    public Vector<OntologyClass> getClasses(boolean includeSubClasses)
     {
-        Vector<Object> cs = new Vector<Object>();
+        Vector<OntologyClass> cs = new Vector<OntologyClass>();
         for (Iterator<OntologyClass> i = classes.iterator(); i.hasNext();)
         {
             OntologyClass c = (OntologyClass) i.next();
@@ -700,7 +700,7 @@ public class Ontology extends OntologyObject
         return cs;
     }
 
-    protected void getClassesRec(OntologyClass c, Vector<Object> cs)
+    protected void getClassesRec(OntologyClass c, Vector<OntologyClass> cs)
     {
         for (int i = 0; i < c.getSubClassesCount(); i++)
         {
@@ -1209,4 +1209,15 @@ public class Ontology extends OntologyObject
         graph.insert(cells, cs);
         return graph;
     }
+
+    /**
+     * Gets the max class height of an Ontology
+     * @return
+     */
+	public int getClassHeight() {
+		int res = 1;
+		for (OntologyClass c : classes)
+			res = Math.max(res, c.getClassDepth());
+		return 1;
+	}
 }

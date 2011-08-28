@@ -500,4 +500,20 @@ public class OntologyClass extends OntologyObject
 
         return ontologyClass;
     }
+
+    /**
+     * Recursively deepen in the instances of the sub class to return the max sub class depth
+     * @return
+     */
+	public int getClassDepth() {
+		int res = 0;
+		int max = 1;
+		if (instances.isEmpty())return res;
+		else
+		{
+			for (OntologyClass sub : instances)
+				max = Math.max(max, sub.getClassDepth()+1);
+			return max;
+		}
+	}
 }
