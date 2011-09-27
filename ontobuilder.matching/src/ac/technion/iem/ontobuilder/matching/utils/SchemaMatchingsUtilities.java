@@ -425,7 +425,7 @@ public final class SchemaMatchingsUtilities
         NodeList children = node.getChildNodes();
         if (children != null)
         {
-            pairs = new MatchedAttributePair[children.getLength()];
+        	ArrayList<MatchedAttributePair> tmpPairs = new ArrayList<MatchedAttributePair>();
             for (int i = 0; i < children.getLength(); i++)
             {
                 Node current = children.item(i);
@@ -452,15 +452,17 @@ public final class SchemaMatchingsUtilities
                                 {
                                     candId = child.getAttribute("id");
                                 }
-                                else if (matrix != null)
-                                {
-                                    Term t = matrix.getTermByName(OntologyUtilities
-                                        .oneIdRemoval(candTerm));
-                                    if (t != null && t.getId() != -1)
-                                    {
-                                        candId = Long.toString(t.getId());
-                                    }
-                                }
+//                                else if (matrix != null)
+//                                {
+//                                    Term t = matrix.getTermByName(OntologyUtilities
+//                                        .oneIdRemoval(candTerm));
+//                                    if (t != null && t.getId() != -1)
+//                                    {
+//                                        candId = Long.toString(t.getId());
+//                                    }
+//                                }
+// no tolerance for exact matches with no id since 27/09/11
+                                else continue; //new line 27/09/11 
                             }
                         }
                         else if (child.getNodeName().compareTo("TargetTerm") == 0)
@@ -477,27 +479,33 @@ public final class SchemaMatchingsUtilities
                                 {
                                     targetId = child.getAttribute("id");
                                 }
-                                else if (matrix != null)
-                                {
-                                    Term t = matrix.getTermByName(OntologyUtilities
-                                        .oneIdRemoval(targetTerm));
-                                    if (t != null && t.getId() != -1)
-                                    {
-                                        targetId = Long.toString(t.getId());
-                                    }
-                                }
+//                                else if (matrix != null)
+//                                {
+//                                    Term t = matrix.getTermByName(OntologyUtilities
+//                                        .oneIdRemoval(targetTerm));
+//                                    if (t != null && t.getId() != -1)
+//                                    {
+//                                        targetId = Long.toString(t.getId());
+//                                    }
+//                                }
+                                else continue; //new line 27/09/11
+// no tolerance for exact matches with no id since 27/09/11
                             }
                         }
                     }
-                    pairs[i] = new MatchedAttributePair(candTerm,targetTerm,1.0);
+                    if (candId == null || targetId == null) continue;
+                    MatchedAttributePair newPair = new MatchedAttributePair(candTerm,targetTerm,1.0);
                     if (candId != null && candId.length() > 0 && targetId != null &&
                         targetId.length() > 0)
                     {
-                        pairs[i].id1 = Long.parseLong("" + candId);
-                        pairs[i].id2 = Long.parseLong("" + targetId);
+                    	newPair.id1 = Long.parseLong("" + candId);
+                    	newPair.id2 = Long.parseLong("" + targetId);
                     }
+                    tmpPairs.add(newPair);
                 }
             }
+            pairs = new MatchedAttributePair[tmpPairs.size()];
+            pairs = tmpPairs.toArray(pairs);
         }
     }
 

@@ -141,19 +141,20 @@ public class MatchMatrix extends AbstractMatchMatrix
      * 
      * @param candidate a {@link Term} for the candidate ontology
      * @param target a {@link Term} for the target ontology
-     * @return confidence - confidence value
+     * @return confidence value if terms are found -1 otherwise
      */
     public double getMatchConfidence(Term candidate, Term target)
     {
         int candIndex = getTermIndex(candidateTerms, candidate, true);
         int targetIndex = getTermIndex(targetTerms, target, false);
-        // debug
+        /* debug
         if (candIndex == -1)
             System.out.println("candidate:" + candidate);
         if (targetIndex == -1)
             System.out.println("target:" + target);
-        // **
-        return confidenceMatrix[targetIndex][candIndex];
+        // **/
+        if (candIndex == -1 || targetIndex == -1) return -1;
+        else return confidenceMatrix[targetIndex][candIndex];
     }
 
     // old version

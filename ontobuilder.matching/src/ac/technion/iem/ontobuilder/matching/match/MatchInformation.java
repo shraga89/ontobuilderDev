@@ -115,7 +115,7 @@ public class MatchInformation
         mismatchesCandidateOntology.clear();
         mismatchesCandidateOntology.addAll(newMatch.getMismatchesCandidateOntology());
         match_Matrix.copyWithEmptyMatrix(newMatch.getMatrix());
-        match_Matrix.setMatchConfidenceMatrix(newMatch.getMatrix().getMatchMatrix());
+        match_Matrix.setMatchMatrix(newMatch.getMatrix().getMatchMatrix());
 
 
     }
@@ -136,6 +136,7 @@ public class MatchInformation
     public void setOriginalTargetTerms(ArrayList<Term> targetTerms)
     {
         originalTargetTerms = new ArrayList<Term>(targetTerms);
+        totalTargetTerms = originalTargetTerms.size();
     }
 
     /**
@@ -144,6 +145,7 @@ public class MatchInformation
     public void setOriginalCandidateTerms(ArrayList<Term> CandidateTerms)
     {
         originalCandidateTerms = new ArrayList<Term>(CandidateTerms);
+        totalCandidateTerms = originalCandidateTerms.size();
     }
 
     /**
@@ -192,6 +194,9 @@ public class MatchInformation
     public void setTargetOntology(Ontology targetOntology)
     {
         this.targetOntology = targetOntology;
+        ArrayList<Term> tmp = new ArrayList<Term>(); 
+        tmp.addAll(targetOntology.getTerms(true));
+        setOriginalTargetTerms(tmp);
     }
 
     /**
@@ -208,6 +213,9 @@ public class MatchInformation
     public void setCandidateOntology(Ontology candidateOntology)
     {
         this.candidateOntology = candidateOntology;
+        ArrayList<Term> tmp = new ArrayList<Term>(); 
+        tmp.addAll(candidateOntology.getTerms(true));
+        setOriginalCandidateTerms(tmp);
     }
 
     /**

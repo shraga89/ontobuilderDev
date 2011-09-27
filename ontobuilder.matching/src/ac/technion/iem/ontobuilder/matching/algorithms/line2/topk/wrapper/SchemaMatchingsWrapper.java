@@ -83,8 +83,12 @@ public final class SchemaMatchingsWrapper
         try
         {
             smRunner = new SchemaMatchingAlgorithmsRunner();
-            smRunner.setInitialSchema(candidateTermNames);
-            smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix());
+            //smRunner.setInitialSchema(candidateTermNames);
+            //smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix());
+            //replaced on 26/09/2011 by Tomer Sagi to reverse the schemas
+            smRunner.setInitialSchema(targetTermNames);
+            smRunner.setMatchedSchema(candidateTermNames, matchMatrix.getMatchMatrix());
+            
         }
         catch (TKMInitializationException ge)
         {

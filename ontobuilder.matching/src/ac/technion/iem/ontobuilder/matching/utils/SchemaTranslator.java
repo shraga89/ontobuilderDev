@@ -146,13 +146,13 @@ public class SchemaTranslator extends AbstractMapping
             {
                 continue;
             }
-            id1 = match.getTargetTerm().getId();
-            id2 = match.getCandidateTerm().getId();
+            id1 = match.getCandidateTerm().getId();
+            id2 = match.getTargetTerm().getId();
             targetTerm = (vs ? match.getTargetTerm().toStringVs2() : match.getTargetTerm()
                 .toString());
             candTerm = (vs ? match.getCandidateTerm().toStringVs2() : match.getCandidateTerm()
                 .toString());
-            MatchedAttributePair pair = new MatchedAttributePair(targetTerm, candTerm,
+            MatchedAttributePair pair = new MatchedAttributePair(candTerm,targetTerm,
                 match.getEffectiveness());
             pair.id1 = id1;
             pair.id2 = id2;
@@ -313,6 +313,7 @@ public class SchemaTranslator extends AbstractMapping
      */
     public ArrayList<Match> toOntoBuilderMatchList(MatchMatrix matchMatrix)
     {
+    	//TODO revise this to use the termID and not term name
         ArrayList<Match> matches = new ArrayList<Match>();
         for (int i = 0; i < schemaPairs.length; i++)
         {
@@ -334,6 +335,7 @@ public class SchemaTranslator extends AbstractMapping
      */
     public MatchInformation getMatchInfromation(MatchMatrix matrix)
     {
+    	//TODO this is bad, uses an empty match informtion means the match matrix remains null and the candidate and target term lists remain null
         MatchInformation matchInfo = new MatchInformation();
         for (int i = 0; i < schemaPairs.length; i++)
         {
