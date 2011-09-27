@@ -14,7 +14,7 @@ import ac.technion.iem.ontobuilder.io.utils.xml.schema.XSDReaderFactory;
 
 //Code documented by Nimrod Busany 10/04/2011
 /**
- * <p>Title: WSDLImporter</p>
+ * <p>Title: XSDImporter</p>
  * Implements {@link Importer}
  */
 public class XSDImporter implements Importer

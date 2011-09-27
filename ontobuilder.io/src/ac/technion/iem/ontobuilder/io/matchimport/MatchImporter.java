@@ -11,5 +11,11 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
  */
 public interface MatchImporter
 {
-    public MatchInformation importMatch(File file);
+	/**
+	 * Imports match information from file according to ontology structure in mi
+	 * @param empty MatchInformation object to be used for Ontology information
+	 * @param file
+	 * @return
+	 */
+    public MatchInformation importMatch(MatchInformation mi, File file);
 }
