@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.core.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -666,6 +667,86 @@ public class StringUtilities
         return replace(normalizeSpaces(StringUtilities.buildTextFromWords(words)), "- ", "-");
     }
 
+    public static double getHybridJaroWinklerDistance(String s1,String s2)
+	{
+		StringTokenizer st1 = new StringTokenizer(s1);
+		int k = 0 ;
+		double result =0 ;
+		while (st1.hasMoreTokens()) {
+			double maxDistance = 0 ;
+			String currentToken1 = st1.nextToken();
+			StringTokenizer st2 = new StringTokenizer(s2);
+			while (st2.hasMoreTokens()) 
+			{
+				double currentDistance = getJaroWinklerDistance(currentToken1,st2.nextToken());
+				if ( currentDistance > maxDistance)
+					maxDistance = currentDistance;
+			}
+			result += maxDistance;
+			k++;
+		}
+		if (k==0)
+			return 0 ;
+		else
+			return result / k ;
+	}
+	private static double getJaroWinklerDistance(String s1,String s2)
+	{
+		int len1 = s1.length();
+        int len2 = s2.length();
+        if (len1 == 0)
+            return len2 == 0 ? 1.0 : 0.0;
+        //calc the match window
+        int  searchRange = Math.max(0,Math.max(len1,len2)/2 - 1);
+
+        boolean[] matched1 = new boolean[len1];
+        Arrays.fill(matched1,false);
+        boolean[] matched2 = new boolean[len2];
+        Arrays.fill(matched2,false);
+        
+        //search for matching characters in the match window
+        int numCommon = 0;
+        for (int i = 0; i < len1; ++i) {
+            int start = Math.max(0,i-searchRange);
+            int end = Math.min(i+searchRange+1,len2);
+            for (int j = start; j < end; ++j) {
+                if (matched2[j]) continue;
+                if (s1.charAt(i) != s2.charAt(j))
+                    continue;
+                matched1[i] = true;
+                matched2[j] = true;
+                ++numCommon;
+                break;
+            }
+        }
+        if (numCommon == 0) return 0.0;
+        //search for transposed characters
+        int numHalfTransposed = 0;
+        int j = 0;
+        for (int i = 0; i < len1; ++i) {
+            if (!matched1[i]) continue;
+            while (!matched2[j]) ++j;
+            if (s1.charAt(i) != s2.charAt(j))
+                ++numHalfTransposed;
+            ++j;
+        }
+        int numTransposed = numHalfTransposed/2;
+        double numCommonD = numCommon;
+        double weight = (numCommonD/len1
+                         + numCommonD/len2
+                         + (numCommon - numTransposed)/numCommonD)/3.0;
+
+        int pos = 0;
+        while (pos < 2 && pos<s1.length() && pos<s2.length() && s1.charAt(pos) == s2.charAt(pos))
+        {
+            ++pos;   
+        }
+        if (pos == 0) return weight;
+        return weight + 0.1 * pos * (1.0 - weight);
+
+	} 
+
+    
     public static void main(String args[])
     {
         // Max common substring

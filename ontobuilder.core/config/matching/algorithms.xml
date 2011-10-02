@@ -64,13 +64,18 @@
 			</parameter>
 			<parameter>
 				<name>maxCommonSubStringWeight</name>
-				<value>0.50</value>
-				<default>0.50</default>
+				<value>0.40</value>
+				<default>0.40</default>
 			</parameter>	
 			<parameter>
 				<name>nGramWeight</name>
-				<value>0.50</value>
-				<default>0.50</default>
+				<value>0.40</value>
+				<default>0.40</default>
+			</parameter>
+			<parameter>
+				<name>jaroWinklerWeight</name>
+				<value>0.2</value>
+				<default>0.2</default>
 			</parameter>
 			<parameter>
 				<name>nGram</name>
