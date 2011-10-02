@@ -23,6 +23,8 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
  * <p>Title: TermAlgorithm</p>
  * Extends a {@link AbstractAlgorithm}
  * Implements a {@link MatchComparator}
+ * @author Giovanni Modica (original author)
+ * @author Maxim Mondiev & Adham Hurani (extended to include Jaro-Winkler)
  */
 public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
 {
@@ -33,6 +35,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
 
     protected double maxCommonSubStringWeight;
     protected double nGramWeight;
+    protected double jaroWinklerWeight;
     protected int nGram;
 
     /**
@@ -40,7 +43,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
      */
     public Algorithm makeCopy()
     {
-        TermAlgorithm algorithm = new TermAlgorithm();
+    	TermAlgorithm algorithm = new TermAlgorithm();
         algorithm.pluginName = pluginName;
         algorithm.mode = mode;
         algorithm.thesaurus = thesaurus;
@@ -53,6 +56,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         algorithm.stringNameWeight = stringNameWeight;
         algorithm.maxCommonSubStringWeight = maxCommonSubStringWeight;
         algorithm.nGramWeight = nGramWeight;
+        algorithm.jaroWinklerWeight = jaroWinklerWeight;
         return algorithm;
     }
 
@@ -336,9 +340,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
                 else if (name.equals("useSoundex") && value)
                     mode += TermAlgorithmFlagsEnum.USE_SOUNDEX_FLAG.getValue();
             }
-            else if (name.equals("wordLabelWeight") || name.equals("stringLabelWeight") ||
-                name.equals("wordNameWeight") || name.equals("stringNameWeight") ||
-                name.equals("maxCommonSubStringWeight") || name.equals("nGramWeight"))
+            else if(name.equals("wordLabelWeight") || name.equals("stringLabelWeight") || name.equals("wordNameWeight") || name.equals("stringNameWeight") || name.equals("maxCommonSubStringWeight") || name.equals("nGramWeight") || name.equals("jaroWinklerWeight"))
             {
                 double value = Double.parseDouble(parameterElement.getChild("value").getText());
                 if (name.equals("wordLabelWeight"))
@@ -353,6 +355,8 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
                     maxCommonSubStringWeight = value;
                 else if (name.equals("nGramWeight"))
                     nGramWeight = value;
+                else if (name.equals("jaroWinklerWeight"))
+					jaroWinklerWeight=value;
             }
 
             else if (name.equals("nGram"))
@@ -420,6 +424,10 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         double commonEffectiveness_label = StringUtilities.getMaxCommonSubstringEffectivity(
             targetLabel, candidateLabel);
 
+      //Hybrid Jaro Winkler Distance
+		double jaroWinklerDistance_label  = StringUtilities.getHybridJaroWinklerDistance(targetLabel, candidateLabel);
+		
+        
         // Get similarity for names
         String targetName = (String) targetTerm.getAttributeValue("name");
         String candidateName = (String) candidateTerm.getAttributeValue("name");
@@ -429,6 +437,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         double wordEffectiveness_name = 0;
         double commonEffectiveness_name = 0;
         double nGramEffectiveness_name = 0;
+        double jaroWinklerDistance_name =0;
         if (isUsingNames)
         {
             // Word matching
@@ -452,14 +461,14 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             // Max common substring matching
             commonEffectiveness_name = StringUtilities.getMaxCommonSubstringEffectivity(targetName,
                 candidateName);
+            
+          //Hybrid Jaro Winkler Distance
+		     jaroWinklerDistance_name  = StringUtilities.getHybridJaroWinklerDistance(targetName, candidateName);
+			
         }
 
-        double stringMatchingEffectiveness_label = (commonEffectiveness_label *
-            maxCommonSubStringWeight + nGramEffectiveness_label * nGramWeight) /
-            (maxCommonSubStringWeight + nGramWeight);
-        double stringMatchingEffectiveness_name = (commonEffectiveness_name *
-            maxCommonSubStringWeight + nGramEffectiveness_name * nGramWeight) /
-            (maxCommonSubStringWeight + nGramWeight);
+        double stringMatchingEffectiveness_label = (jaroWinklerDistance_label*jaroWinklerWeight+ commonEffectiveness_label*maxCommonSubStringWeight+nGramEffectiveness_label*nGramWeight)/(maxCommonSubStringWeight+nGramWeight+jaroWinklerWeight);
+		double stringMatchingEffectiveness_name = (jaroWinklerDistance_name*jaroWinklerWeight+ commonEffectiveness_name*maxCommonSubStringWeight+nGramEffectiveness_name*nGramWeight)/(maxCommonSubStringWeight+nGramWeight+jaroWinklerWeight);
 
         if (isUsingNames)
             effectiveness = (wordEffectiveness_label * wordLabelWeight +
@@ -538,5 +547,9 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         stringNameWeight = string;
         wordNameWeight = word;
     }
+
+	public double getJaroWinklerWeight() {
+		return jaroWinklerWeight;
+	}
 
 }

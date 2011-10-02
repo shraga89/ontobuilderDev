@@ -954,7 +954,6 @@ public class MatchInformation
     public MatchInformation clone()
     {
     	MatchInformation cloned = new MatchInformation(candidateOntology,targetOntology);
-    	cloned.setMatrix(getMatrix());
     	cloned.updateFromMatch(this);
     	return cloned;
     	
