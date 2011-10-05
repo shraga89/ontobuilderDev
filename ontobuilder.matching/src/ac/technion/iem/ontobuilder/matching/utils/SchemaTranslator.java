@@ -110,7 +110,7 @@ public class SchemaTranslator extends AbstractMapping
                 targetTerm = OntologyUtilities.oneIdRemoval(targetTerm);
                 candTerm = OntologyUtilities.oneIdRemoval(candTerm);
             }
-            temp.add(new MatchedAttributePair(targetTerm, candTerm, match.getEffectiveness()));
+            temp.add(new MatchedAttributePair(candTerm,targetTerm , match.getEffectiveness()));
         }
 
         schemaPairs = new MatchedAttributePair[temp.size()];
@@ -124,14 +124,14 @@ public class SchemaTranslator extends AbstractMapping
     }
 
     /**
-     * Get the Ids from the match info
-     * 
+     * Get the Ids for the matches from the match info
+     * @author Tomer Sagi - revised from Haggai's version which not only got the IDs but got the matches as well
      * @param info the match info
      * @param vs the string version
      */
     public void importIdsFromMatchInfo(MatchInformation info, boolean vs)
     {
-        ArrayList<Match> matches = info.getMatches();
+        /*ArrayList<Match> matches = info.getMatches(); //Haggai's version
         ArrayList<MatchedAttributePair> temp = new ArrayList<MatchedAttributePair>();
 
         Iterator<Match> it = matches.iterator();
@@ -165,7 +165,17 @@ public class SchemaTranslator extends AbstractMapping
         while (it2.hasNext())
         {
             schemaPairs[i++] = it2.next();
-        }
+        }*/
+    	
+    	//start new code by Tomer Sagi 04/10/11
+    	for (MatchedAttributePair map : schemaPairs)
+    	{
+    		Term c = info.getMatrix().getTermByName(map.getAttribute1(),info.getMatrix().getCandidateTerms());
+    		Term t = info.getMatrix().getTermByName(map.getAttribute2(),info.getMatrix().getTargetTerms());
+    		map.id1 = c.getId();
+    		map.id2 = t.getId();
+    	}
+    	//end new code by Tomer Sagi 04/10/2011
     }
 
     /**

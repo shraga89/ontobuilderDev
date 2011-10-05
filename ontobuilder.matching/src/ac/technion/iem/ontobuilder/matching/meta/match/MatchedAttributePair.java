@@ -28,22 +28,25 @@ public class MatchedAttributePair implements Serializable
 
     /**
      * Constructs a MatchedAttributePair with two attributes and a weight
+     * 
      */
-    public MatchedAttributePair(String a1, String a2, double w)
+    public MatchedAttributePair(String candTerm, String targTerm, double w)
     {
-        this(a1, a2);
+        this(candTerm, targTerm);
         weight = w;
     }
 
     /**
      * Constructs a MatchedAttributePair with two attributes
+     * @param candTerm Candidate Term
+     * @param targTerm Target Term
      */
-    public MatchedAttributePair(String a1, String a2)
+    public MatchedAttributePair(String candTerm, String targTerm)
     {
-        attribute1 = a1;
-        attribute2 = a2;
-        char[] a1Chars = a1.toCharArray();
-        char[] a2Chars = a2.toCharArray();
+        attribute1 = candTerm;
+        attribute2 = targTerm;
+        char[] a1Chars = candTerm.toCharArray();
+        char[] a2Chars = targTerm.toCharArray();
         int a1Index = 0;
         int a2Index = 0;
         // creating a unique hashCode by mixing the chars of the attributes
