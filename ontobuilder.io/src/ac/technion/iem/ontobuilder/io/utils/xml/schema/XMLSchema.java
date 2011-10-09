@@ -10,6 +10,7 @@ public class XMLSchema
 
     private String name;
     private ArrayList<XSDElement> elements = new ArrayList<XSDElement>();
+    private ArrayList<XSDComplexType> complexTypes = new ArrayList<XSDComplexType>();
     private int currentElementIndex = 0;
 
     /**

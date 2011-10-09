@@ -24,6 +24,12 @@ public class XSDType
 
     public XSDType(String typeName)
     {
+    	if (typeName.startsWith("xs:")) {
+        	typeName = "xs:" + typeName.substring(3);
+		} else if (typeName.startsWith("xsd:")) {
+			typeName = "xs:" + typeName.substring(4);
+		}
+    	
         this.typeName = typeName;
         if (typeName.equals(XSD_STRING))
             typeClass = String.class;
