@@ -515,4 +515,27 @@ public class SchemaTranslator extends AbstractMapping
         else
             return getTotalMatchWeight();
     }
+    
+    /**
+     * Returns a match list usign the supplied match information object to look up Terms
+     * @param mi
+     * @param useProvenenace If ture will use AMC / COMA++ style provenence to look up term 
+     * @return
+     */
+	public ArrayList<Match> toOntoBuilderMatchList(MatchInformation mi,
+			boolean useProvenance) {
+		if (useProvenance)
+		{
+			ArrayList<Match> res = new ArrayList<Match>();
+			for (MatchedAttributePair map : getMatches())
+			{
+				Term c = mi.getCandidateOntology().getTermByProvenance(map.getAttribute1());
+				Term t = mi.getTargetOntology().getTermByProvenance(map.getAttribute2());
+				res.add(new Match(c,t,map.getMatchedPairWeight()));
+			}
+			return res;
+		}
+		else
+			return toOntoBuilderMatchList(mi.getMatrix());
+	}
 }
