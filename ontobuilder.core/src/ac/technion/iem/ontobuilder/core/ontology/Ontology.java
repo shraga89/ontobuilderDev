@@ -1220,4 +1220,36 @@ public class Ontology extends OntologyObject
 			res = Math.max(res, c.getClassDepth());
 		return 1;
 	}
+	
+
+    /**
+     * Returns a term according to the provenence supplied.
+     * Assumes provenence is of form: root.node.  ...etc...  .node.term 
+     * @param provenenace
+     * @return Term is found null otherwise
+     */
+    public Term getTermByProvenance(String provenance)
+    {
+    	StringBuffer sb = new StringBuffer();
+    	ArrayList<String> prov = new ArrayList<String>(); 
+    	for (char c: provenance.toCharArray())
+    	{
+    		if (c != '.')
+    		{
+    			sb.append(c);
+    		}
+    		else
+    		{
+    			prov.add(sb.toString());
+    			sb = new StringBuffer();
+    		}
+    	}
+    	//String prov[] = provenance.split(String.valueOf('.'));
+    	Term t = this.getTerm(0); //root
+    	for (int i=1;i<prov.size();i++)
+    	{
+    		t = t.getTerm(prov.get(i));
+    	}
+    	return t;
+    }
 }
