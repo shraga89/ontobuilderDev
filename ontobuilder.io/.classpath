@@ -6,5 +6,11 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/wsdl4j.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.matching"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/xsom.jar" sourcepath="C:/Program Files/Java/xsom/xsom-20110101-SNAPSHOT-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program Files/Java/xsom/xsom-20110101-SNAPSHOT-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

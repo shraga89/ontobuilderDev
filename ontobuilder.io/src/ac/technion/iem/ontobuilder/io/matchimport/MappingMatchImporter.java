@@ -34,7 +34,6 @@ public class MappingMatchImporter implements MatchImporter {
 			MatchMatrix newMM = res.getMatrix(); 
 			for (Match m : res.getMatches())
 				newMM.setMatchConfidence(m.getCandidateTerm(), m.getTargetTerm(), m.getEffectiveness());
-			res.setMatrix(new MatchMatrix());
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();

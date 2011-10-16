@@ -78,12 +78,7 @@ class XSDReaderImpl extends DefaultHandler implements XSDReader
         throws SAXException
     {
 
-        // System.out.println("open>> currentState::"+currentState+",qualifiedName::"+qualifiedName);
-    	if (qualifiedName.startsWith("xs:")) {
-			qualifiedName = qualifiedName.substring(3);
-		} else if (qualifiedName.startsWith("xsd:")) {
-			qualifiedName = qualifiedName.substring(4);
-		}
+        qualifiedName = extractQName(qualifiedName);
 		XSDComplexElement complexElement = null;
 		if (!complexElements.empty()) {
 			complexElement = complexElements.peek();
@@ -263,11 +258,7 @@ class XSDReaderImpl extends DefaultHandler implements XSDReader
 //            schema.addXSDElement(complexElement);
 //            currentState = WAIT_FOR_ELEMENT;
 //            return;
-    	if (qualifiedName.startsWith("xs:")) {
-			qualifiedName = qualifiedName.substring(3);
-		} else if (qualifiedName.startsWith("xsd:")) {
-			qualifiedName = qualifiedName.substring(4);
-		}
+    	qualifiedName = extractQName(qualifiedName);
 		XSDComplexElement pop = null;
 		if (qualifiedName.equalsIgnoreCase("element")) {
 			if (!complexElements.empty()) {
@@ -323,4 +314,17 @@ class XSDReaderImpl extends DefaultHandler implements XSDReader
        
 
     }
+
+	/**
+	 * @param qualifiedName
+	 * @return
+	 */
+	private String extractQName(String qualifiedName) {
+		if (qualifiedName.startsWith("xs:")) {
+			qualifiedName = qualifiedName.substring(3);
+		} else if (qualifiedName.startsWith("xsd:")) {
+			qualifiedName = qualifiedName.substring(4);
+		}
+		return qualifiedName;
+	}
 }

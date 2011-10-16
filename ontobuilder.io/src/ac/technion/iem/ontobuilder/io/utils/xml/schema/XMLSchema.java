@@ -49,6 +49,11 @@ public class XMLSchema
     {
         elements.add(currentElementIndex++, e);
     }
+    
+    public void addComplexType(XSDComplexType t)
+    {
+    	complexTypes.add(t);
+    }
 
     public XSDElementsIterator iterator()
     {
