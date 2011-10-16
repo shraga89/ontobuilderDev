@@ -28,7 +28,7 @@ public abstract class OntologyObject implements Comparator<Object>,
     }
 
     /**
-     * Constructs a OntologyObject
+     * Constructs an OntologyObject
      * 
      * @param name the OntologyObject name
      */

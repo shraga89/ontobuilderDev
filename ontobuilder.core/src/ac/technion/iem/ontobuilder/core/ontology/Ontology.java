@@ -455,8 +455,8 @@ public class Ontology extends OntologyObject
     public void addClass(final OntologyClass ontologyClass)
     {
 
-        if (isLight)
-            return;
+       // if (isLight)
+       //     return;
 
         if (!classes.contains(ontologyClass))
         {
@@ -1244,9 +1244,10 @@ public class Ontology extends OntologyObject
     			sb = new StringBuffer();
     		}
     	}
+    	prov.add(sb.toString());
     	//String prov[] = provenance.split(String.valueOf('.'));
-    	Term t = this.getTerm(0); //root
-    	for (int i=1;i<prov.size();i++)
+    	Term t = this.findTerm(prov.get(1)); //first
+    	for (int i=2;i<prov.size();i++)
     	{
     		t = t.getTerm(prov.get(i));
     	}

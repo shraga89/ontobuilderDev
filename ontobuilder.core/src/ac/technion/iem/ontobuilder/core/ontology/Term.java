@@ -462,7 +462,7 @@ public class Term extends OntologyClass
      */
     public Term copy()
     {
-        Term t = (Term) clone();
+        Term t = clone();
         t.setId(this.id);
         return t;
     }
@@ -490,7 +490,7 @@ public class Term extends OntologyClass
         return false;
     }
 
-    public Object clone()
+    public Term clone()
     {
         Term term = new Term(new String(name), value);
         term.setDomain((Domain) domain.clone());
@@ -506,6 +506,7 @@ public class Term extends OntologyClass
             term.addRelationship(new Relationship(term, new String(r.getName()), r.getTarget()));
         }
         term.ontology = ontology;
+        //TODO think about what is the meaning of not cloning the subterms and should we clone them or reference the existing terms
         return term;
     }
 
