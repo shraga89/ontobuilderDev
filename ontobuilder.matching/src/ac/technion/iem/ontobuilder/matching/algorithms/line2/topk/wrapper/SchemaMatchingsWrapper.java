@@ -45,7 +45,7 @@ public final class SchemaMatchingsWrapper
         {
             smRunner = new SchemaMatchingAlgorithmsRunner();
             smRunner.setInitialSchema(candidateTermNames);
-            smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix());
+            smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix()); //very slow
         }
         catch (TKMInitializationException ge)
         {

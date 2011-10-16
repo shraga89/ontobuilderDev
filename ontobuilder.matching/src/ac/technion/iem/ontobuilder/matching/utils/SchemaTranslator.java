@@ -531,7 +531,7 @@ public class SchemaTranslator extends AbstractMapping
 			{
 				Term c = mi.getCandidateOntology().getTermByProvenance(map.getAttribute1());
 				Term t = mi.getTargetOntology().getTermByProvenance(map.getAttribute2());
-				res.add(new Match(c,t,map.getMatchedPairWeight()));
+				res.add(new Match(t,c,map.getMatchedPairWeight()));
 			}
 			return res;
 		}
