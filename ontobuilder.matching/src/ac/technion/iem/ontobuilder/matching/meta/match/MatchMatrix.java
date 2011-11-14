@@ -3,6 +3,7 @@ package ac.technion.iem.ontobuilder.matching.meta.match;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -25,7 +26,11 @@ public class MatchMatrix extends AbstractMatchMatrix
     // to support getting match confidence for given two terms in O(1)
     private Hashtable<Term, Integer> candidateHashIndex = new Hashtable<Term, Integer>();
     private Hashtable<Term, Integer> targetHashIndex = new Hashtable<Term, Integer>();
-
+    
+    //supports getting a term by ID in O(1)
+    private HashMap<Long,Term> candidateTermIDs = new HashMap<Long,Term>();
+    private HashMap<Long,Term> targetTermIDs = new HashMap<Long,Term>();
+    
     private static int printIndex = 0;
 
     /**
@@ -245,6 +250,21 @@ public class MatchMatrix extends AbstractMatchMatrix
         else
             return getTermByName(name, getCandidateTerms());
     }
+    
+    /**
+     * Gets a Term in O(1) 
+     * @param id Term ID of the term to retrieve
+     * @param isCandidate supply true if the requested term is in the candidate terms
+     * @return Term with matching ID, null otherwise
+     */
+    public Term getTermByID(long id,boolean isCandidate)
+    {
+    	HashMap<Long,Term> terms = (isCandidate?candidateTermIDs:targetTermIDs);
+    	if (terms.containsKey(id))
+    		return terms.get(new Long(id));
+    	else
+    		return null;
+    }
 
     /**
      * @deprecated
@@ -333,22 +353,19 @@ public class MatchMatrix extends AbstractMatchMatrix
      */
     private void prepareHashIndexes(ArrayList<Term> candTerms, ArrayList<Term> targetTerms)
     {
-        // new 29/4/03
-        Iterator<Term> it = candTerms.iterator();
-        int i = 0;
-        while (it.hasNext())
+    	int i=0;
+        for (Term term : candTerms)
         {
-            Term term = (Term) it.next();
             candidateHashIndex.put(term, new Integer(i++));
+            candidateTermIDs.put(term.getId(), term);
         }
-        it = targetTerms.iterator();
+        
         i = 0;
-        while (it.hasNext())
+        for (Term term : targetTerms)
         {
-            Term term = (Term) it.next();
             targetHashIndex.put(term, new Integer(i++));
+            targetTermIDs.put(term.getId(),term);
         }
-        // end new
 
     }
 

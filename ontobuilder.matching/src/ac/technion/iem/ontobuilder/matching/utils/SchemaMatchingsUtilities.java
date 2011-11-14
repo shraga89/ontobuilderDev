@@ -270,13 +270,13 @@ public final class SchemaMatchingsUtilities
         else if (!(threshold >= 0 && threshold <= 1))
             throw new IllegalArgumentException("Thershold must be 0 <= th <= 1");
         MatchedAttributePair[] oldPairs = st.getMatchedPairs();
-        Vector<MatchedAttributePair> temp = new Vector<MatchedAttributePair>();
+        ArrayList<MatchedAttributePair> temp = new ArrayList<MatchedAttributePair>();
         for (int i = 0; i < oldPairs.length; i++)
             if (oldPairs[i].getMatchedPairWeight() >= threshold)
-                temp.add(temp.size(), oldPairs[i]);
+                temp.add(oldPairs[i]);
         MatchedAttributePair[] newPairs = new MatchedAttributePair[temp.size()];
         for (int i = 0; i < temp.size(); i++)
-            newPairs[i] = (MatchedAttributePair) temp.get(i);
+            newPairs[i] = temp.get(i);
         return new SchemaTranslator(newPairs);
     }
 

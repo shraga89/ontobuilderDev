@@ -66,7 +66,13 @@ public class MatchedAttributePair implements Serializable
         hashCode = mixedString.hashCode();
     }
 
-    /**
+    @Override
+	public String toString() {
+		return " [Candidate:" + id1 + "," + attribute1 + " <-> " +
+			   "  Target: " + id2 + "," + attribute2 + "];Weight:" + weight;
+	}
+
+	/**
      * return hashCode for attribute pairs
      */
     public int hashCode()

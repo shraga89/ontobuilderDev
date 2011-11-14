@@ -4,9 +4,7 @@
 package ac.technion.iem.ontobuilder.io.matchimport;
 
 import java.io.File;
-import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
@@ -27,10 +25,6 @@ public class NativeMatchImporter implements MatchImporter {
 			MatchInformation res = new MatchInformation(mi.getCandidateOntology(),mi.getTargetOntology());
 			SchemaTranslator st = SchemaMatchingsUtilities.readXMLBestMatchingFile(file.getAbsolutePath(),mi.getMatrix());
 			res.setMatches(st.toOntoBuilderMatchList(mi.getMatrix()));
-			MatchMatrix newMM = res.getMatrix(); 
-			for (Match m : res.getMatches())
-				newMM.setMatchConfidence(m.getCandidateTerm(), m.getTargetTerm(), m.getEffectiveness());
-			res.setMatrix(new MatchMatrix());
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();

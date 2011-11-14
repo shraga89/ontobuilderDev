@@ -20,7 +20,10 @@ import com.sun.xml.xsom.XSSchemaSet;
 import com.sun.xml.xsom.XSSimpleType;
 import com.sun.xml.xsom.XSTerm;
 import com.sun.xml.xsom.XSType;
+import com.sun.xml.xsom.impl.ComplexTypeImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
+import com.sun.xml.xsom.impl.ModelGroupImpl;
+import com.sun.xml.xsom.impl.parser.DelayedRef.ComplexType;
 import com.sun.xml.xsom.impl.util.DraconianErrorHandler;
 import com.sun.xml.xsom.parser.XSOMParser;
 
@@ -37,7 +40,8 @@ public class XSDImporterUsingXSOM implements Importer
      * @throws ImportException when the XML Schema import failed
      */
 	private Ontology xsdOntology;
-	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements 
+	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
+	private ArrayList<Term> missingCTTerms = new ArrayList<Term>(); //Terms which couldn't be created since declared complex types where not converted to terms yet, used when types are referenced inside complex elements
 	
     public Ontology importFile(File file) throws ImportException
     {
@@ -74,8 +78,10 @@ public class XSDImporterUsingXSOM implements Importer
         	HashMap<OntologyClass,ArrayList<OntologyClass>> relationships = new HashMap<OntologyClass,ArrayList<OntologyClass>>();
         	Iterator<XSComplexType> it2 = result.iterateComplexTypes();
         	while (it2.hasNext())
-        	{
+        	{ 
+        		
         		XSComplexType newType = it2.next();
+				//Make ontology class
         		ontologyClass = createOntologyClass(xsdOntology,newType);
         		//Record parent child relationships to later create them in classes
         		ArrayList<OntologyClass> superClasses;
@@ -94,7 +100,14 @@ public class XSDImporterUsingXSOM implements Importer
 	        		relationships.put(ontologyClass, superClasses);
         		}
 				xsdOntology.addClass(ontologyClass);
-				//make Term and collect, Will be used to create terms in complex elements using this complex type
+        	}
+        	
+        	it2 = result.iterateComplexTypes();
+        	while (it2.hasNext())
+        	{ 
+        		
+        		XSComplexType newType = it2.next();
+	        	//make Term and collect, Will be used to create terms in complex elements using this complex type
 				Term classT = makeTermFromComplexType(null, newType);
 				this.ctTerms.put(newType.getName(), classT);
         	}
@@ -142,7 +155,12 @@ public class XSDImporterUsingXSOM implements Importer
 		return ontologyClass;
 	}
 
-    
+    /**
+     * 
+     * @param parent
+     * @param complexElement
+     * @return
+     */
 	private Term makeTermFromElement(Term parent,XSElementDecl complexElement)
 	{
 		//TODO check why simple elements are not assigned the correct OntologyClass
@@ -162,7 +180,10 @@ public class XSDImporterUsingXSOM implements Importer
 		if (complexElement.getType().isGlobal())
 		{
 			try {
-				Term ctTerm = ctTerms.get(ct.getName()); 
+				String ctName = ct.getName();
+				if (!ctTerms.containsKey(ctName))
+					ctTerms.put(ctName, makeTermFromComplexType(null, ct));
+				Term ctTerm = ctTerms.get(ct.getName());
 				t = recCloneTerm(ctTerm);
 				t.setName(complexElement.getName());
 				t.setParent(parent);
@@ -199,15 +220,11 @@ public class XSDImporterUsingXSOM implements Importer
 	 * @return new term, clone of supplied term with cloned attributes
 	 */
 	private Term recCloneTerm(Term term) {
+		assert(term!=null);
 		Term res = term.clone();
 		for (Term child : term.getTerms())
 			res.addTerm(recCloneTerm(child));
 		return res;
-	}
-
-	private Term makeTermFromSimpleType(Term t, XSSimpleType sp) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -244,7 +261,7 @@ public class XSDImporterUsingXSOM implements Importer
 	 * Assumes it receives a named complex type and makes a term from it. If the complex type is anonymous (local) throws an exception
 	 * @param parent Term to which this term will refer. Assumes the term created will be added to the parent term after this method is called
 	 * @param ct
-	 * @return
+	 * @return null if term cannot be created due to a missing complex type or the created term otherwise
 	 * @throws Exception if the type is a simple type
 	 */
 	private Term makeTermFromComplexType(Term parent,XSComplexType ct) throws Exception
@@ -256,20 +273,39 @@ public class XSDImporterUsingXSOM implements Importer
 		term.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("name",ct.getName()));
 		term.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("annotation",ct.getAnnotation()));
 		term.setDomain(new Domain(ct.getName()));//TODO improve this by understanding the domain usage in ontobuilder matchers
-		term.setSuperClass(xsdOntology.findClass(ct.getName()));
+		term.setSuperClass(xsdOntology.findClass(ct.getName())); //TODO this doesn't work since maybe the ontology class has not been created yet
 		if (parent != null) term.setParent(parent);
 		term.setOntology(xsdOntology);
-		//Make subterms from elements
-		XSTerm xst = ct.getContentType().asParticle().getTerm();
-		XSModelGroup g =  xst.asModelGroup();
-		for (XSParticle p : g.getChildren())
+		//Extend using base type if exists and complex
+		if (ct.getDerivationMethod()==ComplexTypeImpl.EXTENSION && ct.getBaseType().isComplexType())
 		{
-			if (p.getTerm().getClass() == ElementDecl.class) 
-				term.addTerm(makeTermFromElement(term,p.getTerm().asElementDecl()));
+			String ctName = ct.getBaseType().getName();
+			if (!ctTerms.containsKey(ctName))
+				ctTerms.put(ct.getBaseType().getName(),makeTermFromComplexType(null, ct.getBaseType().asComplexType()));
+			Term baseT = ctTerms.get(ctName);
+			for (Term baseSubT : baseT.getTerms())
+			{
+				baseT.addTerm(recCloneTerm(baseSubT));
+			}
 		}
-//		for (XSElementDecl e : ct.getElementDecls())
-//			term.addTerm(makeTermFromElement(term, e));
-		//TODO handle extension
+		//Make subterms from elements if exist
+		if (ct.getContentType().asParticle()!=null)
+		{
+			XSTerm xst = ct.getContentType().asParticle().getTerm();
+			XSModelGroup g =  xst.asModelGroup();
+			for (XSParticle p : g.getChildren())
+			{
+				if (p.getTerm().getClass() == ElementDecl.class) //simple sequence
+					term.addTerm(makeTermFromElement(term,p.getTerm().asElementDecl()));
+				else if (p.getTerm().getClass() == ModelGroupImpl.class) //sequence within a choice
+				{
+					for (XSParticle p1 : p.asParticle().getTerm().asModelGroup())
+					{
+						term.addTerm(makeTermFromElement(term,p1.getTerm().asElementDecl()));
+					}
+				}
+			}
+		}
 		return term;
 	}
 	

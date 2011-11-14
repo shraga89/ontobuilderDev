@@ -929,6 +929,8 @@ public class MatchInformation
     public void setMatches(ArrayList<Match> matches)
     {
         this.matches = matches;
+        for (Match m : this.getMatches())
+			this.getMatrix().setMatchConfidence(m.getCandidateTerm(), m.getTargetTerm(), m.getEffectiveness());
     }
 
     /**

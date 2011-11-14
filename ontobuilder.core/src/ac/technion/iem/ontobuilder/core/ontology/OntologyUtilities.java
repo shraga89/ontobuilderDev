@@ -78,10 +78,15 @@ public class OntologyUtilities
         }
     }
 
+    /**
+     * This function should be fixed or scrapped
+     * @param attr
+     * @return
+     */
     public static String oneIdRemoval(String attr)
     {
         String tempStr = String.copyValueOf(attr.toCharArray());
-        int i = tempStr.lastIndexOf(",");
+        int i = tempStr.lastIndexOf(","); //TODO: This destroys term labels with "," in them
         if (i != -1)
         {
             return tempStr.substring(0, i);

@@ -115,12 +115,12 @@ public class SchemaTranslator extends AbstractMapping
 
         schemaPairs = new MatchedAttributePair[temp.size()];
 
-        Iterator<MatchedAttributePair> it2 = temp.iterator();
-        while (it2.hasNext())
+        
+        for (MatchedAttributePair map : temp)
         {
-            schemaPairs[i++] = it2.next();
+            schemaPairs[i++] = map;
         }
-        removeIds();
+        if (removeIds) removeIds();
     }
 
     /**
@@ -128,6 +128,7 @@ public class SchemaTranslator extends AbstractMapping
      * @author Tomer Sagi - revised from Haggai's version which not only got the IDs but got the matches as well
      * @param info the match info
      * @param vs the string version
+     * @deprecated use MatchInformation object if possible and not schema translator object
      */
     public void importIdsFromMatchInfo(MatchInformation info, boolean vs)
     {
@@ -186,8 +187,10 @@ public class SchemaTranslator extends AbstractMapping
         for (int i = 0; i < schemaPairs.length; i++)
         {
             MatchedAttributePair pair = schemaPairs[i];
-            pair.setAttribute1(OntologyUtilities.oneIdRemoval(pair.getAttribute1()));
-            pair.setAttribute2(OntologyUtilities.oneIdRemoval(pair.getAttribute2()));
+            pair.id1 = -1;
+            pair.id2 = -1;
+            //pair.setAttribute1(OntologyUtilities.oneIdRemoval(pair.getAttribute1()));
+            //pair.setAttribute2(OntologyUtilities.oneIdRemoval(pair.getAttribute2()));
         }
     }
 
@@ -317,22 +320,29 @@ public class SchemaTranslator extends AbstractMapping
 
     /**
      * Add to OntoBuilder Match List
-     * 
+     * Revised 26/10/2011 to rely on TermID and only if not found on Term Name
      * @param matchMatrix a match matrix
      * @return
      */
     public ArrayList<Match> toOntoBuilderMatchList(MatchMatrix matchMatrix)
     {
-    	//TODO revise this to use the termID and not term name
         ArrayList<Match> matches = new ArrayList<Match>();
-        for (int i = 0; i < schemaPairs.length; i++)
+        for (MatchedAttributePair map : schemaPairs)
         {
-            Term targetTerm = matchMatrix.getTermByName(schemaPairs[i].getAttribute2(),
-                matchMatrix.getTargetTerms());
-            Term candidateTerm = matchMatrix.getTermByName(schemaPairs[i].getAttribute1(),
-                matchMatrix.getCandidateTerms());
-            matches
-                .add(new Match(targetTerm, candidateTerm, schemaPairs[i].getMatchedPairWeight()));
+        	//Target Term
+            Term targetTerm = matchMatrix.getTermByID(map.id2,false);
+            if (targetTerm==null)
+            	targetTerm = matchMatrix.getTermByName(map.getAttribute2(),matchMatrix.getTargetTerms());
+            
+            //Candidate Term
+            Term candidateTerm = matchMatrix.getTermByID(map.id1,true);
+            if (candidateTerm==null)
+            	candidateTerm = matchMatrix.getTermByName(map.getAttribute1(),matchMatrix.getCandidateTerms());
+            
+            if (targetTerm!=null && candidateTerm != null)
+            	matches.add(new Match(targetTerm, candidateTerm, map.getMatchedPairWeight()));
+            else
+            	System.err.println("toOntobuilderMatchList in SchemaTranslator could not find pair" + map.toString());
         }
         return matches;
     }
@@ -530,7 +540,11 @@ public class SchemaTranslator extends AbstractMapping
 			for (MatchedAttributePair map : getMatches())
 			{
 				Term c = mi.getCandidateOntology().getTermByProvenance(map.getAttribute1());
+				if (c==null)
+					continue;
 				Term t = mi.getTargetOntology().getTermByProvenance(map.getAttribute2());
+				if (t==null)
+					continue;
 				res.add(new Match(t,c,map.getMatchedPairWeight()));
 			}
 			return res;

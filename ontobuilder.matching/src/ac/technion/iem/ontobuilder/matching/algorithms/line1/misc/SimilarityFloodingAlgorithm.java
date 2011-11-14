@@ -142,7 +142,7 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
      * @param o2 target {@link Ontology}
      * @return MatchInformation
      */
-    public MatchInformation match(Ontology o1, Ontology o2)
+    public MatchInformation match(Ontology o2, Ontology o1)
     {
         ArrayList<Term> candTerms = getTerms(o1);
         ArrayList<Term> targTerms = getTerms(o2);
@@ -184,8 +184,9 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
                         }
                         else
                             newV = (LabeledVertex) PCGVerts.get(newV.getLabel());
-                        LabeledVertex newV2 = new LabeledVertex(edge1.getTarget().getName(), edge2
-                            .getTarget().getName(), 0);
+                        assert(edge1!=null);
+                        assert(edge2!=null);
+                        LabeledVertex newV2 = new LabeledVertex(edge1.getTarget().getName(), edge2.getTarget().getName(), 0);
                         if (PCGVerts.get(newV2.getLabel()) == null)
                         {
                             newV2.setWeight(sigma0(newV2));

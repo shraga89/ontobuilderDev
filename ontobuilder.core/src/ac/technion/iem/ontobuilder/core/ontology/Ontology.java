@@ -1249,6 +1249,7 @@ public class Ontology extends OntologyObject
     	Term t = this.findTerm(prov.get(1)); //first
     	for (int i=2;i<prov.size();i++)
     	{
+    		assert(t!=null);
     		t = t.getTerm(prov.get(i));
     	}
     	return t;
