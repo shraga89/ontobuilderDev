@@ -266,55 +266,38 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
         // print("received " + candTerms.size() + ":" + targTerms.size());
 
         matrix.setMatchMatrix(getMatchMatrix(PCGVerts, candTerms, targTerms));
-        MatchedAttributePair[] pairs;
-        try
-        {
-            SchemaMatchingsWrapper smw = new SchemaMatchingsWrapper(matrix);
-            pairs = smw.getNextBestMatching().getMatchedPairs();
-
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+//        MatchedAttributePair[] pairs;
+//        try
+//        {
+//            SchemaMatchingsWrapper smw = new SchemaMatchingsWrapper(matrix);
+//            pairs = smw.getNextBestMatching().getMatchedPairs();
+//
+//        }
+//        catch (Exception e)
+//        {
+//            return null;
+//        }
         /*
          * print ("\nFiltered Pairs:"); for (int i =0 ; i<pairs.length ; i++){ print("pair " + i +
          * ": " + pairs[i].getAttribute1() + " && " + pairs[i].getAttribute2()); }
          */
 
         /** Create MatchInformation object */
-        MatchInformation matchInformation = new MatchInformation();
+        MatchInformation matchInformation = new MatchInformation(o1,o2);
         matchInformation.setMatrix(matrix);
-        matchInformation.setTargetOntologyTermsTotal(targTerms.size());
-        matchInformation.setTargetOntology(o2);
-        matchInformation.setCandidateOntologyTermsTotal(candTerms.size());
-        matchInformation.setCandidateOntology(o1);
-        matchInformation.setOriginalCandidateTerms(candTerms);
-        matchInformation.setOriginalTargetTerms(targTerms);
         matchInformation.setAlgorithm(this);
-
-        Term candidateTerm, targetTerm;
-        for (int i = 0; i < candTerms.size(); i++)
+        
+        for (Term targetTerm : targTerms)
         {
-            candidateTerm = matrix.getTermByName(((Term) candTerms.get(i)).toString(),
-                matrix.getCandidateTerms());
-            MatchedAttributePair map;
-            for (int j = 0; j < pairs.length; j++)
-            {
-                map = pairs[j];
-                if (OntologyUtilities.oneIdRemoval((((Term) candTerms.get(i)).toString())).equals(
-                    OntologyUtilities.oneIdRemoval(map.getAttribute1())))
-                {
-                    targetTerm = matrix.getTermByName(map.getAttribute2(), matrix.getTargetTerms());
-                    if (targetTerm != null)
-                    {
-                        matchInformation.addMatch(targetTerm, candidateTerm,
-                            map.getMatchedPairWeight());
-                    }
-
-                }
-            }
+        	for (Term candidateTerm : candTerms)
+        		{
+        			double conf = matrix.getMatchConfidence(candidateTerm, targetTerm);
+        			if (conf>=0.0)
+        				matchInformation.addMatch(targetTerm, candidateTerm,conf);
+        			
+        		}
         }
+        
 
         for (int i = 0; i < matrix.getTargetTerms().size(); i++)
         {
