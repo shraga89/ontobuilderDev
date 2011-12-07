@@ -105,7 +105,7 @@ public class OntologyUtilitiesGui
     }
     
     /**
-     * Perform a math
+     * Perform a match
      * 
      * @param originalTargetTermList the original target terms list
      * @param targetTermList the target terms list

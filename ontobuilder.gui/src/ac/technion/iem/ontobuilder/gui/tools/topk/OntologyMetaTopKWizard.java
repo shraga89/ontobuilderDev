@@ -2096,7 +2096,7 @@ public class OntologyMetaTopKWizard
         {
             mmatrix = (MatchMatrix) metaAlg.getCombinedMatrix();
         }
-        final MatchInformation matchInformation = match.getMatchInfromation(mmatrix);
+        final MatchInformation matchInformation = match.getMatchInfromation(candidate, target, mmatrix);
         matchInformation.setTargetOntologyTermsTotal(mmatrix.getCandidateTerms().size());
         matchInformation.setTargetOntology(target);
         matchInformation.setCandidateOntologyTermsTotal(mmatrix.getTargetTerms().size());
