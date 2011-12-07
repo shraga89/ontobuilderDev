@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
@@ -110,7 +111,7 @@ public class SchemaTranslator extends AbstractMapping
                 targetTerm = OntologyUtilities.oneIdRemoval(targetTerm);
                 candTerm = OntologyUtilities.oneIdRemoval(candTerm);
             }
-            temp.add(new MatchedAttributePair(candTerm,targetTerm , match.getEffectiveness()));
+            temp.add(new MatchedAttributePair(candTerm,targetTerm , match.getEffectiveness(),match.getCandidateTerm().getId(),match.getTargetTerm().getId()));
         }
 
         schemaPairs = new MatchedAttributePair[temp.size()];
@@ -218,7 +219,7 @@ public class SchemaTranslator extends AbstractMapping
     public SchemaTranslator(MatchedAttributePair[] schemaPairs)
     {
         super(schemaPairs);
-        removeIds();
+        //removeIds();
         hashCode = calcHashCode(schemaPairs);
     }
 
@@ -349,14 +350,16 @@ public class SchemaTranslator extends AbstractMapping
 
     /**
      * Get the match information
+     * @param target 
+     * @param candidate 
      * 
      * @param matrix the match matrix
      * @return match information
      */
-    public MatchInformation getMatchInfromation(MatchMatrix matrix)
+    public MatchInformation getMatchInfromation(Ontology candidate, Ontology target, MatchMatrix matrix)
     {
     	//TODO this is bad, uses an empty match informtion means the match matrix remains null and the candidate and target term lists remain null
-        MatchInformation matchInfo = new MatchInformation();
+        MatchInformation matchInfo = new MatchInformation(candidate, target);
         for (int i = 0; i < schemaPairs.length; i++)
         {
             Term targetTerm = matrix.getTermByName(schemaPairs[i].getAttribute2(),

@@ -26,6 +26,12 @@ public class MatchedAttributePair implements Serializable
     /** holds matched pair hashCode */
     private int hashCode;
 
+    public MatchedAttributePair(String candTerm, String targTerm, double w,long id1, long id2)
+    {
+    	this(candTerm,targTerm,w);
+    	this.id1 = id1;
+    	this.id2 = id2;
+    }
     /**
      * Constructs a MatchedAttributePair with two attributes and a weight
      * 

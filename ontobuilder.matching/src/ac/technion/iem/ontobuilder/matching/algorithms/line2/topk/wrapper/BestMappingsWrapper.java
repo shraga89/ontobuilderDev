@@ -90,13 +90,12 @@ public class BestMappingsWrapper {
 
   private static SchemaTranslator  GetBestMappingByFilteredMw(){
     SchemaTranslator bmByUnion = GetBestMappingByUnion();
-    SchemaTranslator bmByDominants = GetBestMappingByDom();
+//    SchemaTranslator bmByDominants = GetBestMappingByDom();
     Filter(null,bmByUnion);
     try {
       SchemaMatchingsWrapper smw = new SchemaMatchingsWrapper(matchMatrix);
       SchemaTranslator bmByFilteredMw = smw.getBestMatching();
       return bmByFilteredMw;
-      //return BestMappingsWrapper.GetBestMappingByUnion(bmByDominants,bmByFilteredMw);
     }
     catch (Exception e) {
       return null;
@@ -119,7 +118,7 @@ public class BestMappingsWrapper {
   private static SchemaTranslator GetBestMappingByIntersection(){
     AbstractMapping em = GetBestMappingByMwbg();
     AbstractMapping tkm = GetBestMappingBySm();
-    ArrayList m = intersectMappings(em, tkm);
+    ArrayList<MatchedAttributePair> m = intersectMappings(em, tkm);
     MatchedAttributePair[] obArrayMatchedPair = new MatchedAttributePair[m.size()];
     obArrayMatchedPair = (MatchedAttributePair[]) m.toArray(obArrayMatchedPair);
     SchemaTranslator obSchemaTranslator = new SchemaTranslator();
@@ -131,9 +130,9 @@ public class BestMappingsWrapper {
   private static SchemaTranslator GetBestMappingByUnion(){
     SchemaTranslator sTranslator1 = GetBestMappingByMwbg();
     SchemaTranslator sTranslator2 = GetBestMappingBySm();
-    ArrayList m1 = null;
-    ArrayList m2 = null;
-    ArrayList m = null;
+    ArrayList<MatchedAttributePair> m1 = null;
+    ArrayList<MatchedAttributePair> m2 = null;
+    ArrayList<MatchedAttributePair> m = null;
     if(sTranslator1 != null)
       m1 = getAttributePairsAsArrayList(sTranslator1);
     if(sTranslator2 != null)
@@ -154,9 +153,9 @@ public class BestMappingsWrapper {
   }
 
   private static SchemaTranslator GetBestMappingByUnion(SchemaTranslator sTranslator1, SchemaTranslator sTranslator2){
-    ArrayList m1 = null;
-    ArrayList m2 = null;
-    ArrayList m = null;
+    ArrayList<MatchedAttributePair> m1 = null;
+    ArrayList<MatchedAttributePair> m2 = null;
+    ArrayList<MatchedAttributePair> m = null;
     if(sTranslator1 != null)
       m1 = getAttributePairsAsArrayList(sTranslator1);
     if(sTranslator2 != null)
@@ -179,22 +178,22 @@ public class BestMappingsWrapper {
 
   private static SchemaTranslator GetBestMappingByBetaDist(){
     SchemaTranslator mapping = new SchemaTranslator();
-    double a_beta_param_neg = 2.6452;
-    double b_beta_param_neg = 16.3139;
-    int negSampleSize = 104503;
+//    double a_beta_param_neg = 2.6452;
+//    double b_beta_param_neg = 16.3139;
+//    int negSampleSize = 104503;
 
-    double a_beta_param_pos = 3.2205;
-    double b_beta_param_pos = 2.3844;
-    int posSampleSize = 1821;
+//    double a_beta_param_pos = 3.2205;
+//    double b_beta_param_pos = 2.3844;
+//    int posSampleSize = 1821;
     double simDegree;
     double maxValue = 0;
-    double probabilityToBePos;
-    double probabilityToBeNeg;
+//    double probabilityToBePos;
+//    double probabilityToBeNeg;
     double eps = 2.2204e-016;
     MatchedAttributePair map;
-    int negSize = 104503;
-    int posSize = 1821;
-    ArrayList alFilteredMatchingResult = new ArrayList();
+//    int negSize = 104503;
+//    int posSize = 1821;
+    ArrayList<MatchedAttributePair> alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
 //    BetaDistribution betaDistPos = new BetaDistribution(a_beta_param_pos,b_beta_param_pos);
 //    BetaDistribution betaDistNeg = new BetaDistribution(a_beta_param_neg,b_beta_param_neg);
     int row = matchMatrix.getRowCount();
@@ -233,30 +232,28 @@ public class BestMappingsWrapper {
     return mapping;
   }
 
-  private static ArrayList minus(ArrayList a, ArrayList b) {
-    ArrayList minus = new ArrayList();
-    Iterator it = a.iterator();
-    while (it.hasNext()) {
-      MatchedAttributePair p = (MatchedAttributePair) it.next();
-      if (!b.contains(p)) {
+  private static ArrayList<MatchedAttributePair> minus(ArrayList<MatchedAttributePair> a, ArrayList<MatchedAttributePair> b) {
+    ArrayList<MatchedAttributePair> minus = new ArrayList<MatchedAttributePair>();
+    for (MatchedAttributePair p : a)
+    {  if (!b.contains(p)) {
         minus.add(p);
       }
     }
     return minus;
   }
 
-  private static ArrayList plus(ArrayList a, ArrayList b) {
-    ArrayList plus = new ArrayList();
-    Iterator it = a.iterator();
-    while (it.hasNext()) {
-      MatchedAttributePair p = (MatchedAttributePair) it.next();
+  private static ArrayList<MatchedAttributePair> plus(ArrayList<MatchedAttributePair> a, ArrayList<MatchedAttributePair> b) {
+    ArrayList<MatchedAttributePair> plus = new ArrayList<MatchedAttributePair>();
+    
+    for (MatchedAttributePair p : a)
+    {
       if (!plus.contains(p)) {
         plus.add(p);
       }
     }
-    it = b.iterator();
-    while (it.hasNext()) {
-      MatchedAttributePair p = (MatchedAttributePair) it.next();
+    
+    for (MatchedAttributePair p : b)
+    {
       if (!plus.contains(p)) {
         plus.add(p);
       }
@@ -264,8 +261,8 @@ public class BestMappingsWrapper {
     return plus;
   }
 
-  private static ArrayList intersectMappings(AbstractMapping stNext, AbstractMapping stPrevious) {
-    ArrayList a = new ArrayList(), b = new ArrayList();
+  private static ArrayList<MatchedAttributePair> intersectMappings(AbstractMapping stNext, AbstractMapping stPrevious) {
+    ArrayList<MatchedAttributePair> a = new ArrayList<MatchedAttributePair>(), b = new ArrayList<MatchedAttributePair>();
 
     int iStNextSize = stNext.getMatchedAttributesPairsCount();
     for (int i = 0; i < iStNextSize; i++) {
@@ -303,8 +300,8 @@ public class BestMappingsWrapper {
 
   }
 */
-  private static ArrayList getAttributePairsAsArrayList(AbstractMapping stNext) {
-    ArrayList a = new ArrayList();
+  private static ArrayList<MatchedAttributePair> getAttributePairsAsArrayList(AbstractMapping stNext) {
+    ArrayList<MatchedAttributePair> a = new ArrayList<MatchedAttributePair>();
     int iStNextSize = stNext.getMatchedAttributesPairsCount();
     for (int i = 0; i < iStNextSize; i++) {
       a.add(stNext.getMatchedAttributePair(i));
@@ -315,10 +312,10 @@ public class BestMappingsWrapper {
   private static SchemaTranslator CalculateDominantPairs(MatchMatrix matrix) {
 
     SchemaTranslator mapping = new SchemaTranslator();
-    ArrayList m_alFilteredMatchingResult = new ArrayList();
+    ArrayList<MatchedAttributePair> m_alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
 
-    Hashtable hMaxInTarget = GetMaxInTargetTerms(matrix);
-    Hashtable hMaxInCandidate = GetMaxInCandidateTerms(matrix);
+    Hashtable<String, Double> hMaxInTarget = GetMaxInTargetTerms(matrix);
+    Hashtable<String, Double> hMaxInCandidate = GetMaxInCandidateTerms(matrix);
 
     String[] candidateTerms = matrix.getCandidateTermNames();
     String[] targetTerms = matrix.getTargetTermNames();
@@ -352,8 +349,8 @@ public class BestMappingsWrapper {
     return mapping;
   }
 
-  private static Hashtable GetMaxInTargetTerms(MatchMatrix matrix) {
-    Hashtable hash = new Hashtable();
+  private static Hashtable<String, Double> GetMaxInTargetTerms(MatchMatrix matrix) {
+    Hashtable<String, Double> hash = new Hashtable<String, Double>();
     String[] candidateTerms = matrix.getCandidateTermNames();
     String[] targetTerms = matrix.getTargetTermNames();
     int iTargetSize = matrix.getTargetTerms().size();
@@ -375,8 +372,8 @@ public class BestMappingsWrapper {
     return hash;
   }
 
-  private static Hashtable GetMaxInCandidateTerms(MatchMatrix matrix) {
-    Hashtable hash = new Hashtable();
+  private static Hashtable<String, Double> GetMaxInCandidateTerms(MatchMatrix matrix) {
+    Hashtable<String, Double> hash = new Hashtable<String, Double>();
     String[] candidateTerms = matrix.getCandidateTermNames();
     String[] targetTerms = matrix.getTargetTermNames();
     int iTargetSize = matrix.getTargetTerms().size();

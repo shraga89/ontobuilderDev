@@ -92,6 +92,9 @@ public class Match
             ")" + "  (" + effectiveness + ")";
     }
 
+    /**
+     * A Match is equal if the terms are equal
+     */
     public boolean equals(Object o)
     {
         if (!(o instanceof Match))
@@ -99,5 +102,13 @@ public class Match
 
         Match m = (Match) o;
         return targetTerm.equals(m.targetTerm) && candidateTerm.equals(m.candidateTerm);
+        
     }
+    
+    public int hashCode()
+    {
+    	return candidateTerm.hashCode() ^ targetTerm.hashCode();
+    }
+    
+    
 }
