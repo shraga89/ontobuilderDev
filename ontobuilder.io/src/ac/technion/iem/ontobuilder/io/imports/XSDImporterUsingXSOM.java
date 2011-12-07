@@ -23,7 +23,6 @@ import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.ComplexTypeImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
 import com.sun.xml.xsom.impl.ModelGroupImpl;
-import com.sun.xml.xsom.impl.parser.DelayedRef.ComplexType;
 import com.sun.xml.xsom.impl.util.DraconianErrorHandler;
 import com.sun.xml.xsom.parser.XSOMParser;
 
@@ -41,9 +40,7 @@ public class XSDImporterUsingXSOM implements Importer
      */
 	private Ontology xsdOntology;
 	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
-	private ArrayList<Term> missingCTTerms = new ArrayList<Term>(); //Terms which couldn't be created since declared complex types where not converted to terms yet, used when types are referenced inside complex elements
-	
-    public Ontology importFile(File file) throws ImportException
+	public Ontology importFile(File file) throws ImportException
     {
         // creating an empty ontology with the name of the file
         xsdOntology = new Ontology(file.getName().substring(0, file.getName().length()-4));
