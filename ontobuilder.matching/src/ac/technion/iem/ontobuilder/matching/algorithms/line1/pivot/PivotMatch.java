@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.pivot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
@@ -107,10 +108,12 @@ public class PivotMatch
     public double[][] match()
     {
         candidateTerms = matrix.getCandidateTerms();
-        for (Iterator<Term> i = candidateTerms.iterator(); i.hasNext();)
+        for (Term term : candidateTerms)
         {
-            Term term = i.next();
+            //long runTime = System.currentTimeMillis();
             matchTerm(term);
+            //runTime = System.currentTimeMillis()-runTime;
+            //System.out.println("Runtime:" + Long.toString(runTime));
         }
         return auxMatchMatrix;
     }
@@ -123,12 +126,12 @@ public class PivotMatch
     protected void matchTerm(Term candidateTerm)
     {
         targetTerms = matrix.getTargetTerms();
-        for (Iterator<Term> i = targetTerms.iterator(); i.hasNext();)
+        for (Term targetTerm : targetTerms)
         {
-            Term targetTerm = (Term) i.next();
-            ArrayList<ArrayList<Term>> candidateTermsSets = po.performPivot(
+            
+            ArrayList<HashSet<Term>> candidateTermsSets = po.performPivot(
                 matrix.getCandidateTerms(), candidateTerm);
-            ArrayList<ArrayList<Term>> targetTermsSets = po.performPivot(targetTerms, targetTerm);
+            ArrayList<HashSet<Term>> targetTermsSets = po.performPivot(targetTerms, targetTerm);
             int numOfSets = candidateTermsSets.size();
             for (int k = 0; k < numOfSets; k++)
             {
@@ -152,7 +155,7 @@ public class PivotMatch
      * @param targets a list of target terms
      * @return 0 if there are no candidates, else returns the confidence/num_of_candidates
      */
-    public double findTermSetsMatch(ArrayList<Term> candidates, ArrayList<Term> targets)
+    public double findTermSetsMatch(HashSet<Term> candidates, HashSet<Term> targets)
     {
         if (targets.size() == 0 && candidates.size() == 0)
             return 1;
@@ -165,10 +168,15 @@ public class PivotMatch
             try
             {
                 // perform one to one match...
+            	ArrayList<Term> cList = new ArrayList<Term>();
+            	cList.addAll(candidates);
+            	ArrayList<Term> tList = new ArrayList<Term>();
+            	tList.addAll(targets);
+            	MatchMatrix mm = matrix.createSubMatrix(cList, tList);
                 if (smw == null)
-                    smw = new SchemaMatchingsWrapper(matrix.createSubMatrix(candidates, targets));
+                    smw = new SchemaMatchingsWrapper(mm);
                 else
-                    smw.reset(matrix.createSubMatrix(candidates, targets));
+                    smw.reset(mm);
                 SchemaTranslator st = smw.getBestMatching();
                 st = SchemaMatchingsUtilities.getSTwithThresholdSensitivity(st, threshold);
                 return candidates.size() == 0 ? 0 : st.getTotalMatchWeight() / candidates.size();
@@ -181,13 +189,11 @@ public class PivotMatch
         }
         else
         {// one to many match
-            for (Iterator<?> j = candidates.iterator(); j.hasNext();)
+            for (Term candidateTerm : candidates)
             {
-                Term candidateTerm = (Term) j.next();
                 double localConfidence = -1;
-                for (Iterator<?> i = targets.iterator(); i.hasNext();)
+                for (Term targetTerm : targets)
                 {
-                    Term targetTerm = (Term) i.next();
                     localConfidence = Math.max(
                         matrix.getMatchConfidence(candidateTerm, targetTerm), localConfidence);
                 }

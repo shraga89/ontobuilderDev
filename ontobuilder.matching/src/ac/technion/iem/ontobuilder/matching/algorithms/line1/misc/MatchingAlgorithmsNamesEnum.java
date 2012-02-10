@@ -1,4 +1,4 @@
-package ac.technion.iem.ontobuilder.matching.algorithms.line2.misc;
+package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ public enum MatchingAlgorithmsNamesEnum
     TERM_VALUE_PRECEDENCE_COMPOSITION_COMBINED("Combined Match"), 
     PRECEDENCE("Precedence Match"), 
     COMPOSITION("Graph Match"),
-    // NEW_PRECEDENCE("New Precedence Match"),
+    NEW_PRECEDENCE("New Precedence Match"),
     SIMILARITY_FLOODING("SimilarityFlooding Match");
 
     private String _name;

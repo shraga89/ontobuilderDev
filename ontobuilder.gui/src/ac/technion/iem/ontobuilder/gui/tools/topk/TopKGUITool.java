@@ -19,7 +19,7 @@ import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.files.XmlFileHandler;
 import ac.technion.iem.ontobuilder.gui.tools.utils.ExceptionsHandler;
 import ac.technion.iem.ontobuilder.gui.tools.utils.FileChoosingUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.misc.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;

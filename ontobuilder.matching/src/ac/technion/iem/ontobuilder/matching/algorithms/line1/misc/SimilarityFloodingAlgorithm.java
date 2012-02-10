@@ -289,7 +289,7 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
         	for (Term candidateTerm : candTerms)
         		{
         			double conf = matrix.getMatchConfidence(candidateTerm, targetTerm);
-        			if (conf>=0.0)
+        			if (conf>0.0)
         				matchInformation.addMatch(targetTerm, candidateTerm,conf);
         			
         		}
@@ -366,12 +366,23 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
     {
         Vector<LabeledEdge> result = new Vector<LabeledEdge>();
         Vector<?> relationships = ontology.getRelationships();
+        
         for (int i = 0; i < relationships.size(); i++)
         {
+        	try
+        	{
             Relationship rel = (Relationship) relationships.get(i);
             result.add(new LabeledEdge(getVert(verts, rel.getSource().toString()), getVert(verts,
                 rel.getTarget().toString()), rel.getName()));
+        	}
+        	catch (NullPointerException e)
+            {
+                print("error in " + i );
+                throw e;
+            }
+            
         }
+        
         return result;
     }
 

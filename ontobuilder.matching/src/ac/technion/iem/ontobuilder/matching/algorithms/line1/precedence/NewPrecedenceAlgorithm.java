@@ -1,5 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.jdom.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.pivot.PivotAlgorithm;
 
@@ -45,18 +47,40 @@ public class NewPrecedenceAlgorithm extends PivotAlgorithm
      */
     protected void getTermsToMatch(Ontology targetOntology, Ontology candidateOntology)
     {
-        originalTargetTerms = OntologyUtilities.getTermsOfClass(targetOntology, "input");
-        originalCandidateTerms = OntologyUtilities.getTermsOfClass(candidateOntology, "input");
+    	if (!targetOntology.isLight())
+        {
+            originalTargetTerms = OntologyUtilities.getTermsOfClass(targetOntology, "input");
+            originalTargetTerms = OntologyUtilities.filterTermListRemovingTermsOfClass(
+                originalTargetTerms, "hidden");
+            originalTargetTerms.addAll(OntologyUtilities.getTermsOfClass(targetOntology,
+                "decomposition"));
 
-        originalTargetTerms = OntologyUtilities.filterTermListRemovingTermsOfClass(
-            originalTargetTerms, "hidden");
-        originalCandidateTerms = OntologyUtilities.filterTermListRemovingTermsOfClass(
-            originalCandidateTerms, "hidden");
+        }
+        else
+        {
+            originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
+        }
 
+        if (!candidateOntology.isLight())
+        {
+            originalCandidateTerms = OntologyUtilities.getTermsOfClass(candidateOntology, "input");
+            originalCandidateTerms = OntologyUtilities.filterTermListRemovingTermsOfClass(
+                originalCandidateTerms, "hidden");
+            originalCandidateTerms.addAll(OntologyUtilities.getTermsOfClass(candidateOntology,
+                "decomposition"));
+        }
+        else
+        {
+            originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
+        }
+        
+        if (!targetOntology.isLight())
+        {
         originalTargetTerms
             .addAll(OntologyUtilities.getTermsOfClass(targetOntology, "composition"));
         originalCandidateTerms.addAll(OntologyUtilities.getTermsOfClass(candidateOntology,
             "composition"));
+        }
     }
 
     /**
@@ -66,7 +90,7 @@ public class NewPrecedenceAlgorithm extends PivotAlgorithm
      */
     public String getName()
     {
-        return "New Precedence Algorithm";
+        return "New Precedence Match";
     }
     
     /**

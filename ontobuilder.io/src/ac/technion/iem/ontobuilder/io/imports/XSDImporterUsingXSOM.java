@@ -9,6 +9,7 @@ import java.util.Map;
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyClass;
+import ac.technion.iem.ontobuilder.core.ontology.Relationship;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.io.utils.xml.XSDEntityResolver;
 import com.sun.xml.xsom.XSComplexType;
@@ -182,9 +183,21 @@ public class XSDImporterUsingXSOM implements Importer
 					ctTerms.put(ctName, makeTermFromComplexType(null, ct));
 				Term ctTerm = ctTerms.get(ct.getName());
 				t = recCloneTerm(ctTerm);
+				//If names have changed, remove the subterms' relationships to this term since they will be reset when the complexType is instantiated
+				if (!t.getName().equals(complexElement.getName()) && t.getTermsCount()>0)
+					for (Term subT : t.getTerms())
+					{
+						subT.removeRelationship(subT,"is child of",ctTerm);
+						subT.addRelationship(new Relationship(subT,"is child of",t));
+					}
 				t.setName(complexElement.getName());
-				t.setParent(parent);
+				if (parent != null)
+				{
+					t.setParent(parent);
+					t.addRelationship(new Relationship(t,"is child of",parent));
+				}
 				t.setAttributeValue("name", complexElement.getName());
+				
 				//t.addTerm(newT);
 			} catch (Exception e) {
 				e.printStackTrace();

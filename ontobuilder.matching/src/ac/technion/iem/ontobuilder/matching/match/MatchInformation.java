@@ -960,4 +960,10 @@ public class MatchInformation
     	return cloned;
     	
     }
+    
+    public String toString()
+    {
+    	String res = "NumMatches:" + this.matches.size();
+    	return res;
+    }
 }

@@ -31,6 +31,10 @@ public class MatchMatrix extends AbstractMatchMatrix
     private HashMap<Long,Term> candidateTermIDs = new HashMap<Long,Term>();
     private HashMap<Long,Term> targetTermIDs = new HashMap<Long,Term>();
     
+    //supports getting max confidence for a term in O(1) filled when first used (O(n^2) for first invocation of getMaxConfidence)
+    private HashMap<Term,Double> candidateTermMaxConf = new HashMap<Term,Double>();
+    private HashMap<Term,Double> targetTermMaxConf = new HashMap<Term,Double>();
+    
     private static int printIndex = 0;
 
     /**
@@ -194,7 +198,7 @@ public class MatchMatrix extends AbstractMatchMatrix
     }
 
     /**
-     * Retrieves a confidence value of a pair of terms
+     * Creates a sub matrix by terms supplied
      * 
      * @param a list of terms from the candidate ontology
      * @param a list of terms from the ontology
@@ -635,4 +639,48 @@ public class MatchMatrix extends AbstractMatchMatrix
         targetTerms = null;
         targetTerms = newAttrPermutation;
     }
+    
+    /**
+     * Gets max confidence for a term in O(1)
+     * Except when first used (O(n^2) for first invocation of getMaxConfidence in a matrix)
+     * @param t Term to get max confidence for
+     * @param isCandidate
+     * @return
+     */
+    public double getMaxConfidence(Term t, boolean isCandidate)
+    {
+    	if (t==null) return 0.0;
+    	if (candidateTermMaxConf.isEmpty() || targetTermMaxConf.isEmpty())
+    		this.fillMaxConfidence();
+    	Double res = (isCandidate?candidateTermMaxConf.get(t):targetTermMaxConf.get(t));
+    	if (res==null) res=0.0;
+		return res ;
+    	
+    }
+
+    /**
+     * Fills the max confidence hash for all terms
+     */
+	private void fillMaxConfidence() 
+	{
+		for (Term candidate : this.candidateTerms)
+		{
+			Double maxConf = 0.0;
+			int col = getTermIndex(candidateTerms, candidate, true);
+			for (int i = 0; i<confidenceMatrix.length;i++)
+				maxConf = Math.max(maxConf,confidenceMatrix[i][col]);
+			candidateTermMaxConf.put(candidate, maxConf);
+		}
+		
+		for (Term target : this.targetTerms)
+		{
+			Double maxConf = 0.0;
+			int row = getTermIndex(targetTerms, target, false);
+			for (int j = 0; j<this.getColCount();j++)
+				maxConf = Math.max(maxConf,confidenceMatrix[row][j]);
+			targetTermMaxConf.put(target, maxConf);
+		}
+	
+		
+	}
 }

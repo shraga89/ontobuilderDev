@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.pivot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 
@@ -9,5 +10,5 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
  */
 public interface PivotOperator
 {
-    public ArrayList<ArrayList<Term>> performPivot(ArrayList<Term> ontologyTerms, Term t);
+    public ArrayList<HashSet<Term>> performPivot(ArrayList<Term> ontologyTerms, Term t);
 }

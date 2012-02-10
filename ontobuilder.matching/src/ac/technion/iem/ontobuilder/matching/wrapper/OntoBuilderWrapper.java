@@ -10,7 +10,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgori
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.misc.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 
@@ -180,12 +180,14 @@ public final class OntoBuilderWrapper extends OntoBuilder
             {
                 return null;
             }
+            long runTime = System.currentTimeMillis();
             System.out.println("matching process starts...uses algorithm:" + algorithm.getName());
             System.out.println("normalizing ontologies...");
             targetOntology.normalize();
             candidateOntology.normalize();
             MatchInformation res = MatchOntologyHandler.match(targetOntology, candidateOntology, algorithm);
-            System.out.println("match process finished...");
+            runTime = System.currentTimeMillis()-runTime;
+            System.out.println("match process finished. Run Time: " + Long.toString(runTime));
             return res;
         }
         catch (Throwable e)

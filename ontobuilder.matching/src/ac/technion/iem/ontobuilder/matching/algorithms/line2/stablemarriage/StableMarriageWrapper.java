@@ -3,7 +3,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.stablemarriage;
 import java.util.*;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.misc.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;

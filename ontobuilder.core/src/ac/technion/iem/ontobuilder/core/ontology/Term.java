@@ -397,6 +397,32 @@ public class Term extends OntologyClass
                 ontology.fireRelationshipDeletedEvent(this, relationship);
         }
     }
+    
+    /**
+     * Remove a relationship by its terms and name
+     * @param source the source {@link Term}
+     * @param name the name
+     * @param target the target {@link Term}
+     */
+    public void removeRelationship(Term source, String name, Term target)
+    {
+    	Relationship toFind = new Relationship(source,name,target);
+    	ArrayList<Relationship> toDelete = new ArrayList<Relationship>();
+    	for (Relationship r : this.relationships)
+    		if (r.compare(r,toFind)==0)
+		        {
+    				toDelete.add(r);
+		        }
+    	for (int i=0;i<toDelete.size();i++)
+    	{
+    		Relationship r = toDelete.get(i);
+    		relationships.remove(r);
+    		if (ontology != null)
+                ontology.fireRelationshipDeletedEvent(this, r);
+    	}
+    		
+        
+    }
 
     /**
      * Get the number of relationships
@@ -480,6 +506,8 @@ public class Term extends OntologyClass
         if (o instanceof Term)
         {
             Term t = (Term) o;
+            if ((this.id != -1) && (t.id != -1) && (this.id == t.id))
+            	return true;
             return t.toString().equals(this.toString()) ||
                 t.toStringVs2().equals(this.toStringVs2());
 

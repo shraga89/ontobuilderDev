@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
@@ -26,15 +27,22 @@ public class PrecedenceOperator implements PivotOperator
      * @param t the {@link Term}
      * @return a list of list of terms
      */
-    public ArrayList<ArrayList<Term>> performPivot(ArrayList<Term> ontologyTerms, Term t)
+    public ArrayList<HashSet<Term>> performPivot(ArrayList<Term> ontologyTerms, Term t)
     {// O(Terms)
-        ArrayList<ArrayList<Term>> termSets = new ArrayList<ArrayList<Term>>();
-        ArrayList<Term> precedeTerms = t.getAllPrecedes();
-        precedeTerms = filter(precedeTerms);
-        ArrayList<Term> succeedTerms = new ArrayList<Term>();
-        for (Iterator<?> it = ontologyTerms.iterator(); it.hasNext();)
+        ArrayList<HashSet<Term>> termSets = new ArrayList<HashSet<Term>>();
+        HashSet<Term> precedeTerms = new HashSet<Term>();
+        if (!t.getOntology().isLight()) 
         {
-            Term termToCheck = (Term) it.next();
+        	precedeTerms.clear();
+        	precedeTerms.addAll(precedeTerms);
+        }
+        else
+        {
+        	precedeTerms.addAll(t.getAllPrecedes());
+        }
+        HashSet<Term> succeedTerms = new HashSet<Term>();
+        for (Term termToCheck : ontologyTerms)
+        {
             if (!precedeTerms.contains(termToCheck) && !termToCheck.equals(t))
             {
                 succeedTerms.add(termToCheck);
