@@ -1246,8 +1246,9 @@ public class Ontology extends OntologyObject
     	}
     	prov.add(sb.toString());
     	//String prov[] = provenance.split(String.valueOf('.'));
-    	Term t = this.findTerm(prov.get(1)); //first
-    	for (int i=2;i<prov.size();i++)
+    	int rootNo =  (prov.get(0).equals(this.name)?1:0);
+    	Term t = this.findTerm(prov.get(rootNo));
+    	for (int i=rootNo+1;i<prov.size();i++)
     	{
     		assert(t!=null);
     		t = t.getTerm(prov.get(i));
