@@ -21,7 +21,7 @@ import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
  * Importer for COMA++ / AMC .mapping standard 
  */
 public class MappingMatchImporter implements MatchImporter {
-
+	
 	/* (non-Javadoc)
 	 * @see ac.technion.iem.ontobuilder.io.matchimport.MatchImporter#importMatch(java.io.File)
 	 */
@@ -42,7 +42,7 @@ public class MappingMatchImporter implements MatchImporter {
 	}
 
 	/**
-	 * Recieves .mapping file and returns the correspondences in a schema translator object
+	 * Receives .mapping file and returns the correspondences in a schema translator object
 	 * @param file
 	 * @return
 	 */
@@ -78,7 +78,7 @@ public class MappingMatchImporter implements MatchImporter {
 		for (int i=0;i<res.size();i++)
 		{
 			String newPair[] = res.get(i);
-			pairs[i]=new MatchedAttributePair(newPair[0],newPair[1],Double.parseDouble(newPair[2]));
+			pairs[i]=new MatchedAttributePair(newPair[0],newPair[1],Double.parseDouble(newPair[2]),-1,-1);
 		}
 		st.setSchemaPairs(pairs );
 		return st;

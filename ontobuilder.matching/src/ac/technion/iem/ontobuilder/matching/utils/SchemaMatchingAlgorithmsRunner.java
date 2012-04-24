@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -16,11 +17,13 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.GraphFactory;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.GraphIsNotBipartiteException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.KBest_Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.SecondBestMatchingAlgorithm_Algorithm2;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.TopKAlgorithm;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
 /**
@@ -38,9 +41,9 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 public final class SchemaMatchingAlgorithmsRunner implements TKM
 {
     /** the schema we want to translate */
-    private String[] initialSchemata;
+    private long[] initialSchemataIDs;
     /** the matched to schema */
-    private String[] matchToSchemata;
+    private long[] matchToSchemataIDs;
     /** adjacency matrix - given from OntoBuilder's output */
     private double[][] adjMatrix;
     /** reference to the K-best algorithm */
@@ -83,13 +86,13 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param weightsMatrix
      * @throws GraphIsNotBipartiteException
      */
-    public SchemaMatchingAlgorithmsRunner(String[] candidateSchemata, String[] targetSchemata,
-        double[][] weightsMatrix) throws TKMInitializationException
+    public SchemaMatchingAlgorithmsRunner(long[] candidateSchemata, long[] targetSchemata,
+    		MatchMatrix matchMatrix) throws TKMInitializationException
     {
         try
         {
             setInitialSchema(candidateSchemata);
-            setMatchedSchema(targetSchemata, weightsMatrix);
+            setMatchedSchema(targetSchemata, matchMatrix);
         }
         catch (Throwable e)
         {
@@ -111,8 +114,8 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     {
         try
         {
-            initialSchemata = null;
-            matchToSchemata = null;
+            initialSchemataIDs = null;
+            matchToSchemataIDs = null;
             adjMatrix = null;
             kba.nullify();
             bg.nullify();
@@ -128,13 +131,13 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * 
      * @param schemata the initial schema attributes names
      */
-    public void setInitialSchema(String[] schemata)
+    public void setInitialSchema(long[] schemata)
     {
         if (schemata == null)
             throw new NullPointerException();
         if (schemata.length == 0)
             throw new IllegalArgumentException("Schemata deg should be > 0");
-        initialSchemata = schemata;
+        initialSchemataIDs = schemata;
         k = 0;
         usedSecondBestAlgorithm = false;
         if (!bestMatches.isEmpty())
@@ -148,12 +151,12 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param weightsMatrix - the matrix from OntoBuilder
      * @throws GraphIsNotBipartiteException - the given graph of the problem is not bipartite
      */
-    public void setMatchedSchema(String[] schemata, double[][] weightsMatrix)
+    public void setMatchedSchema(long[] schemata, MatchMatrix matchMatrix)
         throws TKMInitializationException
     {
         try
         {
-            if (schemata == null || weightsMatrix == null)
+            if (schemata == null || matchMatrix == null)
                 throw new NullPointerException();
             if (schemata.length == 0)
                 throw new IllegalArgumentException("Schemata deg should be > 0");
@@ -161,16 +164,39 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
             usedSecondBestAlgorithm = false;
             if (!bestMatches.isEmpty())
                 bestMatches.clear();
-            matchToSchemata = schemata;
-            createGraphAdjMatrix(weightsMatrix, matchToSchemata.length, initialSchemata.length);
-            ArrayList<String> rn = new ArrayList<String>();
-            ArrayList<String> ln = new ArrayList<String>();
-            for (int i = 0; i < matchToSchemata.length; i++)
-                rn.add(i, matchToSchemata[i]);
-            for (int i = 0; i < initialSchemata.length; i++)
-                ln.add(i, initialSchemata[i]);
-            bg = GraphFactory.buildBipartiteGraph(adjMatrix, rn, ln, matchToSchemata.length,
-                initialSchemata.length, true);
+            matchToSchemataIDs = schemata;
+//            createGraphAdjMatrix(matchMatrix.getMatchMatrix(), matchToSchemataIDs.length, initialSchemataIDs.length);
+          /*
+             * We create the adj matrix inline to make sure that we get the correct mapping between
+             * nodes IDs and term IDs
+             */
+            adjMatrix = new double[matchToSchemataIDs.length + initialSchemataIDs.length][matchToSchemataIDs.length + initialSchemataIDs.length];
+            for (int i = 0; i < initialSchemataIDs.length; i++)
+                for (int j = 0; j < initialSchemataIDs.length; j++)
+                    adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
+            for (int i = 0; i < initialSchemataIDs.length; i++)
+                for (int j = initialSchemataIDs.length; j < matchToSchemataIDs.length + initialSchemataIDs.length; j++)
+                    adjMatrix[i][j] = matchMatrix.getMatchConfidenceByID(initialSchemataIDs[i], matchToSchemataIDs[j - initialSchemataIDs.length]);
+                    
+            for (int i = initialSchemataIDs.length; i < matchToSchemataIDs.length + initialSchemataIDs.length; i++)
+                for (int j = 0; j < matchToSchemataIDs.length + initialSchemataIDs.length; j++)
+                    adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
+
+            List<Long> rn = new ArrayList<Long>();
+            List<Long> ln = new ArrayList<Long>();
+            String[] rnNames = new String[matchToSchemataIDs.length];
+            String[] lnNames = new String[initialSchemataIDs.length];
+            for (int i = 0; i < matchToSchemataIDs.length; i++) {
+                rn.add(i, matchToSchemataIDs[i]);
+                rnNames[i] = matchMatrix.getTermNameByID(matchToSchemataIDs[i], false);
+            }
+            for (int i = 0; i < initialSchemataIDs.length; i++) {
+                ln.add(i, initialSchemataIDs[i]);
+                lnNames[i] = matchMatrix.getTermNameByID(initialSchemataIDs[i], true);
+            }
+            
+            bg = GraphFactory.buildBipartiteGraph(adjMatrix, rn, ln, matchToSchemataIDs.length,
+                initialSchemataIDs.length, true, rnNames, lnNames);
             bg.buildAdjMatrix();
             kba = new KBest_Algorithm(bg);
             bestMatching = kba.getNextMatching(true);
@@ -243,7 +269,10 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         {
             Edge e = (Edge) it.next();
             mp[i] = new MatchedAttributePair(bg.getVertex(e.getSourceVertexID()).getVertexName(),
-                bg.getVertex(e.getTargetVertexID()).getVertexName(), e.getEdgeWeight());
+            		bg.getVertex(e.getTargetVertexID()).getVertexName(),
+            		e.getEdgeWeight(),
+            		bg.getVertex(e.getSourceVertexID()).getVertexNameID(),
+                bg.getVertex(e.getTargetVertexID()).getVertexNameID());
         }
         return mp;
     }
@@ -374,10 +403,10 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Resets the runner
      */
-    public void reset(String[] candidateSchemata, String[] targetSchemata, double[][] weightsMatrix)
+    public void reset(long[] candidateSchemata, long[] targetSchemata, MatchMatrix matchMatrix)
         throws TKMInitializationException
     {
-        if (candidateSchemata == null || targetSchemata == null || weightsMatrix == null)
+        if (candidateSchemata == null || targetSchemata == null || matchMatrix == null)
             throw new NullPointerException();
         if (candidateSchemata.length == 0 || targetSchemata.length == 0)
             throw new IllegalArgumentException("Schemata deg should be > 0");
@@ -386,7 +415,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         if (!bestMatches.isEmpty())
             bestMatches.clear();
         setInitialSchema(candidateSchemata);
-        setMatchedSchema(targetSchemata, weightsMatrix);
+        setMatchedSchema(targetSchemata, matchMatrix);
     }
 
     /**

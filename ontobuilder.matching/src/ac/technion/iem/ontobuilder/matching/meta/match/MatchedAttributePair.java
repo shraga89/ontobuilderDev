@@ -2,6 +2,9 @@ package ac.technion.iem.ontobuilder.matching.meta.match;
 
 import java.io.Serializable;
 
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
+import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
+
 /**
  * <p>Title: MatchedAttributePair</p>
  * <p>Description: represents a two matched attributes pair</p>
@@ -28,48 +31,12 @@ public class MatchedAttributePair implements Serializable
 
     public MatchedAttributePair(String candTerm, String targTerm, double w,long id1, long id2)
     {
-    	this(candTerm,targTerm,w);
+        this.attribute1 = candTerm;
+        this.attribute2 = targTerm;
+        this.weight = w;
     	this.id1 = id1;
     	this.id2 = id2;
-    }
-    /**
-     * Constructs a MatchedAttributePair with two attributes and a weight
-     * 
-     */
-    public MatchedAttributePair(String candTerm, String targTerm, double w)
-    {
-        this(candTerm, targTerm);
-        weight = w;
-    }
-
-    /**
-     * Constructs a MatchedAttributePair with two attributes
-     * @param candTerm Candidate Term
-     * @param targTerm Target Term
-     */
-    public MatchedAttributePair(String candTerm, String targTerm)
-    {
-        attribute1 = candTerm;
-        attribute2 = targTerm;
-        char[] a1Chars = candTerm.toCharArray();
-        char[] a2Chars = targTerm.toCharArray();
-        int a1Index = 0;
-        int a2Index = 0;
-        // creating a unique hashCode by mixing the chars of the attributes
-        char[] mix = new char[a1Chars.length + a2Chars.length];
-        for (int i = 0; i < mix.length; i++)
-        {
-            if (i % 2 == 0 && a1Index < a1Chars.length)
-                mix[i] = a1Chars[a1Index++];
-            else if (i % 2 == 1 && a2Index < a2Chars.length)
-                mix[i] = a2Chars[a2Index++];
-            else if (a1Chars.length > a2Chars.length)
-                mix[i] = a1Chars[a1Index++];
-            else
-                mix[i] = a2Chars[a2Index++];
-        }
-        String mixedString = new String(mix);
-        hashCode = mixedString.hashCode();
+    	this.hashCode = new Long(this.id1 ^ this.id2).intValue();
     }
 
     @Override
@@ -95,20 +62,36 @@ public class MatchedAttributePair implements Serializable
         attribute2 = null;
     }
 
-    /**
-     * Translates an input string into one of the attributes, if there is a match
+    public long getId1() {
+		return id1;
+	}
+
+	public void setId1(long id1) {
+		this.id1 = id1;
+	}
+
+	public long getId2() {
+		return id2;
+	}
+
+	public void setId2(long id2) {
+		this.id2 = id2;
+	}
+
+	/**
+     * Translates an input id into one of the attributes, if there is a match
      * 
-     * @param toTranslate attribute to translate
-     * @return the attribute translation or "NO translation" if the translation equals "DummyVertex"
+     * @param toTranslate attribute id to translate
+     * @return the attribute translation id or SchemaTranslator.NO_TRANSLATION if the translation is to a dummy vertex
      */
-    public String getAttributeTranslation(String toTranslate)
+    public long getAttributeTranslation(long toTranslate)
     {
         // fix bug - haggai 12/12/03 - changed equalsIgnoreCase to equals
-        if (attribute1.equals(toTranslate) && !attribute2.equalsIgnoreCase("DummyVertex"))
-            return attribute2;
-        if (attribute2.equals(toTranslate) && !attribute1.equalsIgnoreCase("DummyVertex"))
-            return attribute1;
-        return "No Translation";
+        if (this.id1 == toTranslate && !(this.id2 <= BipartiteGraph.ID_DUMMY_VERTEX))
+            return this.id2;
+        if (this.id2 == toTranslate && !(this.id1 <= BipartiteGraph.ID_DUMMY_VERTEX))
+            return this.id1;
+        return SchemaTranslator.NO_TRANSLATION;
     }
 
     /**
@@ -167,16 +150,12 @@ public class MatchedAttributePair implements Serializable
     public boolean equals(Object o)
     {
         MatchedAttributePair p = (MatchedAttributePair) o;
-        boolean idEqual = true;
-        if (p.id1 != -1 && p.id2 != -1 && this.id1 != -1 && this.id2 != -1)
-        {
-            idEqual = ((p.id1 == this.id1 && p.id2 == this.id2) || (p.id1 == this.id2 && p.id2 == this.id1));
-        }
-        if (idEqual)
-            return true;
-        else
-            return (this.attribute1.equals(p.attribute1) && this.attribute2.equals(p.attribute2) || this.attribute2
-                .equals(p.attribute1) && this.attribute1.equals(p.attribute2));
+        assert(p.id1 != -1);
+        assert(p.id2 != -1);
+        assert(this.id1 != -1);
+        assert(this.id1 != -1);
+        
+        return ((p.id1 == this.id1 && p.id2 == this.id2) || (p.id1 == this.id2 && p.id2 == this.id1));
     }
 
 }

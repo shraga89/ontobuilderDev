@@ -10,6 +10,7 @@ import java.util.Iterator;
 import ac.technion.iem.ontobuilder.core.ontology.DummyTerm;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
+import ac.technion.iem.ontobuilder.matching.utils.ArrayConversion;
 
 /**
  * <p>
@@ -156,12 +157,26 @@ public class MatchMatrix extends AbstractMatchMatrix
     {
         int candIndex = getTermIndex(candidateTerms, candidate, true);
         int targetIndex = getTermIndex(targetTerms, target, false);
-        /* debug
         if (candIndex == -1)
-            System.out.println("candidate:" + candidate);
+            System.out.println("ERROR candidate:" + candidate);
         if (targetIndex == -1)
-            System.out.println("target:" + target);
-        // **/
+            System.out.println("ERROR target:" + target);
+        if (candIndex == -1 || targetIndex == -1) return -1;
+        else return confidenceMatrix[targetIndex][candIndex];
+    }
+
+    public double getMatchConfidenceByID(long candidate, long target)
+    {
+//    	Term t1 = getTermByID(candidate, true);
+//    	Term t2 = getTermByID(target, false);
+    	
+        int candIndex = getTermIndex(candidateTerms, getTermByID(candidate, true), true);
+        int targetIndex = getTermIndex(targetTerms, getTermByID(target, false), false);
+        if (candIndex == -1)
+            System.out.println("ERROR candidate:" + candidate);
+        if (targetIndex == -1)
+            System.out.println("ERROR target:" + target);
+//        double tmp = confidenceMatrix[targetIndex][candIndex];
         if (candIndex == -1 || targetIndex == -1) return -1;
         else return confidenceMatrix[targetIndex][candIndex];
     }
@@ -269,6 +284,45 @@ public class MatchMatrix extends AbstractMatchMatrix
     	else
     		return null;
     }
+    
+    public String getTermNameByID(long id,boolean isCandidate)
+    {
+    	HashMap<Long,Term> terms = (isCandidate?candidateTermIDs:targetTermIDs);
+    	if (terms.containsKey(id))
+    		return terms.get(id).getName();
+    	else
+    		return null;
+    }
+
+    
+    /**
+     * Gets all Term identifier for all target or candidate terms
+     * @param isCandidate supply true if the requested ID relates to a candidate term
+     * @return all IDs of Terms
+     */
+    public long[] getTermIDs(boolean isCandidate) {
+    	if (isCandidate)
+    		return ArrayConversion.toPrimitiveLong(this.candidateTermIDs.keySet());
+    	else
+    		return ArrayConversion.toPrimitiveLong(this.targetTermIDs.keySet());
+    }
+    
+    /**
+     * Gets all Term identifier for all target terms
+     * @return all IDs of target Terms
+     */
+    public long[] getTargetTermIDs() {
+    		return this.getTermIDs(false);
+    }
+    
+    /**
+     * Gets all Term identifier for all candidate terms
+     * @return all IDs of candidate Terms
+     */
+    public long[] getCandidateTermIDs() {
+    		return this.getTermIDs(true);
+    }
+
 
     /**
      * @deprecated

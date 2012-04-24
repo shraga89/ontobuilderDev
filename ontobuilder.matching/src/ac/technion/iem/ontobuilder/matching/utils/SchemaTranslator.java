@@ -44,7 +44,7 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 public class SchemaTranslator extends AbstractMapping
 {
     /** used when attribute has no translation */
-    public static final String NO_TRANSLATION = "No Translation";
+    public static final long NO_TRANSLATION = -1;
 
     /** hashCode holder */
     private int hashCode;
@@ -237,49 +237,49 @@ public class SchemaTranslator extends AbstractMapping
             hashCode = calcHashCode(schemaPairs);
     }
 
-    /**
-     * Translates a given attribute name
-     * 
-     * @param attribute to translate
-     * @return translation or "NO TRANSLATION" when attribute was not match to any of the other
-     * schema attributes
-     */
-    public String translateAttribute(String attribute)
-    {
-        for (int i = 0; i < schemaPairs.length; i++)
-        {
-            String result = schemaPairs[i].getAttributeTranslation(attribute);
-            if (!(result.equals(NO_TRANSLATION)))
-                return result;
-        }
-        return NO_TRANSLATION;
-    }
-
-    /**
-     * Maps a given term
-     * 
-     * @param term
-     * @param smw
-     * @return a term
-     */
-    public Term translateTerm(Term term, SchemaMatchingsWrapper smw)
-    {
-        MatchMatrix matchMatrix = smw.getMatchMatrix();
-        String translation = translateAttribute(term.toString());
-        if (!translation.equals(NO_TRANSLATION))
-        {
-            if (matchMatrix.isCandTerm(term))
-            {
-                return matchMatrix.getTermByName(translation, matchMatrix.getTargetTerms());
-            }
-            else
-            {
-                return matchMatrix.getTermByName(translation, matchMatrix.getCandidateTerms());
-            }
-        }
-        else
-            return null;
-    }
+//    /**
+//     * Translates a given attribute name
+//     * 
+//     * @param attribute to translate
+//     * @return translation or "NO TRANSLATION" when attribute was not match to any of the other
+//     * schema attributes
+//     */
+//    public String translateAttribute(String attribute)
+//    {
+//        for (int i = 0; i < schemaPairs.length; i++)
+//        {
+//            String result = schemaPairs[i].getAttributeTranslation(attribute);
+//            if (!(result.equals(NO_TRANSLATION)))
+//                return result;
+//        }
+//        return NO_TRANSLATION;
+//    }
+//
+//    /**
+//     * Maps a given term
+//     * 
+//     * @param term
+//     * @param smw
+//     * @return a term
+//     */
+//    public Term translateTerm(Term term, SchemaMatchingsWrapper smw)
+//    {
+//        MatchMatrix matchMatrix = smw.getMatchMatrix();
+//        String translation = translateAttribute(term.toString());
+//        if (!translation.equals(NO_TRANSLATION))
+//        {
+//            if (matchMatrix.isCandTerm(term))
+//            {
+//                return matchMatrix.getTermByName(translation, matchMatrix.getTargetTerms());
+//            }
+//            else
+//            {
+//                return matchMatrix.getTermByName(translation, matchMatrix.getCandidateTerms());
+//            }
+//        }
+//        else
+//            return null;
+//    }
 
     /**
      * Release resources
@@ -293,15 +293,15 @@ public class SchemaTranslator extends AbstractMapping
     /**
      * Get the translation weight
      * 
-     * @param attribute for the translation
+     * @param attribute id for the translation
      * @return the weight of the translation
      */
-    public double getTranslationWeight(String attribute)
+    public double getTranslationWeight(long attributeID)
     {
         for (int i = 0; i < schemaPairs.length; i++)
         {
-            String result = schemaPairs[i].getAttributeTranslation(attribute);
-            if (!(result.equals(NO_TRANSLATION)))
+            long result = schemaPairs[i].getAttributeTranslation(attributeID);
+            if (!(result == NO_TRANSLATION))
                 return schemaPairs[i].getMatchedPairWeight();
         }
         return 0;
@@ -393,7 +393,6 @@ public class SchemaTranslator extends AbstractMapping
     public void setSchemaPairs(MatchedAttributePair[] pairs)
     {
         schemaPairs = pairs;
-        removeIds();
         hashCode = calcHashCode(pairs);
     }
 

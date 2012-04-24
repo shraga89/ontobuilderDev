@@ -18,6 +18,8 @@ import java.util.Iterator;
  */
 public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
 {
+	public static final long ID_DUMMY_VERTEX = -2;
+
     private static final long serialVersionUID = 7953761776911271034L;
 
     /** holds the right vertexes group of the graph */
@@ -110,13 +112,13 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     }
 
     /**
-     * Return vertex id according to the vertex group association and name
+     * Return vertex id according to the vertex group association and id
      * 
-     * @param vName vertex name
+     * @param id
      * @param left flag if belong to the left vertex group of the graph
      * @return vertex index in the graph
      */
-    public int getVertexIndexByName(String vName, boolean left)
+    public int getVertexIndexByNameID(long id, boolean left)
     {
         if (left)
         {
@@ -124,7 +126,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
             while (it.hasNext())
             {
                 Vertex v = (Vertex) it.next();
-                if (v.getVertexName().equals(vName))
+                if (v.getVertexNameID() == id)
                     return v.getVertexID();
             }
             return -1;
@@ -135,7 +137,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
             while (it.hasNext())
             {
                 Vertex v = (Vertex) it.next();
-                if (v.getVertexName().equals(vName))
+                if (v.getVertexNameID() == id)
                     return v.getVertexID();
             }
             return -1;

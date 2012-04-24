@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import javax.xml.validation.Schema;
+
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.matching.algorithms.common.MatchAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
@@ -815,7 +817,6 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
         private Boolean canContinueToNextStep = Boolean.FALSE;
         private boolean keepRunning = true;
         private int tid;
-        private long currentStep = 1;
         private TKM tkm;
         private boolean nonUniform = false;
         private byte nonUniformVersion;
@@ -926,8 +927,8 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
         {
             try
             {
-                tkm.setInitialSchema(matrix.getCandidateAttributeNames());
-                tkm.setMatchedSchema(matrix.getTargetAttributeNames(), matrix.getMatchMatrix());
+                tkm.setInitialSchema(matrix.getCandidateTermIDs());
+                tkm.setMatchedSchema(matrix.getTargetTermIDs(), matrix.getMatchMatrix());
             }
             catch (Throwable e)
             {

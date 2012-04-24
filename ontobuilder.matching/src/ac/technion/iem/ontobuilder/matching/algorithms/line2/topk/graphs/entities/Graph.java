@@ -237,7 +237,7 @@ public class Graph implements Serializable
         {
             Vertex v = (Vertex) it.next();
             System.out.println("Vertex id:" + (v.getVertexID() + 1) + " vertex name:" +
-                v.getVertexName());
+                v.getVertexNameID());
         }
     }
 

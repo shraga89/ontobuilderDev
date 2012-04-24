@@ -23,8 +23,8 @@ public final class SchemaMatchingsWrapper
 
     private SchemaMatchingAlgorithmsRunner smRunner = null;
     private MatchMatrix matchMatrix = null;
-    private String[] candidateTermNames;
-    private String[] targetTermNames;
+    private long[] candidateTermIDs;
+    private long[] targetTermIDs;
 
     /**
      * Constructs a SchemaMatchingsWrapper
@@ -39,13 +39,13 @@ public final class SchemaMatchingsWrapper
         if (matchMatrix == null)
             throw new IllegalArgumentException("Must specify match information");
         this.matchMatrix = matchMatrix;
-        candidateTermNames = matchMatrix.getCandidateTermNames();
-        targetTermNames = matchMatrix.getTargetTermNames();
+        candidateTermIDs = matchMatrix.getCandidateTermIDs();
+        targetTermIDs = matchMatrix.getTargetTermIDs();
         try
         {
             smRunner = new SchemaMatchingAlgorithmsRunner();
-            smRunner.setInitialSchema(candidateTermNames);
-            smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix()); //very slow
+            smRunner.setInitialSchema(candidateTermIDs);
+            smRunner.setMatchedSchema(targetTermIDs, matchMatrix); //very slow
         }
         catch (TKMInitializationException ge)
         {
@@ -78,16 +78,16 @@ public final class SchemaMatchingsWrapper
         if (matchMatrix == null)
             throw new IllegalArgumentException("Must specify match information");
         this.matchMatrix = matchMatrix;
-        candidateTermNames = matchMatrix.getCandidateTermNames();
-        targetTermNames = matchMatrix.getTargetTermNames();
+        candidateTermIDs = matchMatrix.getCandidateTermIDs();
+        targetTermIDs = matchMatrix.getTargetTermIDs();
         try
         {
             smRunner = new SchemaMatchingAlgorithmsRunner();
             //smRunner.setInitialSchema(candidateTermNames);
             //smRunner.setMatchedSchema(targetTermNames, matchMatrix.getMatchMatrix());
             //replaced on 26/09/2011 by Tomer Sagi to reverse the schemas
-            smRunner.setInitialSchema(targetTermNames);
-            smRunner.setMatchedSchema(candidateTermNames, matchMatrix.getMatchMatrix());
+            smRunner.setInitialSchema(targetTermIDs);
+            smRunner.setMatchedSchema(candidateTermIDs, matchMatrix);
             
         }
         catch (TKMInitializationException ge)

@@ -21,9 +21,11 @@ public class Vertex implements Serializable
 
     /** vertex id */
     private int vertexID;
-    /** vertex associated name */
+    /** id of the entity represented by the vertex */
+    private long vertexNameID;
+    /** name of the vertex */
     private String vertexName;
-
+    
     /**
      * Constructs a default Vertex
      */
@@ -35,12 +37,14 @@ public class Vertex implements Serializable
      * Constructs a Vertex
      * 
      * @param vID vertex id
-     * @param vName vertex assosiated name
+     * @param vNameID  id of the entity represented by the vertex 
+     * @param vName vertex associated name
      */
-    public Vertex(int vID, String vName)
+    public Vertex(int vID, long vNameID, String vName)
     {
-        vertexID = vID;
-        vertexName = vName;
+        this.vertexID = vID;
+        this.vertexNameID = vNameID;
+        this.vertexName = vName;
     }
 
     /**
@@ -48,7 +52,7 @@ public class Vertex implements Serializable
      */
     public void nullify()
     {
-        vertexName = null;
+    	this.vertexName = null;
     }
 
     /**
@@ -72,23 +76,23 @@ public class Vertex implements Serializable
     }
 
     /**
-     * Get the vertex name
+     * Get the vertex name id
      * 
-     * @return vertex associated name
+     * @return vertex associated name id
      */
-    public String getVertexName()
+    public long getVertexNameID()
     {
-        return vertexName;
+        return vertexNameID;
     }
 
     /**
-     * Set the vertex name
+     * Set the vertex name id
      * 
-     * @param vertexName the name to set
+     * @param vertexNameID the name id to set
      */
-    public void setVertexName(String vertexName)
+    public void setVertexNameID(long vertexNameID)
     {
-        this.vertexName = vertexName;
+        this.vertexNameID = vertexNameID;
     }
 
     /**
@@ -98,9 +102,13 @@ public class Vertex implements Serializable
      */
     public Vertex clone()
     {
-        return new Vertex(this.vertexID, this.vertexName);
+        return new Vertex(this.vertexID, this.vertexNameID, this.vertexName);
     }
 
+    public String getVertexName() {
+    	return this.vertexName;
+    }
+    
     /**
      * Check if two vertexes are equal
      * 
@@ -108,7 +116,8 @@ public class Vertex implements Serializable
      */
     public boolean equals(Object obj)
     {
-        return (this.vertexID == ((Vertex) obj).getVertexID() && this.vertexName
-            .equals(((Vertex) obj).getVertexName()));
+        return (this.vertexID == ((Vertex) obj).getVertexID() && this.vertexNameID
+            == ((Vertex) obj).getVertexNameID() && this.vertexName
+                    == ((Vertex) obj).getVertexName());
     }
 }

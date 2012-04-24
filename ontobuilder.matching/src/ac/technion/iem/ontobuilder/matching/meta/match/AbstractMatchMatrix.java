@@ -56,6 +56,11 @@ public abstract class AbstractMatchMatrix
 
     public abstract double getMatchConfidenceByAttributeNames(String candAttrName,
         String targetAttrName);
+    
+    public abstract long[] getTargetTermIDs();
+    
+    public abstract long[] getCandidateTermIDs();
+    
 
     /**
      * Sets a confidence value in the Confidence Matrix to '0' if the original value isn't higher

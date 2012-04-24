@@ -1,6 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
@@ -26,19 +26,20 @@ public abstract class GraphFactory
      * Builds a general graph
      * 
      * @param adjMatrix - Adjacency matrix of the graph
+     * @param vertexNameIDs - vertexes name IDs of the graph
      * @param vertexNames - vertexes names of the graph
      * @param vertexCount - vertex count in the graph
      * @param dirGraph - <code>true</code> if it is a directed graph
      * @return built graph
      */
-    public final static Graph buildGraph(double[][] adjMatrix, String[] vertexNames,
+    public final static Graph buildGraph(double[][] adjMatrix, long[] vertexNameIDs, String[] vertexNames,
         int vertexCount, boolean dirGraph)
     {
         VertexesSet vg = new VertexesSet();
         EdgesSet eg = new EdgesSet(vertexCount);
         for (int i = 0; i < vertexCount; i++)
         {// O(V)
-            vg.addMember(new Vertex(i, vertexNames[i]));
+            vg.addMember(new Vertex(i, vertexNameIDs[i], vertexNames[i]));
         }
         for (int i = 0; i < vertexCount; i++)
             // O(V^2)
@@ -53,8 +54,8 @@ public abstract class GraphFactory
      * left vertexes group represent the "sources" and right the "targets"
      * 
      * @param adjMatrix - Adjacency matrix of the graph
-     * @param rightVertexNames - the names of the right vertexes of the graph
-     * @param leftVertexNames - the names of the left vertexes of the graph
+     * @param rightVertexIDs - the IDs of the right vertexes of the graph
+     * @param leftVertexIDs - the IDs of the left vertexes of the graph
      * @param rightVertexCount - right vertexes count
      * @param leftVertexCount - left vertexes count
      * @param dirGraph - <code>true</code> if it is directed graph
@@ -62,11 +63,15 @@ public abstract class GraphFactory
      * @throws GraphIsNotBipartiteException - given graph to construct is not a bipartite graph
      */
     public final static BipartiteGraph buildBipartiteGraph(double[][] adjMatrix,
-        ArrayList<String> rightVertexNames, ArrayList<String> leftVertexNames,
-        int rightVertexCount, int leftVertexCount, boolean dirGraph)
+        List<Long> rightVertexIDs, List<Long> leftVertexIDs,
+        int rightVertexCount, int leftVertexCount, boolean dirGraph, 
+        String[] rightVertexNames, String[] leftVertexNames
+    		)
         throws GraphIsNotBipartiteException
     {// O(V^2+E)
-        if (!isBipartiteGraph(adjMatrix, rightVertexCount, leftVertexCount))
+        
+    	
+    	if (!isBipartiteGraph(adjMatrix, rightVertexCount, leftVertexCount))
             throw new GraphIsNotBipartiteException(adjMatrix, rightVertexCount, leftVertexCount);
         VertexesSet rvg = new VertexesSet();
         VertexesSet lvg = new VertexesSet();
@@ -80,7 +85,7 @@ public abstract class GraphFactory
                     leftVertexCount, rightVertexCount);
                 leftVertexCount += numOfDummyVertexesToAdd;
                 for (int i = 0; i < numOfDummyVertexesToAdd; i++)
-                    leftVertexNames.add("DummyVertex");
+                    leftVertexIDs.add(BipartiteGraph.ID_DUMMY_VERTEX);
             }
             else
             {
@@ -89,28 +94,27 @@ public abstract class GraphFactory
                     leftVertexCount, rightVertexCount);
                 rightVertexCount += numOfDummyVertexesToAdd;
                 for (int i = 0; i < numOfDummyVertexesToAdd; i++)
-                    rightVertexNames.add(rightVertexCount - numOfDummyVertexesToAdd + i,
-                        "DummyVertex");
+                    rightVertexIDs.add(rightVertexCount - numOfDummyVertexesToAdd + i, BipartiteGraph.ID_DUMMY_VERTEX);
             }
         }
         EdgesSet eg = new EdgesSet(rightVertexCount + leftVertexCount);
         for (int i = 0; i < leftVertexCount; i++)
         {
-            if (!((String) leftVertexNames.get(i)).equals("DummyVertex"))
+            if (!(leftVertexIDs.get(i) == BipartiteGraph.ID_DUMMY_VERTEX ))
             {
-                lvg.addMember(new Vertex(i, (String) leftVertexNames.get(i)));
+                lvg.addMember(new Vertex(i, leftVertexIDs.get(i),leftVertexNames[i]));
             }
             else
             {
-                lvg.addMember(new Vertex(i, "DummyVertex " + i));
+                lvg.addMember(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
             }
         }
         for (int i = leftVertexCount; i < (leftVertexCount + rightVertexCount); i++)
         {
-            if (!((String) rightVertexNames.get(i - leftVertexCount)).equals("DummyVertex"))
-                rvg.addMember(new Vertex(i, (String) rightVertexNames.get(i - leftVertexCount)));
+            if (!(rightVertexIDs.get(i - leftVertexCount) == BipartiteGraph.ID_DUMMY_VERTEX))
+                rvg.addMember(new Vertex(i, rightVertexIDs.get(i - leftVertexCount), rightVertexNames[i - leftVertexCount]));
             else
-                rvg.addMember(new Vertex(i, "DummyVertex " + i));
+                rvg.addMember(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
         }
         for (int i = 0; i < (rightVertexCount + leftVertexCount); i++)
             // O(V^2)

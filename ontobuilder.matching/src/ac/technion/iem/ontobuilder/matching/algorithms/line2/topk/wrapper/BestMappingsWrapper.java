@@ -204,8 +204,11 @@ public class BestMappingsWrapper {
       }
     }
 
-    String[] candTerms =  matchMatrix.getCandidateTermNames();
-    String[] targetTerms = matchMatrix.getTargetTermNames();
+    long[] candTerms =  matchMatrix.getCandidateTermIDs();
+    long[] targetTerms = matchMatrix.getTargetTermIDs();
+    String[] candTermNames =  matchMatrix.getCandidateTermNames();
+    String[] targetTermNames = matchMatrix.getTargetTermNames();
+    
     for (int r = 0; r < targetTerms.length; ++r) {
       for (int c = 0; c < candTerms.length; ++c) {
         simDegree = matchMatrix.getMatchConfidenceByAttributeNames(candTerms[c],targetTerms[r]);
