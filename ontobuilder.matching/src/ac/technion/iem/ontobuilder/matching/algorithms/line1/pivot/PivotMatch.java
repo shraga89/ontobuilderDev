@@ -2,8 +2,6 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.pivot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;

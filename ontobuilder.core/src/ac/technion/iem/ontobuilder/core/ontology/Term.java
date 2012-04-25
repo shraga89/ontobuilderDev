@@ -232,6 +232,23 @@ public class Term extends OntologyClass
     {
         return parent;
     }
+    
+    /**
+     * Get the term's provenance, i.e. a string of dot 
+     * separated term names from root (left) to supplied term (right)
+     * @return
+     */
+    public String getProvenance()
+    {
+    	String prov = this.name;
+    	Term pT = this.parent;
+    	while (pT  != null)
+    	{
+    		prov = pT.name + "." + prov;
+    		pT = pT.parent;
+    	}
+    	return prov;
+    }
 
     /**
      * Add a term

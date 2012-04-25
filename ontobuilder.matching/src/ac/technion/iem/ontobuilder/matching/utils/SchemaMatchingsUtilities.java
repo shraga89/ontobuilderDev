@@ -137,23 +137,24 @@ public final class SchemaMatchingsUtilities
         Term cand, target;
         for (int i = 0; i < ap.length; i++)
         {
-            cand = matrix.getTermByName(ap[i].getAttribute2());
-            target = matrix.getTermByName(ap[i].getAttribute1());
-            if (cand != null && target != null)
-                a.add(new MatchedAttributePair(OntologyUtilities.oneIdRemoval(cand.toStringVs2()),
-                    OntologyUtilities.oneIdRemoval(target.toStringVs2()), ap[i]
-                        .getMatchedPairWeight()));
-
+//            cand = matrix.getTermByName(ap[i].getAttribute2());
+//            target = matrix.getTermByName(ap[i].getAttribute1());
+//            if (cand != null && target != null)
+//                a.add(new MatchedAttributePair(OntologyUtilities.oneIdRemoval(cand.toStringVs2()),
+//                    OntologyUtilities.oneIdRemoval(target.toStringVs2()), ap[i]
+//                        .getMatchedPairWeight()));
+        	a.add(ap[i].clone());
         }
 
         for (int i = 0; i < bp.length; i++)
         {
-            cand = matrix.getTermByName(bp[i].getAttribute2());
-            target = matrix.getTermByName(bp[i].getAttribute1());
-            if (cand != null && target != null)
-                b.add(new MatchedAttributePair(OntologyUtilities.oneIdRemoval(cand.toStringVs2()),
-                    OntologyUtilities.oneIdRemoval(target.toStringVs2()), bp[i]
-                        .getMatchedPairWeight()));
+//            cand = matrix.getTermByName(bp[i].getAttribute2());
+//            target = matrix.getTermByName(bp[i].getAttribute1());
+//            if (cand != null && target != null)
+//                b.add(new MatchedAttributePair(OntologyUtilities.oneIdRemoval(cand.toStringVs2()),
+//                    OntologyUtilities.oneIdRemoval(target.toStringVs2()), bp[i]
+//                        .getMatchedPairWeight()));
+        	b.add(bp[i].clone());
         }
         return minus(a, minus(a, b));
     }
@@ -288,10 +289,10 @@ public final class SchemaMatchingsUtilities
      * original mapping attribute
      * @return ArrayList with all possible mappings for the attribute
      */
-    public static ArrayList<String> getAllPossibleTranslations(SchemaTranslator st,
-        String attribute, boolean candidateAttribute, boolean includeOriginalTranslation)
+    public static ArrayList<Long> getAllPossibleTranslations(SchemaTranslator st,
+        Long attribute, boolean candidateAttribute, boolean includeOriginalTranslation)
     {
-        ArrayList<String> allPossibleTarnslations = new ArrayList<String>();
+        ArrayList<Long> allPossibleTranslations = new ArrayList<Long>();
         MatchedAttributePair[] pairs = st.getMatchedPairs();
         double weight = st.getTranslationWeight(attribute);
         for (int i = 0; i < pairs.length; i++)
@@ -300,30 +301,30 @@ public final class SchemaMatchingsUtilities
             {
                 if (pairs[i].getMatchedPairWeight() >= weight)
                 {
-                    if (attribute.equalsIgnoreCase(pairs[i].getAttribute1()) &&
+                    if (attribute.equals(pairs[i].getId1()) &&
                         includeOriginalTranslation)
-                        allPossibleTarnslations.add(allPossibleTarnslations.size(),
-                            pairs[i].getAttribute2());
-                    else if (!attribute.equalsIgnoreCase(pairs[i].getAttribute1()))
-                        allPossibleTarnslations.add(allPossibleTarnslations.size(),
-                            pairs[i].getAttribute2());
+                        allPossibleTranslations.add(allPossibleTranslations.size(),
+                            pairs[i].getId2());
+                    else if (!attribute.equals(pairs[i].getId1()))
+                        allPossibleTranslations.add(allPossibleTranslations.size(),
+                            pairs[i].getId2());
                 }
             }
             else
             {
                 if (pairs[i].getMatchedPairWeight() >= weight)
                 {
-                    if (attribute.equalsIgnoreCase(pairs[i].getAttribute2()) &&
+                    if (attribute.equals(pairs[i].getId2()) &&
                         includeOriginalTranslation)
-                        allPossibleTarnslations.add(allPossibleTarnslations.size(),
-                            pairs[i].getAttribute1());
-                    else if (!attribute.equalsIgnoreCase(pairs[i].getAttribute2()))
-                        allPossibleTarnslations.add(allPossibleTarnslations.size(),
-                            pairs[i].getAttribute1());
+                        allPossibleTranslations.add(allPossibleTranslations.size(),
+                            pairs[i].getId1());
+                    else if (!attribute.equals(pairs[i].getId2()))
+                        allPossibleTranslations.add(allPossibleTranslations.size(),
+                            pairs[i].getId1());
                 }
             }
         }
-        return allPossibleTarnslations;
+        return allPossibleTranslations;
     }
 
     /**
@@ -492,13 +493,13 @@ public final class SchemaMatchingsUtilities
                         }
                     }
                     if (candId == null || targetId == null) continue;
-                    MatchedAttributePair newPair = new MatchedAttributePair(candTerm,targetTerm,1.0);
-                    if (candId != null && candId.length() > 0 && targetId != null &&
-                        targetId.length() > 0)
-                    {
-                    	newPair.id1 = Long.parseLong("" + candId);
-                    	newPair.id2 = Long.parseLong("" + targetId);
-                    }
+                    MatchedAttributePair newPair = new MatchedAttributePair(candTerm,targetTerm,1.0,Long.parseLong("" + candId),Long.parseLong("" + targetId));
+//                    if (candId != null && candId.length() > 0 && targetId != null &&
+//                        targetId.length() > 0)
+//                    {
+//                    	newPair.id1 = Long.parseLong("" + candId);
+//                    	newPair.id2 = Long.parseLong("" + targetId);
+//                    }
                     tmpPairs.add(newPair);
                 }
             }

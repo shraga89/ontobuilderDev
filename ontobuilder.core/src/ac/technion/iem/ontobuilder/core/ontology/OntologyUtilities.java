@@ -82,6 +82,7 @@ public class OntologyUtilities
      * This function should be fixed or scrapped
      * @param attr
      * @return
+     * @deprecated
      */
     public static String oneIdRemoval(String attr)
     {
@@ -120,6 +121,7 @@ public class OntologyUtilities
     {
         if (t1 == null || t2 == null)
             return false;
+        if (t1.id == t2.id) return true;
         String t1V1 = oneIdRemoval(t1.toString());
         String t1V2 = oneIdRemoval(t1.toStringVs2());
         String t2V1 = oneIdRemoval(t2.toString());
