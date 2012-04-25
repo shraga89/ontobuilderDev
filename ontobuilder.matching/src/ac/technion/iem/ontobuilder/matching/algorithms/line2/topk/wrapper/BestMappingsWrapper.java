@@ -3,6 +3,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper;
 import java.util.*;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.stablemarriage.StableMarriageWrapper;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
@@ -204,17 +205,15 @@ public class BestMappingsWrapper {
       }
     }
 
-    long[] candTerms =  matchMatrix.getCandidateTermIDs();
-    long[] targetTerms = matchMatrix.getTargetTermIDs();
-    String[] candTermNames =  matchMatrix.getCandidateTermNames();
-    String[] targetTermNames = matchMatrix.getTargetTermNames();
+    ArrayList<Term> candTerms =  matchMatrix.getCandidateTerms();
+    ArrayList<Term> targetTerms = matchMatrix.getTargetTerms();
     
-    for (int r = 0; r < targetTerms.length; ++r) {
-      for (int c = 0; c < candTerms.length; ++c) {
-        simDegree = matchMatrix.getMatchConfidenceByAttributeNames(candTerms[c],targetTerms[r]);
+    for (Term t : targetTerms) {
+      for (Term c : candTerms) {
+        simDegree = matchMatrix.getMatchConfidence(c, t);
 
         if((simDegree/maxValue) >= 0.975){
-          map = new MatchedAttributePair(candTerms[c], targetTerms[r], 1.0);
+          map = new MatchedAttributePair(c.getName(), t.getName(), 1.0,c.getId(),t.getId());
           alFilteredMatchingResult.add(map);
         }else{
           if(simDegree == 0.0)
@@ -317,27 +316,18 @@ public class BestMappingsWrapper {
     SchemaTranslator mapping = new SchemaTranslator();
     ArrayList<MatchedAttributePair> m_alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
 
-    Hashtable<String, Double> hMaxInTarget = GetMaxInTargetTerms(matrix);
-    Hashtable<String, Double> hMaxInCandidate = GetMaxInCandidateTerms(matrix);
+    Hashtable<Term, Double> hMaxInTarget = GetMaxInTargetTerms(matrix);
+    Hashtable<Term, Double> hMaxInCandidate = GetMaxInCandidateTerms(matrix);
 
-    String[] candidateTerms = matrix.getCandidateTermNames();
-    String[] targetTerms = matrix.getTargetTermNames();
-    int iTargetSize = matrix.getTargetTerms().size();
-    int iCandidateSize = matrix.getCandidateTerms().size();
-
-    for (int i = 0; i < iTargetSize; ++i) {
-      String targetName = targetTerms[i];
-      for (int j = 0; j < iCandidateSize; ++j) {
-        String candidateName = (String) candidateTerms[j];
-        double dConfidence = matrix.getMatchConfidenceByAttributeNames(
-            candidateName, targetName);
-        Double d1 = (Double) (hMaxInTarget.get(targetName));
+    for (Term t : matrix.getTargetTerms()) {
+      for (Term c : matrix.getCandidateTerms()) {
+        double dConfidence = matrix.getMatchConfidence(c,t);
+        Double d1 = (Double) (hMaxInTarget.get(t));
         double d1value = d1.doubleValue();
-        Double d2 = (Double) (hMaxInCandidate.get(candidateName));
+        Double d2 = (Double) (hMaxInCandidate.get(c));
         double d2value = d2.doubleValue();
         if ( (dConfidence == d1value) && (dConfidence == d2value)) {
-          MatchedAttributePair map = new MatchedAttributePair(candidateName,
-              targetName, 1.0);
+          MatchedAttributePair map = new MatchedAttributePair(c.getName(), t.getName(), 1.0, c.getId(), t.getId());
           m_alFilteredMatchingResult.add(map);
         }
       }
@@ -352,48 +342,36 @@ public class BestMappingsWrapper {
     return mapping;
   }
 
-  private static Hashtable<String, Double> GetMaxInTargetTerms(MatchMatrix matrix) {
-    Hashtable<String, Double> hash = new Hashtable<String, Double>();
-    String[] candidateTerms = matrix.getCandidateTermNames();
-    String[] targetTerms = matrix.getTargetTermNames();
-    int iTargetSize = matrix.getTargetTerms().size();
-    int iCandidateSize = matrix.getCandidateTerms().size();
+  private static Hashtable<Term, Double> GetMaxInTargetTerms(MatchMatrix matrix) {
+    Hashtable<Term, Double> hash = new Hashtable<Term, Double>();
+    ArrayList<Term> candidateTerms = matrix.getCandidateTerms();
+    ArrayList<Term> targetTerms = matrix.getTargetTerms();
 
-    for (int i = 0; i < iTargetSize; ++i) {
-      String targetName = targetTerms[i];
+    for (Term t : targetTerms) {
       double max = 0.0;
-      for (int j = 0; j < iCandidateSize; ++j) {
-        String candidateName = (String) candidateTerms[j];
-        double dConfidence = matrix.getMatchConfidenceByAttributeNames(
-            candidateName, targetName);
+      for (Term c : candidateTerms ) {
+        double dConfidence = matrix.getMatchConfidence(c, t);
         if (dConfidence > max) {
           max = dConfidence;
         }
       }
-      hash.put(targetName, new Double(max));
+      hash.put(t, new Double(max));
     }
     return hash;
   }
 
-  private static Hashtable<String, Double> GetMaxInCandidateTerms(MatchMatrix matrix) {
-    Hashtable<String, Double> hash = new Hashtable<String, Double>();
-    String[] candidateTerms = matrix.getCandidateTermNames();
-    String[] targetTerms = matrix.getTargetTermNames();
-    int iTargetSize = matrix.getTargetTerms().size();
-    int iCandidateSize = matrix.getCandidateTerms().size();
-
-    for (int i = 0; i < iCandidateSize; ++i) {
-      String candidateName = candidateTerms[i];
+  private static Hashtable<Term, Double> GetMaxInCandidateTerms(MatchMatrix matrix) {
+    Hashtable<Term, Double> hash = new Hashtable<Term, Double>();
+    
+    for (Term c : matrix.getCandidateTerms()) {
       double max = 0;
-      for (int j = 0; j < iTargetSize; ++j) {
-        String targetName = (String) targetTerms[j];
-        double dConfidence = matrix.getMatchConfidenceByAttributeNames(
-            candidateName, targetName);
+      for (Term t : matrix.getTargetTerms()) {
+        double dConfidence = matrix.getMatchConfidence(c,t);
         if (dConfidence > max) {
           max = dConfidence;
         }
       }
-      hash.put(candidateName, new Double(max));
+      hash.put(c, new Double(max));
     }
     return hash;
   }
@@ -401,17 +379,15 @@ public class BestMappingsWrapper {
   private static void Filter(SchemaTranslator mappingsToBeOned, SchemaTranslator mappingsToBeZeroed){
     //MatchedAttributePair[] matchedPairs = mappingsToBeOned.getMatchedPairs();
     MatchedAttributePair map;
-    String[] candAttrs = matchMatrix.getCandidateAttributeNames();
-    String[] targetAttrs = matchMatrix.getTargetAttributeNames();
-    for(int i = 0 ; i < targetAttrs.length; ++i){
-      for(int j = 0 ; j < candAttrs.length; ++j){
-        map = new MatchedAttributePair(candAttrs[j],targetAttrs[i],1.0);
+    for(Term t : matchMatrix.getTargetTerms()){
+      for(Term c : matchMatrix.getCandidateTerms()){
+        map = new MatchedAttributePair(c.getName(),t.getName(),1.0,c.getId(), t.getId());
         /*if(mappingsToBeOned.isExist(map)){
           matchMatrix.setMatchConfidenceAt(i,j,1.0);
         }*/
         //else{
         if(!mappingsToBeZeroed.isExist(map)){
-          matchMatrix.setMatchConfidenceAt(i,j,0.0);
+          matchMatrix.setMatchConfidence(c,t,0.0);
         }
         //}
       }

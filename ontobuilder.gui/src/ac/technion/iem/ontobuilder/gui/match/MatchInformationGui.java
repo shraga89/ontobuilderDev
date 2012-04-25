@@ -308,9 +308,9 @@ public class MatchInformationGui
     {
         SchemaTranslator st = new SchemaTranslator(_matchInformation, true, false);
         // List badMatches = SchemaMatchingsUtilities.diffBestMatches(st, exact);
-        List<?> goodMatches = (exact != null ? SchemaMatchingsUtilities.intersectMappings(st,
-            exact, _matchInformation.getMatrix()) : new ArrayList<Object>());
-        List<?> allMatches = st.getMatches();
+        List<MatchedAttributePair> goodMatches = (exact != null ? SchemaMatchingsUtilities.intersectMappings(st,
+            exact, _matchInformation.getMatrix()) : new ArrayList<MatchedAttributePair>());
+        List<MatchedAttributePair> allMatches = st.getMatches();
         JGraph graph = new JGraph(new DefaultGraphModel());
         graph.setEditable(false);
         ArrayList<DefaultGraphCell> cells = new ArrayList<DefaultGraphCell>();
@@ -327,16 +327,10 @@ public class MatchInformationGui
         NumberFormat nf = NumberFormat.getInstance();
 
         // Create match edges
-        for (Iterator<?> i = allMatches.iterator(); i.hasNext();)
+        for (MatchedAttributePair match : allMatches)
         {
-            MatchedAttributePair match = (MatchedAttributePair) i.next();
 
-            MatchedAttributePair pair;
-            Term cand, target;
-            cand = _matchInformation.getMatrix().getTermByName(match.getAttribute2());
-            target = _matchInformation.getMatrix().getTermByName(match.getAttribute1());
-            pair = new MatchedAttributePair(OntologyUtilities.oneIdRemoval(target.toStringVs2()),
-                OntologyUtilities.oneIdRemoval(cand.toStringVs2()), match.getMatchedPairWeight());
+            MatchedAttributePair pair = new MatchedAttributePair(match.getAttribute1(),match.getAttribute2(), match.getMatchedPairWeight(),match.getId1(),match.getId2());
 
             String targetTerm = match.getAttribute1();
             String candidateTerm = match.getAttribute2();

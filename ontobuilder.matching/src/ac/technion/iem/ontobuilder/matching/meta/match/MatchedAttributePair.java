@@ -157,5 +157,10 @@ public class MatchedAttributePair implements Serializable
         
         return ((p.id1 == this.id1 && p.id2 == this.id2) || (p.id1 == this.id2 && p.id2 == this.id1));
     }
+    
+    public MatchedAttributePair clone()
+    {
+    	return new MatchedAttributePair(this.attribute1,this.attribute2,this.weight,this.id1, this.id2);
+    }
 
 }
