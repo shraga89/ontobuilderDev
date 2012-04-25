@@ -18,6 +18,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableColumnModel;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.elements.AbsoluteConstraints;
 import ac.technion.iem.ontobuilder.gui.elements.AbsoluteLayout;
@@ -341,8 +342,9 @@ public class ExactMappingTool extends JPanel
             MatchedAttributePair[] matchPairs = new MatchedAttributePair[selectedIndexes.length];
             for (int i = 0; i < selectedIndexes.length; i++)
             {
-                matchPairs[i] = new MatchedAttributePair((String) model.getValueAt(
-                    selectedIndexes[i], 0), (String) model.getValueAt(selectedIndexes[i], 1), 1.0);
+            	Term c = (Term)model.getValueAt(selectedIndexes[i], 0);
+            	Term t = (Term)model.getValueAt(selectedIndexes[i], 1);
+                matchPairs[i] = new MatchedAttributePair(c.getName(),t.getName(), 1.0,c.getId(), t.getId());
             }
             validate(matchPairs);
             SchemaTranslator st = new SchemaTranslator(matchPairs);

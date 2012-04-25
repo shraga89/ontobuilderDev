@@ -9,6 +9,7 @@ import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggre
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 /**
  * <p>Title: MatrixDirectWithBoundingAlgorithm</p>
@@ -77,9 +78,9 @@ public class MatrixDirectWithBoundingAlgorithm extends MatrixDirectAlgorithm
                 matrixNormalization();
             }
             // initialize TKM algorithm
-            tkm.setInitialSchema(combinedMatrix.getCandidateAttributeNames());
-            tkm.setMatchedSchema(combinedMatrix.getTargetAttributeNames(),
-                combinedMatrix.getMatchMatrix());
+            tkm.setInitialSchema(combinedMatrix.getCandidateTermIDs());
+            tkm.setMatchedSchema(combinedMatrix.getTargetTermIDs(),
+                (MatchMatrix)combinedMatrix);
             // do k best mapping searches with using TKM
             do
             {

@@ -4,7 +4,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
@@ -56,14 +55,7 @@ public class ExactTabelModel extends AbstractTableModel
             for (int j = 0; j < data.length; j++)
             {
                 ExactTableRowModel row = data[j];
-                if ((OntologyUtilities.oneIdRemoval(row.getCandTerm().toString()).equals(
-                    OntologyUtilities.oneIdRemoval(match.getAttribute1())) || OntologyUtilities
-                    .oneIdRemoval(row.getCandTerm().toStringVs2()).equals(
-                        OntologyUtilities.oneIdRemoval(match.getAttribute1()))) &&
-                    (OntologyUtilities.oneIdRemoval(row.getTargetTerm().toString()).equals(
-                        OntologyUtilities.oneIdRemoval(match.getAttribute2())) || OntologyUtilities
-                        .oneIdRemoval(row.getTargetTerm().toStringVs2()).equals(
-                            OntologyUtilities.oneIdRemoval(match.getAttribute2()))))
+                if (row.getCandTerm().getId() == match.id1 && row.getTargetTerm().getId() == match.getId2())
                 {
                     row.setSelected(Boolean.TRUE);
                     break;
@@ -187,10 +179,10 @@ public class ExactTabelModel extends AbstractTableModel
         switch (col)
         {
         case (0):
-            toReturn = tableRow.getCandTerm().toString();
+            toReturn = tableRow.getCandTerm();
             break;
         case (1):
-            toReturn = tableRow.getTargetTerm().toString();
+            toReturn = tableRow.getTargetTerm();
 
             break;
         case (2):

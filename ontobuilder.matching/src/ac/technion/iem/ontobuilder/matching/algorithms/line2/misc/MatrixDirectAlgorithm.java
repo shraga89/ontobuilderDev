@@ -10,6 +10,7 @@ import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggre
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.MetaAlgorithmStatistics;
 
 /**
@@ -53,9 +54,9 @@ public class MatrixDirectAlgorithm extends AbstractMetaAlgorithm
             // prepare the combined matrix
             createCombinedMatrix(globalArg);
             // Initialise TKM algorithm
-            _tkm.setInitialSchema(combinedMatrix.getCandidateAttributeNames());
-            _tkm.setMatchedSchema(combinedMatrix.getTargetAttributeNames(),
-                combinedMatrix.getMatchMatrix());
+            _tkm.setInitialSchema(combinedMatrix.getCandidateTermIDs());
+            _tkm.setMatchedSchema(combinedMatrix.getTargetTermIDs(),
+                (MatchMatrix)combinedMatrix);
             // do k best mapping searches with using TKM
             while (!canHalt())
             {

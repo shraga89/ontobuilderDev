@@ -29,12 +29,14 @@ public class StableMarriagePlayer
      * Constructs a StableMarriagePlayer
      *
      * @param sName the name of the player
+     * @param id the ID of the player
      */
-    public StableMarriagePlayer(String sName)
+    public StableMarriagePlayer(String sName,Long id)
     {
         m_bMarried = false;
         m_uPartner = null;
         m_sName = sName;
+        m_id = id;
         m_lPreferencesList = new LinkedList<StableMarriagePlayer>();
         /*
          * m_nPreferencesSize = nPreferencesSize; for (int i = 0; i < m_nPreferencesSize; ++i) {
@@ -105,7 +107,7 @@ public class StableMarriagePlayer
 
     public boolean equals(StableMarriagePlayer object)
     {
-        if (m_sName.equals(object.getName()))
+        if (m_sName.equals(object.getName()) && m_id == object.m_id)
         {
             return true;
         }
@@ -188,9 +190,25 @@ public class StableMarriagePlayer
     }
 
     String m_sName;
-    boolean m_bMarried;
+    long m_id;
+    /**
+	 * @return the m_id
+	 */
+	public long getM_id() {
+		return m_id;
+	}
+
+	/**
+	 * @param m_id the m_id to set
+	 */
+	public void setM_id(long m_id) {
+		this.m_id = m_id;
+	}
+
+	boolean m_bMarried;
     StableMarriagePlayer m_uPartner;
     LinkedList<StableMarriagePlayer> m_lPreferencesList;
     int m_nPreferencesSize;
+    
 
 }

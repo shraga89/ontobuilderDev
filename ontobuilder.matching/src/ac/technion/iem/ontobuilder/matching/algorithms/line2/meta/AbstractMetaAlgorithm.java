@@ -14,6 +14,7 @@ import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggre
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessor;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessorTypeEnum;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.MetaAlgorithmStatistics;
@@ -928,7 +929,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
             try
             {
                 tkm.setInitialSchema(matrix.getCandidateTermIDs());
-                tkm.setMatchedSchema(matrix.getTargetTermIDs(), matrix.getMatchMatrix());
+                tkm.setMatchedSchema(matrix.getTargetTermIDs(), (MatchMatrix)matrix);
             }
             catch (Throwable e)
             {

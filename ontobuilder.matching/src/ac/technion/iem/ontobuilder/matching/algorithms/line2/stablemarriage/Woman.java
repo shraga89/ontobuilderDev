@@ -14,10 +14,11 @@ public class Woman extends StableMarriagePlayer
     /**
      * @param nPreferencesSize the number of preferred partners
      * @param sName the name of the woman
+     * @param id id of the woman
      */
-    public Woman(int nPreferencesSize, String sName)
+    public Woman(int nPreferencesSize, String sName, long id)
     {
-        super(/* nPreferencesSize, */sName);
+        super(/* nPreferencesSize, */sName,id);
     }
 
     /**

@@ -3,6 +3,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.stablemarriage;
 import java.util.*;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
@@ -85,7 +86,7 @@ public class StableMarriageWrapper
             else
             {
                 MatchedAttributePair map = new MatchedAttributePair(man.getPartner().getName(),
-                    man.getName(), 1.0);
+                    man.getName(), 1.0, man.getPartner().getM_id(), man.getM_id());
                 m_alFilteredMatchingResult.add(map);
             }
         }
@@ -129,7 +130,7 @@ public class StableMarriageWrapper
             else
             {
                 MatchedAttributePair map = new MatchedAttributePair(man.getPartner().getName(),
-                    man.getName(), 1.0);
+                    man.getName(), 1.0, man.getPartner().getM_id(), man.getM_id());
                 m_alFilteredMatchingResult.add(map);
             }
         }
@@ -179,21 +180,19 @@ public class StableMarriageWrapper
         {
             return false;
         }
-        String[] womenTerms = m_MatchMatrix.getCandidateTermNames();
-        String[] menTerms = m_MatchMatrix.getTargetTermNames();
-        int iMenSize = m_MatchMatrix.getTargetTerms().size();
-        int iWomenSize = m_MatchMatrix.getCandidateTerms().size();
+        ArrayList<Term> womenTerms = m_MatchMatrix.getCandidateTerms();
+        ArrayList<Term> menTerms = m_MatchMatrix.getTargetTerms();
+        int iMenSize = menTerms.size();
+        int iWomenSize = womenTerms.size();
 
         m_StableMarriage.setSize(iMenSize, iWomenSize);
-        for (int i = 0; i < iMenSize; ++i)
+        for (Term m : menTerms)
         {
-            String manName = menTerms[i];
-            m_MenSet.put(new Man(iWomenSize, manName), new TreeMap<Object, Object>());
+            m_MenSet.put(new Man(iWomenSize, m.getName(), m.getId()), new TreeMap<Object, Object>());
         }
-        for (int j = 0; j < iWomenSize; ++j)
+        for (Term w : womenTerms)
         {
-            String womanName = (String) womenTerms[j];
-            m_WomenSet.put(new Woman(iMenSize, womanName), new TreeMap<Object, Object>());
+            m_WomenSet.put(new Woman(iMenSize, w.getName(), w.getId()), new TreeMap<Object, Object>());
         }
         return true;
     }
