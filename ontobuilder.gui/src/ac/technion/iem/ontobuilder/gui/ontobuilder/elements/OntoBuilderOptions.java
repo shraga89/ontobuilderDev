@@ -41,7 +41,7 @@ import ac.technion.iem.ontobuilder.gui.utils.files.html.HTMLUtilitiesGui;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.GraphUtilities;
 import ac.technion.iem.ontobuilder.io.exports.ExportUtilities;
 import ac.technion.iem.ontobuilder.io.imports.ImportUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 
 /**
  * <p>Title: OntoBuilderOptions</p>

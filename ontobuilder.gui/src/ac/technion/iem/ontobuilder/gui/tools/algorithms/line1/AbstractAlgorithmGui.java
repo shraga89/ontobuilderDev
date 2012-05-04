@@ -5,7 +5,7 @@ import java.util.HashMap;
 import javax.swing.JTable;
 
 import ac.technion.iem.ontobuilder.gui.application.ObjectWithProperties;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 
 /**
  * <p>

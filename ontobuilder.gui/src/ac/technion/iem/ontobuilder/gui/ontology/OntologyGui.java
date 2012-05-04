@@ -114,7 +114,7 @@ import ac.technion.iem.ontobuilder.gui.utils.files.html.TextINPUTElementGui;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.GraphUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.OrderedDefaultPort;
 import ac.technion.iem.ontobuilder.gui.utils.hypertree.NodeHyperTree;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 import com.jgraph.JGraph;

@@ -60,11 +60,10 @@ public class OntologyUtilitiesGui
             ontology.addClass(ontologyClass);
         }
 
-        ArrayList<?> matches = matchInformation.getMatches();
+        ArrayList<Match> matches = matchInformation.getCopyOfMatches();
         ArrayList<Term> matchesToInclude = new ArrayList<Term>();
-        for (Iterator<?> i = matches.iterator(); i.hasNext();)
+        for (Match match : matches)
         {
-            Match match = (Match) i.next();
             matchesToInclude.add(match.getTargetTerm());
         }
         for (Iterator<Term> i = matchesToInclude.iterator(); i.hasNext();)
@@ -166,9 +165,9 @@ public class OntologyUtilitiesGui
                     matchTable[index][4] = "[none]";
             }
             if (maxTargetTerm != null)
-                matchInformation.addMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
+                matchInformation.updateMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
         }
-        for (int i = 0; i < originalTargetTermList.size(); i++)
+        /*for (int i = 0; i < originalTargetTermList.size(); i++)
         {
             Term term = (Term) originalTargetTermList.get(i);
             if (!matchInformation.isMatched(term))
@@ -180,7 +179,7 @@ public class OntologyUtilitiesGui
             if (!matchInformation.isMatched(term))
                 matchInformation.addMismatchCandidateOntology(new Mismatch(term));
         }
-
+This section deprecated since updateMatch now updates mismatch lists as well*/
         if (ApplicationParameters.verbose)
         {
             System.out.println(ApplicationUtilities.getResourceString("verbose.match.syntactic"));
@@ -229,7 +228,7 @@ public class OntologyUtilitiesGui
                 }
                 else
                     matchTable[index][4] = "[none]";
-                matchInformation.addMatch(originalTargetTerm, originalCandidateTerm, effectiveness);
+                matchInformation.updateMatch(originalTargetTerm, originalCandidateTerm, effectiveness);
             }
         }
 

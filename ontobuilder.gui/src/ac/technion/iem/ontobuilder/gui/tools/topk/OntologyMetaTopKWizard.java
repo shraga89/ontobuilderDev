@@ -80,8 +80,9 @@ import ac.technion.iem.ontobuilder.io.exports.ExportUtilities;
 import ac.technion.iem.ontobuilder.io.exports.Exporter;
 import ac.technion.iem.ontobuilder.io.exports.ExporterMetadata;
 import ac.technion.iem.ontobuilder.io.exports.ExportersTypeEnum;
-import ac.technion.iem.ontobuilder.matching.algorithms.common.MatchAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.io.matchimport.NativeMatchImporter;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.AbstractMetaAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmInitiationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmNamesEnum;
@@ -136,7 +137,7 @@ public class OntologyMetaTopKWizard
     private Vector<AbstractAlgorithm> selectedAlgs;
     private boolean normalize = false;
     private JTable properties;
-    private SchemaTranslator exactMapping;
+    private MatchInformation exactMapping;
     private Vector<AbstractLocalAggregator> availableLocalFAggs;
     private Vector<AbstractGlobalAggregator> availableGlobalFAggs;
     private Vector<AbstractLocalAggregator> availableLocalHAggs;
@@ -293,7 +294,7 @@ public class OntologyMetaTopKWizard
     {
         Object[] params = new Object[4];
         int numSelectedMatchers = selectedAlgs.size();
-        MatchAlgorithm[] matchAlgorithms = new MatchAlgorithm[numSelectedMatchers];
+        Algorithm[] matchAlgorithms = new Algorithm[numSelectedMatchers];
         Iterator<AbstractAlgorithm> it = selectedAlgs.iterator();
         int i = 0;
         while (it.hasNext())
@@ -349,7 +350,7 @@ public class OntologyMetaTopKWizard
     {
         Object[] params = new Object[6];
         int numSelectedMatchers = selectedAlgs.size();
-        MatchAlgorithm[] matchAlgorithms = new MatchAlgorithm[numSelectedMatchers];
+        Algorithm[] matchAlgorithms = new Algorithm[numSelectedMatchers];
         Iterator<AbstractAlgorithm> it = selectedAlgs.iterator();
         int i = 0;
         while (it.hasNext())
@@ -410,7 +411,7 @@ public class OntologyMetaTopKWizard
         Object wait = new Object();
         Object[] params = new Object[3];
         int numSelectedMatchers = selectedAlgs.size();
-        MatchAlgorithm[] matchAlgorithms = new MatchAlgorithm[numSelectedMatchers];
+        Algorithm[] matchAlgorithms = new Algorithm[numSelectedMatchers];
         Iterator<AbstractAlgorithm> it = selectedAlgs.iterator();
         int i = 0;
         while (it.hasNext())
@@ -488,7 +489,7 @@ public class OntologyMetaTopKWizard
         Object wait = new Object();
         Object[] params = new Object[6];
         int numSelectedMatchers = selectedAlgs.size();
-        MatchAlgorithm[] matchAlgorithms = new MatchAlgorithm[numSelectedMatchers];
+        Algorithm[] matchAlgorithms = new Algorithm[numSelectedMatchers];
         Iterator<AbstractAlgorithm> it = selectedAlgs.iterator();
         int i = 0;
         while (it.hasNext())
@@ -524,7 +525,7 @@ public class OntologyMetaTopKWizard
         }
         hybrid.useStatistics();
         if (exactMapping != null)
-            hybrid.setExactMapping(exactMapping);
+            hybrid.setExactMapping(new SchemaTranslator(exactMapping));
         hybrid.normalizeMatrixes();
         try
         {
@@ -931,8 +932,8 @@ public class OntologyMetaTopKWizard
                 {
                     if (name.getText() != null && name.getText().length() > 0)
                     {
-                        exactMapping = SchemaMatchingsUtilities.readXMLBestMatchingFile(name
-                            .getText());
+                    	NativeMatchImporter imp = new NativeMatchImporter();
+                        exactMapping = imp.importMatch(new MatchInformation(candidate,target), new File(name.getText()));
                     }
                     status.setNextAction(WizardStatus.NEXT_ACTION);
                 }
@@ -2097,13 +2098,13 @@ public class OntologyMetaTopKWizard
             mmatrix = (MatchMatrix) metaAlg.getCombinedMatrix();
         }
         final MatchInformation matchInformation = match.getMatchInfromation(candidate, target, mmatrix);
-        matchInformation.setTargetOntologyTermsTotal(mmatrix.getCandidateTerms().size());
-        matchInformation.setTargetOntology(target);
-        matchInformation.setCandidateOntologyTermsTotal(mmatrix.getTargetTerms().size());
-        matchInformation.setCandidateOntology(candidate);
+//        matchInformation.setTargetOntologyTermsTotal(mmatrix.getCandidateTerms().size());
+//        matchInformation.setTargetOntology(target);
+//        matchInformation.setCandidateOntologyTermsTotal(mmatrix.getTargetTerms().size());
+//        matchInformation.setCandidateOntology(candidate);
         matchInformation.setMetaAlgorithm(metaAlg);
-        matchInformation.setOriginalCandidateTerms(mmatrix.getTargetTerms());
-        matchInformation.setOriginalTargetTerms(mmatrix.getCandidateTerms());
+//        matchInformation.setOriginalCandidateTerms(mmatrix.getTargetTerms());
+//        matchInformation.setOriginalTargetTerms(mmatrix.getCandidateTerms());
         matchInformation.setMatrix(mmatrix);
         final MatchInformationGui matchInformationGui = new MatchInformationGui(matchInformation);
         // Information
@@ -2158,13 +2159,16 @@ public class OntologyMetaTopKWizard
                 SchemaTranslator st;
                 for (int i = 0; i < numMatches; i++)
                 {
-                    st = (SchemaTranslator) matches.get(i);
+                	st = (SchemaTranslator) matches.get(i);
+                	MatchInformation mi = new MatchInformation(candidate,target);
+                	mi.setMatches(st.toOntoBuilderMatchList(mi, false));
+                    
                     try
                     {
                         pAtK.add(new XYDataPair(new Integer(i + 1), new Double(
-                            SchemaMatchingsUtilities.calculatePrecision(exactMapping, st, mmatrix))));
+                            mi.getPrecision(exactMapping))));
                         rAtK.add(new XYDataPair(new Integer(i + 1), new Double(
-                            SchemaMatchingsUtilities.calculateRecall(exactMapping, st, mmatrix))));
+                        		mi.getRecall(exactMapping))));
                     }
                     catch (SeriesException e1)
                     {

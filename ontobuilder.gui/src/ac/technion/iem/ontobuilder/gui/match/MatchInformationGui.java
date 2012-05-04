@@ -8,7 +8,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTable;
@@ -25,10 +24,6 @@ import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformationFormatTypesEnum;
 import ac.technion.iem.ontobuilder.matching.match.Mismatch;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
-
 import com.jgraph.JGraph;
 import com.jgraph.graph.ConnectionSet;
 import com.jgraph.graph.DefaultEdge;
@@ -77,7 +72,7 @@ public class MatchInformationGui
      */
     public Object[][] getTableModelData()
     {
-        ArrayList<Match> matches = _matchInformation.getMatches();
+        ArrayList<Match> matches = _matchInformation.getCopyOfMatches();
         Object data[][] = new Object[matches.size()][3];
         NumberFormat nf = NumberFormat.getInstance();
         for (int i = 0; i < matches.size(); i++)
@@ -184,7 +179,7 @@ public class MatchInformationGui
      * @return {@link JTable} holds target,candidate names, algorithm, total count of matches
      * precision and recall
      */
-    public JTable getStatistics(SchemaTranslator exactMapping)
+    public JTable getStatistics(MatchInformation exactMapping)
     {
         double recall = -1;
         double precision = -1;
@@ -224,7 +219,7 @@ public class MatchInformationGui
             },
             {
                 PropertiesHandler.getResourceString("ontology.match.totalMatches"),
-                new Integer(_matchInformation.getMatches().size())
+                new Integer(_matchInformation.getNumMatches())
             },
             {
                 PropertiesHandler.getResourceString("ontology.match.recall"),
@@ -264,11 +259,11 @@ public class MatchInformationGui
         sb.append(PropertiesHandler.getResourceString("ontology.match.totalCandidate"))
             .append(": ").append(_matchInformation.getCandidateOntologyTermsTotal()).append("\n");
         sb.append(PropertiesHandler.getResourceString("ontology.match.totalMatches")).append(": ")
-            .append(_matchInformation.getMatches().size()).append("\n");
+            .append(_matchInformation.getNumMatches()).append("\n");
         sb.append(PropertiesHandler.getResourceString("ontology.match.recall"))
             .append(": ")
             .append(
-                nf.format(_matchInformation.getMatches().size() /
+                nf.format(_matchInformation.getNumMatches() /
                     (double) _matchInformation.getTargetOntologyTermsTotal() * 100) +
                     "%").append("\n");
         sb.append("\n");
@@ -304,13 +299,10 @@ public class MatchInformationGui
     /**
      * @return {@link JGraph} with the matches
      */
-    public JGraph getGraph(SchemaTranslator exact)
+    public JGraph getGraph(MatchInformation exact)
     {
-        SchemaTranslator st = new SchemaTranslator(_matchInformation, true, false);
         // List badMatches = SchemaMatchingsUtilities.diffBestMatches(st, exact);
-        List<MatchedAttributePair> goodMatches = (exact != null ? SchemaMatchingsUtilities.intersectMappings(st,
-            exact, _matchInformation.getMatrix()) : new ArrayList<MatchedAttributePair>());
-        List<MatchedAttributePair> allMatches = st.getMatches();
+        ArrayList<Match> goodMatches = MatchInformation.intersectMatchLists(_matchInformation.getCopyOfMatches(), exact.getCopyOfMatches());
         JGraph graph = new JGraph(new DefaultGraphModel());
         graph.setEditable(false);
         ArrayList<DefaultGraphCell> cells = new ArrayList<DefaultGraphCell>();
@@ -327,13 +319,13 @@ public class MatchInformationGui
         NumberFormat nf = NumberFormat.getInstance();
 
         // Create match edges
-        for (MatchedAttributePair match : allMatches)
+        for (Match match : _matchInformation.getCopyOfMatches())
         {
 
-            MatchedAttributePair pair = new MatchedAttributePair(match.getAttribute1(),match.getAttribute2(), match.getMatchedPairWeight(),match.getId1(),match.getId2());
+            //MatchedAttributePair pair = new MatchedAttributePair(match.getAttribute1(),match.getAttribute2(), match.getMatchedPairWeight(),match.getId1(),match.getId2());
 
-            String targetTerm = match.getAttribute1();
-            String candidateTerm = match.getAttribute2();
+            String targetTerm = match.getTargetTerm().toString();
+            String candidateTerm = match.getTargetTerm().toString();
 
             DefaultGraphCell targetTermCell = null, candidateTermCell = null;
             boolean targetSelected = false;
@@ -367,7 +359,7 @@ public class MatchInformationGui
                 DefaultPort toCandidatePort = new DefaultPort("toCandidate");
                 targetTermCell.add(toCandidatePort);
                 String portName;
-                if (goodMatches.contains(pair))
+                if (goodMatches.contains(match))
                 {
                     portName = "toGoodTarget";
                 }
@@ -377,7 +369,7 @@ public class MatchInformationGui
                 }
                 DefaultPort toTargetPort = new DefaultPort(portName);
                 candidateTermCell.add(toTargetPort);
-                DefaultEdge edge = new DefaultEdge(nf.format(match.getMatchedPairWeight()));
+                DefaultEdge edge = new DefaultEdge(nf.format(match.getEffectiveness()));
                 cs.connect(edge, toCandidatePort, true);
                 cs.connect(edge, toTargetPort, false);
                 cells.add(edge);

@@ -83,7 +83,8 @@ import ac.technion.iem.ontobuilder.io.exports.ExportUtilities;
 import ac.technion.iem.ontobuilder.io.exports.Exporter;
 import ac.technion.iem.ontobuilder.io.exports.ExporterMetadata;
 import ac.technion.iem.ontobuilder.io.exports.ExportersTypeEnum;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.io.matchimport.NativeMatchImporter;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -114,7 +115,7 @@ public class OntologyMergeWizard
     private String ontologyName;
     private boolean normalize = false;
     private JTable properties;
-    private SchemaTranslator exactMapping;
+    private MatchInformation exactMapping;
     private double recall;
     private double precision;
 
@@ -578,8 +579,8 @@ public class OntologyMergeWizard
                 {
                     if (name.getText() != null && name.getText().length() > 0)
                     {
-                        exactMapping = SchemaMatchingsUtilities.readXMLBestMatchingFile(name
-                            .getText());
+                    	NativeMatchImporter imp = new NativeMatchImporter();
+                        exactMapping = imp.importMatch(new MatchInformation(candidate, candidate), new File(name.getText()));
                     }
                     status.setNextAction(WizardStatus.NEXT_ACTION);
                 }
@@ -1139,8 +1140,7 @@ public class OntologyMergeWizard
             if (exactMapping != null)
             {
                 DefaultPieDataset pie = new DefaultPieDataset();
-                SchemaTranslator st = new SchemaTranslator(matchInformation);
-                double precision = SchemaMatchingsUtilities.calculatePrecision(exactMapping, st);
+                double precision = matchInformation.getPrecision(exactMapping);
                 nf = NumberFormat.getInstance();
                 pie.setValue(
                     " " +
@@ -1443,7 +1443,7 @@ public class OntologyMergeWizard
                         .getMismatchesTargetOntology().get(targetMismatchIndex);
                     Mismatch candidateMismatch = (Mismatch) matchInformation
                         .getMismatchesCandidateOntology().get(candidateMismatchIndex);
-                    matchInformation.addMatch(targetMismatch.getTerm(),
+                    matchInformation.updateMatch(targetMismatch.getTerm(),
                         candidateMismatch.getTerm(), 1);
                     DefaultTableModel matchModel = (DefaultTableModel) matchTable.getModel();
                     Term targetTerm = targetMismatch.getTerm();
