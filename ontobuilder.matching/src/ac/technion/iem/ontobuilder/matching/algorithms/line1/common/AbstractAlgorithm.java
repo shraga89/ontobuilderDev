@@ -11,7 +11,6 @@ import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermPreprocessor;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.match.Mismatch;
 
 
 /**

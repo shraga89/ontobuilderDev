@@ -108,7 +108,6 @@ import ac.technion.iem.ontobuilder.matching.meta.aggregators.SumLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingAlgorithmsRunner;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 import com.jgraph.JGraph;

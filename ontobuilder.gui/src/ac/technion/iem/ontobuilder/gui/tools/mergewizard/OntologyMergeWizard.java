@@ -91,7 +91,6 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformationFormatTypesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 import ac.technion.iem.ontobuilder.matching.match.Mismatch;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 import com.jgraph.JGraph;

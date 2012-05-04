@@ -17,7 +17,6 @@ import ac.technion.iem.ontobuilder.core.utils.graphs.LabeledVertex;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.match.Mismatch;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 /**
