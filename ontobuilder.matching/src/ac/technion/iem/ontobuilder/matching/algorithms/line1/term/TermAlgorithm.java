@@ -11,8 +11,8 @@ import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.match.MatchComparator;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -134,16 +134,16 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             // changed haggai - 6/12/03
             MatchMatrix matchMatrix = MatchOntologyHandler.createMatchMatrix(originalTargetTerms,
                 targetTerms, originalCandidateTerms, candidateTerms, this);
-            matchInformation = buildMatchInformation(matchMatrix.transpose());
-            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
-            matchInformation.setTargetOntology(targetOntology);
-            matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
-            matchInformation.setCandidateOntology(candidateOntology);
+            matchInformation = buildMatchInformation(matchMatrix.transpose(),candidateOntology, targetOntology);
+//            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
+//            matchInformation.setTargetOntology(targetOntology);
+//            matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
+//            matchInformation.setCandidateOntology(candidateOntology);
             matchInformation.setAlgorithm(this);
             // /*****
             // /added by Haggai 9/10/03
-            matchInformation.setOriginalCandidateTerms(originalCandidateTerms);
-            matchInformation.setOriginalTargetTerms(originalTargetTerms);
+//            matchInformation.setOriginalCandidateTerms(originalCandidateTerms);
+//            matchInformation.setOriginalTargetTerms(originalTargetTerms);
             matchInformation.setMatrix(matchMatrix);
             // /////
         }

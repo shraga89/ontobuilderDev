@@ -15,8 +15,8 @@ import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationOptions;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertyException;
 import ac.technion.iem.ontobuilder.core.utils.properties.ResourceException;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 

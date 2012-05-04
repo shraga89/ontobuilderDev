@@ -1,7 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.misc;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.matching.algorithms.common.MatchAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmInitiationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmRunningException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
@@ -131,7 +131,7 @@ public class MatrixDirectWithBoundingAlgorithm extends MatrixDirectAlgorithm
      * @throws MetaAlgorithmInitiationException
      */
     public void init(Ontology s1, Ontology s2, int numOfMatchingAlgorithms,
-        MatchAlgorithm[] algorithms, TKM tkm) throws MetaAlgorithmInitiationException
+        Algorithm[] algorithms, TKM tkm) throws MetaAlgorithmInitiationException
     {
         super.init(s1, s2, numOfMatchingAlgorithms, algorithms, tkm);
         initiated = true;

@@ -13,7 +13,7 @@ import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationParameters;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermValueAlgorithm;
@@ -326,14 +326,14 @@ public class PrecedenceAlgorithm extends TermValueAlgorithm
         MatchMatrix precrdenceMM = new MatchMatrix(originalCandidateTerms.size(),
             originalTargetTerms.size(), originalCandidateTerms, originalTargetTerms);
         precrdenceMM.setMatchConfidenceMatrix(matchMatrix);
-        matchInformation = buildMatchInformation(matchMatrix);
+        matchInformation = buildMatchInformation(matchMatrix,candidateOntology,targetOntology);
         matchInformation.setMatrix(precrdenceMM);
         // /end haggai
 
-        matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
-        matchInformation.setTargetOntology(targetOntology);
-        matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
-        matchInformation.setCandidateOntology(candidateOntology);
+//        matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
+//        matchInformation.setTargetOntology(targetOntology);
+//        matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
+//        matchInformation.setCandidateOntology(candidateOntology);
         matchInformation.setAlgorithm(this);
         return matchInformation;
     }

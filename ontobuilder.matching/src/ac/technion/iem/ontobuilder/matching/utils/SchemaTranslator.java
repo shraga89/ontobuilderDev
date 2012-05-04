@@ -39,6 +39,7 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
  * 
  * @author Haggai Roitman
  * @version 1.1
+ * @deprecated
  */
 
 public class SchemaTranslator extends AbstractMapping
@@ -88,7 +89,7 @@ public class SchemaTranslator extends AbstractMapping
     public SchemaTranslator(MatchInformation info, boolean removeIds, boolean vs)
     {
 
-        ArrayList<Match> matches = info.getMatches();
+        ArrayList<Match> matches = info.getCopyOfMatches();
         ArrayList<MatchedAttributePair> temp = new ArrayList<MatchedAttributePair>();
 
         Iterator<Match> it = matches.iterator();
@@ -358,7 +359,6 @@ public class SchemaTranslator extends AbstractMapping
      */
     public MatchInformation getMatchInfromation(Ontology candidate, Ontology target, MatchMatrix matrix)
     {
-    	//TODO this is bad, uses an empty match informtion means the match matrix remains null and the candidate and target term lists remain null
         MatchInformation matchInfo = new MatchInformation(candidate, target);
         for (int i = 0; i < schemaPairs.length; i++)
         {
@@ -366,8 +366,8 @@ public class SchemaTranslator extends AbstractMapping
                 matrix.getTargetTerms());
             Term candidateTerm = matrix.getTermByName(schemaPairs[i].getAttribute1(),
                 matrix.getCandidateTerms());
-            matchInfo.addMatch(new Match(targetTerm, candidateTerm, schemaPairs[i]
-                .getMatchedPairWeight()));
+            matchInfo.updateMatch(targetTerm, candidateTerm, schemaPairs[i]
+                .getMatchedPairWeight());
         }
         return matchInfo;
     }

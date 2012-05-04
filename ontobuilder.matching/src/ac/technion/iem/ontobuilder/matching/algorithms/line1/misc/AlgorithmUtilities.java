@@ -18,6 +18,8 @@ import org.jdom.input.SAXBuilder;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermPreprocessor;
 
 /**

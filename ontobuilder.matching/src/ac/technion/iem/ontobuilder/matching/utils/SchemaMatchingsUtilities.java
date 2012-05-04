@@ -21,8 +21,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
-import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
@@ -134,7 +132,7 @@ public final class SchemaMatchingsUtilities
         ArrayList<MatchedAttributePair> a = new ArrayList<MatchedAttributePair>(), b = new ArrayList<MatchedAttributePair>();
         MatchedAttributePair[] ap = stNext.getMatchedPairs();
         MatchedAttributePair[] bp = stPrevious.getMatchedPairs();
-        Term cand, target;
+        //Term cand, target;
         for (int i = 0; i < ap.length; i++)
         {
 //            cand = matrix.getTermByName(ap[i].getAttribute2());
@@ -383,6 +381,7 @@ public final class SchemaMatchingsUtilities
      * @param node the node
      * @param matrix the matrix
      * @throws Exception
+     * @deprecated
      */
     private static void parseNode(Node node, MatchMatrix matrix) throws Exception
     {

@@ -6,11 +6,11 @@ import java.net.URL;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 

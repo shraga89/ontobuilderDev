@@ -1,4 +1,4 @@
-package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
+package ac.technion.iem.ontobuilder.matching.algorithms.line1.common;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,6 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.common.MatchAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermPreprocessor;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.Mismatch;
@@ -21,7 +20,7 @@ import ac.technion.iem.ontobuilder.matching.match.Mismatch;
  * </p>
  * Implements {@link Algorithm} and {@link MatchAlgorithm}
  */
-abstract public class AbstractAlgorithm implements Algorithm, MatchAlgorithm
+abstract public class AbstractAlgorithm implements Algorithm
 {
     public static final int NO_MODE = 0;
 
@@ -209,9 +208,9 @@ abstract public class AbstractAlgorithm implements Algorithm, MatchAlgorithm
      * @param matchMatrix the match matrix
      * @return {@link MatchInformation}
      */
-    protected MatchInformation buildMatchInformation(double matchMatrix[][])
+    protected MatchInformation buildMatchInformation(double matchMatrix[][],Ontology candidate, Ontology target) //TODO replace this with MatchMatrix object
     {
-        MatchInformation matchInformation = new MatchInformation();
+        MatchInformation matchInformation = new MatchInformation(candidate, target);
 
         for (int j = 0; j < candidateTerms.size(); j++)
         {
@@ -228,21 +227,8 @@ abstract public class AbstractAlgorithm implements Algorithm, MatchAlgorithm
                 }
             }
             if (maxTargetTerm != null)
-                matchInformation.addMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
+                matchInformation.updateMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
         }
-        for (int i = 0; i < originalTargetTerms.size(); i++)
-        {
-            Term term = (Term) originalTargetTerms.get(i);
-            if (!matchInformation.isMatched(term))
-                matchInformation.addMismatchTargetOntology(new Mismatch(term));
-        }
-        for (int i = 0; i < originalCandidateTerms.size(); i++)
-        {
-            Term term = (Term) originalCandidateTerms.get(i);
-            if (!matchInformation.isMatched(term))
-                matchInformation.addMismatchCandidateOntology(new Mismatch(term));
-        }
-
         return matchInformation;
     }
 

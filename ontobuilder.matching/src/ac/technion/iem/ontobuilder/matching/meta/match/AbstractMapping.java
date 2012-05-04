@@ -4,6 +4,7 @@ package ac.technion.iem.ontobuilder.matching.meta.match;
  * <p>Title: AbstractMapping</p>
  * <p>Description: Abstract class to hold a mapping between 2 schemas</p>
  * Implements {@link Comparable}
+ * @deprecated use matchInformation instead
  */
 public abstract class AbstractMapping implements Comparable<Object>
 {

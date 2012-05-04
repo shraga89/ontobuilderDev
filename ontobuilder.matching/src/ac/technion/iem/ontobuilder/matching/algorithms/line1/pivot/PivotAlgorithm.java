@@ -9,7 +9,7 @@ import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermValueAlgorithm;
@@ -135,13 +135,13 @@ public abstract class PivotAlgorithm extends TermValueAlgorithm
         MatchMatrix pivotMM = new MatchMatrix(originalCandidateTerms.size(),
             originalTargetTerms.size(), originalCandidateTerms, originalTargetTerms);
         pivotMM.setMatchConfidenceMatrix(matchMatrix);
-        matchInformation = buildMatchInformation(matchMatrix);
+        matchInformation = buildMatchInformation(matchMatrix,candidateOntology,targetOntology);
         matchInformation.setMatrix(pivotMM);
         // /end haggai
-        matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
-        matchInformation.setTargetOntology(targetOntology);
-        matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
-        matchInformation.setCandidateOntology(candidateOntology);
+//        matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
+//        matchInformation.setTargetOntology(targetOntology);
+//        matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
+//        matchInformation.setCandidateOntology(candidateOntology);
         matchInformation.setAlgorithm(this);
         return matchInformation;
     }

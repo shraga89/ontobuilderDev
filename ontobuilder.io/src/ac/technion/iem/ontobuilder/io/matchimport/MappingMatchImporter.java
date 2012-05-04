@@ -31,9 +31,6 @@ public class MappingMatchImporter implements MatchImporter {
 			MatchInformation res = new MatchInformation(mi.getCandidateOntology(),mi.getTargetOntology());
 			SchemaTranslator st = readMappingFile(file);
 			res.setMatches(st.toOntoBuilderMatchList(mi,true));
-			MatchMatrix newMM = res.getMatrix(); 
-			for (Match m : res.getMatches())
-				newMM.setMatchConfidence(m.getCandidateTerm(), m.getTargetTerm(), m.getEffectiveness());
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();

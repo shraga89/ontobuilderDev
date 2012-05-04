@@ -13,8 +13,8 @@ import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationParameters;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AbstractAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -249,34 +249,35 @@ public class TermValueAlgorithm extends AbstractAlgorithm
                                                                     */
             // end new version
             double matchMatrix[][] = combineMatrices(termMatchMatrix, valueMatchMatrix);
-            /* gabi - ceating the matchTable and adding it to MatchInformation - 5/2/2003 */
-            Object matchTable[][] = new Object[targetTerms.size() * candidateTerms.size()][3];
-            // added by haggai - 6/12/03
-            MatchMatrix termAndValueMatchMatrix = new MatchMatrix(originalCandidateTerms.size(),
-                originalTargetTerms.size(), originalCandidateTerms, originalTargetTerms);
-            // end haggai
-            for (int j = 0; j < candidateTerms.size(); j++)
-            {
-                Term candidateTerm = (Term) originalCandidateTerms.get(j);
-                for (int i = 0; i < targetTerms.size(); i++)
-                {
-                    Term targetTerm = (Term) originalTargetTerms.get(i);
-                    int index = j * targetTerms.size() + i;
-                    matchTable[index][0] = targetTerm;
-                    matchTable[index][1] = candidateTerm;
-                    matchTable[index][2] = new Double(matchMatrix[j][i]);
-                    // added by haggai 6/12/3
-                    termAndValueMatchMatrix.setMatchConfidence(candidateTerm, targetTerm,
-                        matchMatrix[j][i]);
-                    // end
-                }
-            }
-            // end gabi
+//            
+//            /* gabi - ceating the matchTable and adding it to MatchInformation - 5/2/2003 */
+//            Object matchTable[][] = new Object[targetTerms.size() * candidateTerms.size()][3];
+//            // added by haggai - 6/12/03
+//            MatchMatrix termAndValueMatchMatrix = new MatchMatrix(originalCandidateTerms.size(),
+//                originalTargetTerms.size(), originalCandidateTerms, originalTargetTerms);
+//            // end haggai
+//            for (int j = 0; j < candidateTerms.size(); j++)
+//            {
+//                Term candidateTerm = (Term) originalCandidateTerms.get(j);
+//                for (int i = 0; i < targetTerms.size(); i++)
+//                {
+//                    Term targetTerm = (Term) originalTargetTerms.get(i);
+//                    int index = j * targetTerms.size() + i;
+//                    matchTable[index][0] = targetTerm;
+//                    matchTable[index][1] = candidateTerm;
+//                    matchTable[index][2] = new Double(matchMatrix[j][i]);
+//                    // added by haggai 6/12/3
+//                    termAndValueMatchMatrix.setMatchConfidence(candidateTerm, targetTerm,
+//                        matchMatrix[j][i]);
+//                    // end
+//                }
+//            }
+//            // end gabi
 
-            matchInformation = buildMatchInformation(matchMatrix);
+            matchInformation = buildMatchInformation(matchMatrix, candidateOntology, targetOntology);
 
             // haggai
-            matchInformation.setMatrix(termAndValueMatchMatrix);
+/*            matchInformation.setMatrix(termAndValueMatchMatrix);
             // gabi
             matchInformation.setOriginalTargetTerms(originalTargetTerms);
             matchInformation.setOriginalCandidateTerms(originalCandidateTerms);
@@ -287,7 +288,7 @@ public class TermValueAlgorithm extends AbstractAlgorithm
             matchInformation.setTargetOntology(targetOntology);
             matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
             matchInformation.setCandidateOntology(candidateOntology);
-            matchInformation.setAlgorithm(this);
+            matchInformation.setAlgorithm(this);*/
         }
         catch (Throwable e)
         {

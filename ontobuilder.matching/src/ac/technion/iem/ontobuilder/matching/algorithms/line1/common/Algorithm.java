@@ -1,4 +1,4 @@
-package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
+package ac.technion.iem.ontobuilder.matching.algorithms.line1.common;
 
 import org.jdom.Element;
 

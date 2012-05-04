@@ -14,7 +14,7 @@ import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.graphs.Graph;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationParameters;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence.PrecedenceAlgorithm;
@@ -312,14 +312,14 @@ public class CombinedAlgorithm extends TermValueAlgorithm
             MatchMatrix combinedMM = new MatchMatrix(originalCandidateTerms.size(),
                 originalTargetTerms.size(), originalCandidateTerms, originalTargetTerms);
             combinedMM.setMatchConfidenceMatrix(matchMatrix);
-            matchInformation = buildMatchInformation(matchMatrix);
+            matchInformation = buildMatchInformation(matchMatrix,candidateOntology, targetOntology);
             matchInformation.setMatrix(combinedMM);
             // /end haggai
 
-            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
-            matchInformation.setTargetOntology(targetOntology);
-            matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
-            matchInformation.setCandidateOntology(candidateOntology);
+//            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
+//            matchInformation.setTargetOntology(targetOntology);
+//            matchInformation.setCandidateOntologyTermsTotal(originalCandidateTerms.size());
+//            matchInformation.setCandidateOntology(candidateOntology);
             matchInformation.setAlgorithm(this);
         }
         catch (Throwable e)

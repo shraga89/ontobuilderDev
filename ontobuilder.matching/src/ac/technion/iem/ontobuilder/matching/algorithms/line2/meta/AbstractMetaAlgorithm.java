@@ -8,7 +8,7 @@ import java.util.Vector;
 import javax.xml.validation.Schema;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.matching.algorithms.common.MatchAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
@@ -37,7 +37,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     protected AbstractGlobalAggregator globalArg;
     protected int synchronizer = 0;
     protected int numOfMatchingAlgorithms = 0;
-    protected MatchAlgorithm[] algorithms;
+    protected Algorithm[] algorithms;
     protected AbstractMatchMatrix[] matrixs;
     protected AbstractMatchMatrix combinedMatrix;
     protected MetaAlgorithmThread[] maThreads;
@@ -266,7 +266,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
      * @throws MetaAlgorithmInitiationException
      */
     public void init(Ontology o1, Ontology o2, int numOfMatchingAlgorithms,
-        MatchAlgorithm[] algorithms, TKM tkm) throws MetaAlgorithmInitiationException
+        Algorithm[] algorithms, TKM tkm) throws MetaAlgorithmInitiationException
     {
         if (o1 == null || o2 == null || numOfMatchingAlgorithms < 1 || algorithms == null ||
             algorithms.length != numOfMatchingAlgorithms || tkm == null)

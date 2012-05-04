@@ -10,7 +10,7 @@ import org.jdom.Element;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.pivot.PivotAlgorithm;
 
 /**

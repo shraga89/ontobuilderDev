@@ -14,6 +14,8 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
 import ac.technion.iem.ontobuilder.core.utils.graphs.LabeledEdge;
 import ac.technion.iem.ontobuilder.core.utils.graphs.LabeledVertex;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.Mismatch;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
@@ -290,13 +292,13 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
         		{
         			double conf = matrix.getMatchConfidence(candidateTerm, targetTerm);
         			if (conf>0.0)
-        				matchInformation.addMatch(targetTerm, candidateTerm,conf);
+        				matchInformation.updateMatch(targetTerm, candidateTerm,conf);
         			
         		}
         }
         
 
-        for (int i = 0; i < matrix.getTargetTerms().size(); i++)
+/*        for (int i = 0; i < matrix.getTargetTerms().size(); i++)
         {
             Term term = (Term) matrix.getTargetTerms().get(i);
             if (!matchInformation.isMatched(term))
@@ -307,7 +309,7 @@ public class SimilarityFloodingAlgorithm extends AbstractAlgorithm
             Term term = (Term) matrix.getCandidateTerms().get(i);
             if (!matchInformation.isMatched(term))
                 matchInformation.addMismatchCandidateOntology(new Mismatch(term));
-        }
+        } This section deprecated since updateMatch now updates mismatch lists as well*/
         return matchInformation;
     }
 
