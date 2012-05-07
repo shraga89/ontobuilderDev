@@ -1,26 +1,38 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.simple;
 
+import java.util.Properties;
+
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.common.SecondLineAlgorithm;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 public class Threshold2LM implements SecondLineAlgorithm {
 
+	private double threshold;
+
 	@Override
 	public MatchInformation match(MatchInformation mi) {
-		// TODO Auto-generated method stub
+		MatchInformation res = new MatchInformation(mi.getCandidateOntology(),mi.getTargetOntology());
+		for (Match m : mi.getCopyOfMatches())
+			if (m.getEffectiveness() < threshold)
+				res.updateMatch(m.getTargetTerm(), m.getCandidateTerm(), 0.0);
 		return null;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Simple Threshold filter";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Return all matches with confidence equal or over supplied threshold. \n";
+	}
+
+	@Override
+	public boolean init(Properties prop) {
+		if (prop == null) this.threshold = 0.1;
+		return true;
 	}
 
 }
