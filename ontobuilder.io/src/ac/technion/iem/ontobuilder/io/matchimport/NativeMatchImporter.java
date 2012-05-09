@@ -43,7 +43,7 @@ public class NativeMatchImporter implements MatchImporter {
 	        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
 	        docBuilder.setErrorHandler(new ParseErrorHandler(50));
 	        Document doc = docBuilder.parse(file);
-	        parseNode(doc, mi);
+	        parseNode(doc, res);
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();

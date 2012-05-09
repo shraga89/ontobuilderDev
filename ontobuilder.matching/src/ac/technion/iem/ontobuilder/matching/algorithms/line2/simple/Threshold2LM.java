@@ -14,9 +14,9 @@ public class Threshold2LM implements SecondLineAlgorithm {
 	public MatchInformation match(MatchInformation mi) {
 		MatchInformation res = new MatchInformation(mi.getCandidateOntology(),mi.getTargetOntology());
 		for (Match m : mi.getCopyOfMatches())
-			if (m.getEffectiveness() < threshold)
-				res.updateMatch(m.getTargetTerm(), m.getCandidateTerm(), 0.0);
-		return null;
+			if (m.getEffectiveness() >= threshold)
+				res.updateMatch(m.getTargetTerm(), m.getCandidateTerm(), m.getEffectiveness());
+		return res;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class Threshold2LM implements SecondLineAlgorithm {
 
 	@Override
 	public boolean init(Properties prop) {
-		if (prop == null) this.threshold = 0.1;
+		this.threshold = Double.parseDouble(prop.getProperty(new String("threshold"), "0.1"));	
 		return true;
 	}
 

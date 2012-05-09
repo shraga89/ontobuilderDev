@@ -94,7 +94,12 @@ public class MatchInformation
     {
     	matches = new ArrayList<Match>();
         mismatchesTargetOntology = new ArrayList<Mismatch>();
+        for (Term t : targ.getTerms(true))
+        	mismatchesTargetOntology.add(new Mismatch(t));
+        	
         mismatchesCandidateOntology = new ArrayList<Mismatch>();
+        for (Term c : cand.getTerms(true))
+        	mismatchesCandidateOntology.add(new Mismatch(c));
     	this.setCandidateOntology(cand);
     	this.setTargetOntology(targ);
     	match_Matrix = new MatchMatrix(originalCandidateTerms.size(),originalTargetTerms.size(),originalCandidateTerms,originalTargetTerms); 
@@ -120,14 +125,14 @@ public class MatchInformation
     	if (matches.contains(match)) 
     	{
     		matches.remove(match);
-    		matchedCandidateTerms.get(c).remove(match);
-    		matchedTargetTerms.get(t).remove(match);
+    		if (matchedCandidateTerms.containsKey(c)) matchedCandidateTerms.get(c).remove(match);
+    		if (matchedTargetTerms.containsKey(t)) matchedTargetTerms.get(t).remove(match);
 	    	if (match.effectiveness==0)
 	    	{
 	    		//if last match for candidate or target term, add to mismatch list
-	    		if (matchedCandidateTerms.get(c).isEmpty())
+	    		if ((!matchedCandidateTerms.containsKey(c) || matchedCandidateTerms.get(c).isEmpty()) && !mismatchesCandidateOntology.contains(c))
 	    			mismatchesCandidateOntology.add(new Mismatch(match.candidateTerm));
-	    		if (matchedTargetTerms.get(t).isEmpty())
+	    		if ((!matchedTargetTerms.containsKey(t) || matchedTargetTerms.get(t).isEmpty()) && !mismatchesTargetOntology.contains(t))
 	    			mismatchesTargetOntology.add(new Mismatch(t));
 	    	}
 	    	else //match.effectiveness >0
@@ -162,7 +167,7 @@ public class MatchInformation
 		HashMap<Term,ArrayList<Match>> matchedTermMap = ( isCandidate ? matchedCandidateTerms : matchedTargetTerms);
 		Term t = (isCandidate ? match.candidateTerm : match.targetTerm);
 		if (matchedTermMap.containsKey(t))
-			termMatches = matchedTermMap.get(match.candidateTerm);
+			termMatches = matchedTermMap.get(t);
 		else
 			termMatches = new ArrayList<Match>(); 
 		termMatches.add(match);
