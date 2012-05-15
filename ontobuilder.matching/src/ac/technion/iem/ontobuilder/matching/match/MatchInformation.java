@@ -122,7 +122,7 @@ public class MatchInformation
     	
     	match_Matrix.setMatchConfidence(c, t, match.effectiveness);
     	
-    	if (matches.contains(match)) 
+    	if (matches.contains(match)) //todo fix Match class hash function to be based on term ids and replace araylists with hashsets 
     	{
     		matches.remove(match);
     		if (matchedCandidateTerms.containsKey(c)) matchedCandidateTerms.get(c).remove(match);
@@ -761,10 +761,9 @@ public class MatchInformation
 
 
     
-    //TODO add ontology descriptions
     public String toString()
     {
-    	String res = "NumMatches:" + this.matches.size();
+    	String res =  candidateOntology.getName() + "<->" + targetOntology + " NumMatches:" + this.matches.size();
     	return res;
     }
     

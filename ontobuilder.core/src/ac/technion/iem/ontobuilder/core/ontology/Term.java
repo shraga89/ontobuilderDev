@@ -523,10 +523,11 @@ public class Term extends OntologyClass
         if (o instanceof Term)
         {
             Term t = (Term) o;
-            if ((this.id != -1) && (t.id != -1) && (this.id == t.id))
-            	return true;
-            return t.toString().equals(this.toString()) ||
-                t.toStringVs2().equals(this.toStringVs2());
+            if ((this.id == -1) || (t.id == -1)) 
+            		return t.toString().equals(this.toString()) ||
+            			t.toStringVs2().equals(this.toStringVs2());
+            else
+            	return (this.id == t.id);
 
         }
         // return (name != null && ((Term)o).t != null ? name.equals(((Term)o).name) : false) &&

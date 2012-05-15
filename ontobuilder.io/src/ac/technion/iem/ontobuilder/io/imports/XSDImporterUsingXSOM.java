@@ -175,7 +175,7 @@ public class XSDImporterUsingXSOM implements Importer
 		
 		//if Complex element's complex type is named make a term from it
 		XSComplexType ct = complexElement.getType().asComplexType();
-		if (complexElement.getType().isGlobal())
+		if (ct.isGlobal())
 		{
 			try {
 				String ctName = ct.getName();
@@ -203,7 +203,8 @@ public class XSDImporterUsingXSOM implements Importer
 				e.printStackTrace();
 			}
 		}
-		else//if it is anonymous skip the type and make terms from the type's elements
+		else
+		if(!(ct.getContentType().asEmpty()==ct.getContentType()))//if it is anonymous skip the type and make terms from the type's elements
 		{
 			XSTerm xst = ct.getContentType().asParticle().getTerm();
 			XSModelGroup g =  xst.asModelGroup();
