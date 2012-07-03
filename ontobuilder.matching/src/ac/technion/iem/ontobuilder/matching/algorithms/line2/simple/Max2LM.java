@@ -42,12 +42,12 @@ public class Max2LM implements SecondLineAlgorithm {
 
 	@Override
 	public String getName() {
-		return "Simple Threshold filter";
+		return "Max(Delta)";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Return all matches with confidence equal or over supplied threshold. \n";
+		return "Return all matches within delta of the max value in the row / column. \n";
 	}
 
 	@Override

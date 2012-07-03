@@ -5,10 +5,9 @@ import java.util.*;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 
 /**
@@ -59,7 +58,7 @@ public class StableMarriageWrapper
      * @param obCandidateOntology the candidate {@link Ontology}
      * @return a {@link SchemaTranslator}
      */
-    public SchemaTranslator runAlgorithm(Ontology obTargetOntology, Ontology obCandidateOntology)
+    public MatchInformation runAlgorithm(Ontology obTargetOntology, Ontology obCandidateOntology)
     {
         m_TargetOntology = obTargetOntology;
         m_CandidateOntology = obCandidateOntology;
@@ -67,59 +66,31 @@ public class StableMarriageWrapper
         {
             return null;
         }
-        employ();
-        if (m_alMatchingResult == null)
-        {
-            return null;
-        }
-        SchemaTranslator obSchemaTranslator = new SchemaTranslator();
-        int iArraySize = m_alMatchingResult.size();
-
-        ArrayList<MatchedAttributePair> m_alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
-        for (int i = 0; i < iArraySize; ++i)
-        {
-            Man man = (Man) m_alMatchingResult.get(i);
-            if ((man == null) || (man.getPartner() == null))
-            {
-                continue;
-            }
-            else
-            {
-                MatchedAttributePair map = new MatchedAttributePair(man.getPartner().getName(),
-                    man.getName(), 1.0, man.getPartner().getM_id(), man.getM_id());
-                m_alFilteredMatchingResult.add(map);
-            }
-        }
-        MatchedAttributePair[] obArrayMatchedPair = new MatchedAttributePair[m_alFilteredMatchingResult
-            .size()];
-        obArrayMatchedPair = (MatchedAttributePair[]) m_alFilteredMatchingResult
-            .toArray(obArrayMatchedPair);
-
-        obSchemaTranslator.setSchemaPairs(obArrayMatchedPair);
-        return obSchemaTranslator;
+        matchOntologies();
+        return runAlgorithm(m_MatchMatrix, m_CandidateOntology,m_TargetOntology);
     }
 
     /**
      * Runs the algorithm
      * 
      * @param matchMatrix a {@link MatchMatrix}
-     * @return a {@link SchemaTranslator}
+     * @param candidate Candidate ontology
+     * @param target Target ontology
+     * @return a {@link MatchInformation}
      */
-    public SchemaTranslator runAlgorithm(MatchMatrix matchMatrix)
+    public MatchInformation runAlgorithm(MatchMatrix matchMatrix, Ontology candidate, Ontology target)
     {
-
+    	if (candidate == null || target == null) return null;
+    	MatchInformation res = new MatchInformation(candidate, target);
         m_MatchMatrix = matchMatrix;
-        readStableMarriagePlayers();
-        setPreferences();
-        run();
+        employ();
         if (m_alMatchingResult == null)
         {
             return null;
         }
-        SchemaTranslator obSchemaTranslator = new SchemaTranslator();
         int iArraySize = m_alMatchingResult.size();
 
-        ArrayList<MatchedAttributePair> m_alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
+        ArrayList<Match> matches = new ArrayList<Match>();
         for (int i = 0; i < iArraySize; ++i)
         {
             Man man = (Man) m_alMatchingResult.get(i);
@@ -129,18 +100,14 @@ public class StableMarriageWrapper
             }
             else
             {
-                MatchedAttributePair map = new MatchedAttributePair(man.getPartner().getName(),
-                    man.getName(), 1.0, man.getPartner().getM_id(), man.getM_id());
-                m_alFilteredMatchingResult.add(map);
+            	Term c = candidate.getTermByID(man.getPartner().getM_id());
+            	Term t = target.getTermByID(man.getM_id());
+            	Match m = new Match(t,c , m_MatchMatrix.getMatchConfidence(c, t));
+                matches.add(m);
             }
         }
-        MatchedAttributePair[] obArrayMatchedPair = new MatchedAttributePair[m_alFilteredMatchingResult
-            .size()];
-        obArrayMatchedPair = (MatchedAttributePair[]) m_alFilteredMatchingResult
-            .toArray(obArrayMatchedPair);
-
-        obSchemaTranslator.setSchemaPairs(obArrayMatchedPair);
-        return obSchemaTranslator;
+		res.setMatches(matches);
+        return res;
     }
 
     /**
@@ -275,7 +242,6 @@ public class StableMarriageWrapper
 
     public void employ()
     {
-        matchOntologies();
         readStableMarriagePlayers();
         setPreferences();
         run();

@@ -17,6 +17,7 @@ import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
  * and is out of sync with the latest iteration of ontobuilder - major open issue</p>
  * @author Anan Marie
  * @version 1.0
+ * @deprecated use the ontobuilder research environment second line matcher wrappers instead
  */
 
 public class BestMappingsWrapper {
@@ -109,7 +110,7 @@ public class BestMappingsWrapper {
 
   private static SchemaTranslator GetBestMappingBySm(){
     StableMarriageWrapper m_StableMarriageWrapper = new StableMarriageWrapper();
-    return m_StableMarriageWrapper.runAlgorithm(matchMatrix);
+    return new SchemaTranslator(m_StableMarriageWrapper.runAlgorithm(matchMatrix, null, null));
   }
 
   private static SchemaTranslator GetBestMappingByDom(){
@@ -312,7 +313,6 @@ public class BestMappingsWrapper {
   }
 
   private static SchemaTranslator CalculateDominantPairs(MatchMatrix matrix) {
-
     SchemaTranslator mapping = new SchemaTranslator();
     ArrayList<MatchedAttributePair> m_alFilteredMatchingResult = new ArrayList<MatchedAttributePair>();
 

@@ -10,9 +10,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ac.technion.iem.ontobuilder.core.ontology.Ontology;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 /**
  * @author Tomer Sagi
@@ -20,15 +20,85 @@ import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
  */
 public class MappingMatchImporter implements MatchImporter {
 	
+	private class ProvenancePair{
+		/**
+		 * @param leftP
+		 * @param rightP
+		 * @param conf
+		 */
+		public ProvenancePair(String leftP, String rightP, double conf) {
+			this.setLeftP(leftP);
+			this.setRightP(rightP);
+			this.setConf(conf);
+		}
+		/**
+		 * @return the leftP
+		 */
+		public String getLeftP() {
+			return leftP;
+		}
+		/**
+		 * @param leftP the leftP to set
+		 */
+		public void setLeftP(String leftP) {
+			this.leftP = leftP;
+		}
+		/**
+		 * @return the rightP
+		 */
+		public String getRightP() {
+			return rightP;
+		}
+		/**
+		 * @param rightP the rightP to set
+		 */
+		public void setRightP(String rightP) {
+			this.rightP = rightP;
+		}
+		/**
+		 * @return the conf
+		 */
+		public double getConf() {
+			return conf;
+		}
+		/**
+		 * @param conf the conf to set
+		 */
+		public void setConf(double conf) {
+			this.conf = conf;
+		}
+		private String leftP;
+		private String rightP;
+		private double conf;
+		
+		
+		
+	}
 	/* (non-Javadoc)
 	 * @see ac.technion.iem.ontobuilder.io.matchimport.MatchImporter#importMatch(java.io.File)
 	 */
 	@Override
 	public MatchInformation importMatch(MatchInformation mi, File file) {
 		try {
-			MatchInformation res = new MatchInformation(mi.getCandidateOntology(),mi.getTargetOntology());
-			SchemaTranslator st = readMappingFile(file);
-			res.setMatches(st.toOntoBuilderMatchList(mi,true));
+			Ontology candidate = mi.getCandidateOntology();
+			Ontology target = mi.getTargetOntology();
+			MatchInformation res = new MatchInformation(candidate,target);
+			ArrayList<ProvenancePair> list = readMappingFile(file);
+			for (ProvenancePair p : list)
+			{
+				Term c = candidate.getTermByProvenance(p.getLeftP());
+				if (c==null)
+					{System.err.println("Attribute with provenenance:" + p.getLeftP() + "not found in " + candidate.getName());
+					continue;}
+				Term t = target.getTermByProvenance(p.getRightP());
+				if (t==null)
+				{
+					System.err.println("Attribute with provenenance:" + p.getRightP() + "not found in " + target.getName());
+					continue;
+				}
+				res.updateMatch(t,c,p.getConf());
+			}
+			
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,11 +111,11 @@ public class MappingMatchImporter implements MatchImporter {
 	 * @param file
 	 * @return
 	 */
-	private SchemaTranslator readMappingFile(File file) {
+	private ArrayList<ProvenancePair> readMappingFile(File file) {
 		BufferedReader readbuffer;
 		String strRead;
 		String splitArray[];
-		ArrayList<String[]> res = new ArrayList<String[]>();
+		ArrayList<ProvenancePair> list = new ArrayList<ProvenancePair>();
 		try {
 			readbuffer = new BufferedReader(new FileReader(file.getPath()));
 			for (int i=0;i<8;i++)
@@ -57,7 +127,7 @@ public class MappingMatchImporter implements MatchImporter {
 				resArray[0] = splitArray[0].substring(3);
 				resArray[1] = splitArray[1].substring(0,splitArray[1].length()-5);
 				resArray[2] = splitArray[1].substring(splitArray[1].lastIndexOf(":")+1);
-	    		res.add(resArray);
+				list.add( new ProvenancePair(resArray[0],resArray[1],Double.parseDouble(resArray[2])));
 	    		strRead=readbuffer.readLine();
 				}
 		
@@ -67,16 +137,7 @@ public class MappingMatchImporter implements MatchImporter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		SchemaTranslator st = new SchemaTranslator();
-		
-		MatchedAttributePair[] pairs = new MatchedAttributePair[res.size()];
-		for (int i=0;i<res.size();i++)
-		{
-			String newPair[] = res.get(i);
-			pairs[i]=new MatchedAttributePair(newPair[0],newPair[1],Double.parseDouble(newPair[2]),-1,-1);
-		}
-		st.setSchemaPairs(pairs );
-		return st;
+		return list ;
 	}
 
 }
