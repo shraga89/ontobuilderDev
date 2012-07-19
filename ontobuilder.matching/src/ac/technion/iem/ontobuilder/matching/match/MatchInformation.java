@@ -803,7 +803,8 @@ public class MatchInformation
     public static MatchInformation combineMatches(MatchInformation matchInfo1,
         MatchInformation matchInfo2, double threshold)
     {
-        MatchInformation combinedMI = new MatchInformation();
+    	if (matchInfo1 == null || matchInfo2 == null) return null;
+        MatchInformation combinedMI = new MatchInformation(matchInfo1.candidateOntology,matchInfo2.targetOntology);
 
         ArrayList<Match> matches1 = matchInfo1.getCopyOfMatches();
         ArrayList<Match> matches2 = matchInfo2.getCopyOfMatches();

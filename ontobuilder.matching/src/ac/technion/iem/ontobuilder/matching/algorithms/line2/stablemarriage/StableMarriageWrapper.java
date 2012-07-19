@@ -5,6 +5,7 @@ import java.util.*;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.common.SecondLineAlgorithm;
 import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
@@ -15,7 +16,7 @@ import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
  * Title: StableMarriageWrapper
  * </p>
  */
-public class StableMarriageWrapper
+public class StableMarriageWrapper implements SecondLineAlgorithm
 {
     private OntoBuilderWrapper m_OntoBuilderWrapper;
 
@@ -181,8 +182,7 @@ public class StableMarriageWrapper
 
                 TreeMap<Double, Woman> manTree = (TreeMap<Double, Woman>) m_MenSet.get(man);
                 TreeMap<Double, Man> womanTree = (TreeMap<Double, Man>) m_WomenSet.get(woman);
-                double d1 = m_MatchMatrix.getMatchConfidenceByAttributeNames(woman.getName(),
-                    man.getName());
+                double d1 = m_MatchMatrix.getMatchConfidenceByID(woman.getM_id(), man.getM_id());
                 Double manWomanCon = new Double(d1);
                 Double womanManCon = new Double(d1);
                 while (manTree.containsKey(manWomanCon))
@@ -249,4 +249,24 @@ public class StableMarriageWrapper
 
     ArrayList<Man> m_alMatchingResult;
     // private static int m_iThreshold = 5;
+    
+	@Override
+	public boolean init(Properties prop) {
+		return true;
+	}
+
+	@Override
+	public MatchInformation match(MatchInformation mi) {
+		return this.runAlgorithm(mi.getMatrix(), mi.getCandidateOntology(), mi.getTargetOntology());
+	}
+
+	@Override
+	public String getName() {
+		return "StableMarriage";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Performs Stable Marriage Matching as described in 'On the Stable Marriage of Maximum Weight Royal Couples'";
+	}    
 }

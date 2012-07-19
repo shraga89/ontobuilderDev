@@ -225,7 +225,7 @@ abstract public class AbstractAlgorithm implements Algorithm
                     maxTargetTerm = originalTargetTerm;
                 }
             }
-            if (maxTargetTerm != null)
+            if (maxTargetTerm != null && maxEffectiveness>0)
                 matchInformation.updateMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
         }
         return matchInformation;

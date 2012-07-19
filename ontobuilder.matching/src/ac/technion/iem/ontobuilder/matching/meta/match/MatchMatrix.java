@@ -502,6 +502,7 @@ public class MatchMatrix extends AbstractMatchMatrix
      * @param targetAttrName - attribute Terms name from target ontology
      * @return double - Confidence value of the given terms if method fails to find one of the terms
      * an error will be printed and value returned is 0
+     * @deprecated use this.getMatchConfidenceByID
      */
     public double getMatchConfidenceByAttributeNames(String candAttrName, String targetAttrName)
     {

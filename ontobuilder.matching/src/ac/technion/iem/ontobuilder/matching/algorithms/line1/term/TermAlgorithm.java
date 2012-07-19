@@ -144,7 +144,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             // /added by Haggai 9/10/03
 //            matchInformation.setOriginalCandidateTerms(originalCandidateTerms);
 //            matchInformation.setOriginalTargetTerms(originalTargetTerms);
-            matchInformation.setMatrix(matchMatrix);
+ //           matchInformation.setMatrix(matchMatrix);
             // /////
         }
         catch (Throwable e)

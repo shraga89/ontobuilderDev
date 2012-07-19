@@ -4,6 +4,12 @@ import java.util.*;
 
 /**
  * <p>Title: StableMarriage</p>
+ * Published in @inproceedings{marie2007stable,
+  title={On the Stable Marriage of Maximum Weight Royal Couples},
+  author={Marie, A. and Gal, A.},
+  booktitle={Proceedings of AAAI Workshop on Information Integration on the Web (II-Web’07), Vancouver, BC, Canada},
+  year={2007}
+}
  */
 public class StableMarriage
 {
@@ -170,5 +176,4 @@ public class StableMarriage
     private LinkedList<Woman> m_sWomenList;
     private int m_iMenSize;
     private int m_iWomenSize;
-
 }
