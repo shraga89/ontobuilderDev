@@ -31,6 +31,7 @@ public class XSDImporter implements Importer
     {
         // creating an empty ontology with the name of the file
         Ontology xsdOntology = new Ontology(file.getName());
+        xsdOntology.setFile(file);
         xsdOntology.setLight(true);
         try
         {
