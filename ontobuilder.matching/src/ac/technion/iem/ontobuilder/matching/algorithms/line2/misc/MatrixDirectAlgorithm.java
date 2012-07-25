@@ -9,7 +9,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.MetaAlgorithmStatistics;
 
@@ -32,7 +31,7 @@ public class MatrixDirectAlgorithm extends AbstractMetaAlgorithm
 
     // remark: need to check here if matrix double[][] is allocated
     public MatrixDirectAlgorithm(int k, AbstractGlobalAggregator globalArg,
-        AbstractLocalAggregator localArg, AbstractMatchMatrix combinedMatrix)
+        AbstractLocalAggregator localArg, MatchMatrix combinedMatrix)
     {
         this();
         this.k = k;

@@ -11,7 +11,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.TAStatistics;
 
 
@@ -32,11 +32,11 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
      * @param fLocalArg F {@link AbstractLocalAggregator}
      * @param hGlobalArg H {@link AbstractGlobalAggregator}
      * @param hLocalArg H {@link AbstractLocalAggregator}
-     * @param combinedMatrix the combined match matrix {@link AbstractMatchMatrix}
+     * @param combinedMatrix the combined match matrix {@link MatchMatrix}
      */
     public CrossThresholdAlgorithm(int k, AbstractGlobalAggregator fGlobalArg,
         AbstractLocalAggregator fLocalArg, AbstractGlobalAggregator hGlobalArg,
-        AbstractLocalAggregator hLocalArg, AbstractMatchMatrix combinedMatrix)
+        AbstractLocalAggregator hLocalArg, MatchMatrix combinedMatrix)
     {
         super(k, fGlobalArg, fLocalArg, hGlobalArg, hLocalArg, combinedMatrix);
         setAlgorithmName("CrossThreshold Algorithm");
@@ -100,7 +100,7 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
             this.lastMappings = new AbstractMapping[numOfMatchingAlgorithms + 1];
             this.algorithms = algorithms;
             this.tkm = tkm;
-            matrixs = new AbstractMatchMatrix[numOfMatchingAlgorithms];
+            matrixs = new MatchMatrix[numOfMatchingAlgorithms];
             maThreads = new MetaAlgorithmThread[numOfMatchingAlgorithms + 1];
             for (int i = 0; i < numOfMatchingAlgorithms + 1; i++)
             {
@@ -117,12 +117,12 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
     /**
      * Add the combined matrix
      * 
-     * @param combinedMatrix the {@link AbstractMatchMatrix} to add
+     * @param combinedMatrix the {@link MatchMatrix} to add
      */
-    private void addCombinedMatrix(AbstractMatchMatrix combinedMatrix)
+    private void addCombinedMatrix(MatchMatrix combinedMatrix)
     {
-        AbstractMatchMatrix[] temp = matrixs;
-        matrixs = new AbstractMatchMatrix[numOfMatchingAlgorithms];
+        MatchMatrix[] temp = matrixs;
+        matrixs = new MatchMatrix[numOfMatchingAlgorithms];
         for (int i = 0; i < temp.length; i++)
             matrixs[i] = temp[i];
         matrixs[temp.length] = combinedMatrix;

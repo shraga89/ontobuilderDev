@@ -1,7 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.meta.aggregators;
 
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
 
@@ -33,10 +33,10 @@ public class SumLocalAggregator extends AbstractLocalAggregator
      * Calculates the sum of the mapping's pairs values according to the match matrix provided
      * 
      * @param mapping a mapping result {@link AbstractMapping}
-     * @param matrix a match matrix {@link AbstractMatchMatrix}
+     * @param matrix a match matrix {@link MatchMatrix}
      * @return the sum
      */
-    public double calcArgValue(AbstractMapping mapping, AbstractMatchMatrix matrix)
+    public double calcArgValue(AbstractMapping mapping, MatchMatrix matrix)
     {// O(E)
         double score = 0;
         MatchedAttributePair pair;

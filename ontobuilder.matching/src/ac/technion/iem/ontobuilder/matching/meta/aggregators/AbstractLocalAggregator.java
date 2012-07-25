@@ -1,7 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.meta.aggregators;
 
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 
 
@@ -33,9 +33,9 @@ public abstract class AbstractLocalAggregator implements Aggregator
      * Calculates a local value according to the Aggregator type
      * 
      * @param mapping a mapping result {@link AbstractMapping}
-     * @param matrix a match matrix {@link AbstractMatchMatrix}
+     * @param matrix a match matrix {@link MatchMatrix}
      * @return the value
      */
-    public abstract double calcArgValue(AbstractMapping mapping, AbstractMatchMatrix matrix);
+    public abstract double calcArgValue(AbstractMapping mapping, MatchMatrix matrix);
 
 }

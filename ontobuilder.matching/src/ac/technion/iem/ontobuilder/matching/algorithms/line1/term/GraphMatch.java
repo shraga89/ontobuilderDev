@@ -290,7 +290,6 @@ public class GraphMatch
             return 1;
 
         double confidence = 0;
-        int matches = 0;
 
         for (Iterator<?> j = candidates.iterator(); j.hasNext();)
         {
@@ -317,12 +316,9 @@ public class GraphMatch
             }
             if (localConfidence >= threshold)
             {
-                matches++;
                 confidence += localConfidence;
             }
         }
-
-        // return matches==0?0:confidence/(double)matches;
         return candidates.size() == 0 ? 0 : confidence / candidates.size();
     }
 }

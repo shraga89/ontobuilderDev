@@ -16,7 +16,7 @@ import java.util.Vector;
  */
 public final class MatrixPreprocessor
 {
-    private AbstractMatchMatrix[] matrixes;
+    private MatchMatrix[] matrixes;
     private int templateIndex = 0; // by default take the first
     private MatrixPreprocessorTypeEnum typeOfPreprocessing = MatrixPreprocessorTypeEnum.INTERSECT_PREPROCESSING; // default
 
@@ -31,7 +31,7 @@ public final class MatrixPreprocessor
      * Constructs a MatrixPreprocessor with a Match Matrix, template index and type of
      * pre-processing
      */
-    public MatrixPreprocessor(AbstractMatchMatrix[] matrixes, int templateIndex,
+    public MatrixPreprocessor(MatchMatrix[] matrixes, int templateIndex,
         MatrixPreprocessorTypeEnum typeOfPreprocessing)
     {
         this.matrixes = matrixes;
@@ -70,9 +70,9 @@ public final class MatrixPreprocessor
     /**
      * Perform pre-process for all the matrixes according to the type of pre-processing
      * 
-     * @return the {@link AbstractMatchMatrix} array
+     * @return the {@link MatchMatrix} array
      */
-    public AbstractMatchMatrix[] preprocess()
+    public MatchMatrix[] preprocess()
     {
         switch (typeOfPreprocessing)
         {
@@ -91,9 +91,9 @@ public final class MatrixPreprocessor
     /**
      * Perform a union between the candidate and target attributes and calculate the match matrix
      * 
-     * @return an {@link AbstractMatchMatrix} array
+     * @return an {@link MatchMatrix} array
      */
-    private AbstractMatchMatrix[] union()
+    private MatchMatrix[] union()
     {// O(n*m^2)
         String[] candidateAttributes;
         String[] targetAttributes;
@@ -225,9 +225,9 @@ public final class MatrixPreprocessor
      * Perform an intersect between the candidate and target attributes and calculate the match
      * matrix
      * 
-     * @return an {@link AbstractMatchMatrix} array
+     * @return an {@link MatchMatrix} array
      */
-    private AbstractMatchMatrix[] intersect()
+    private MatchMatrix[] intersect()
     {// O(n*m^2)
 
         String[] candidateAttributes;
@@ -341,20 +341,20 @@ public final class MatrixPreprocessor
     }
 
     /**
-     * Sorts the match matrix to the same order of candidate and target attribute names
+     * Sorts the match matrix to the same order of candidate and target attribute terms
      * 
-     * @param matrixToPermute a {@link AbstractMatchMatrix}
-     * @param templateMatrix a {@link AbstractMatchMatrix}
-     * @return a sorted {@link AbstractMatchMatrix}
+     * @param matrixToPermute a {@link MatchMatrix}
+     * @param templateMatrix a {@link MatchMatrix}
+     * @return a sorted {@link MatchMatrix}
      */
-    private AbstractMatchMatrix permuteMatrix(AbstractMatchMatrix matrixToPermute,
-        AbstractMatchMatrix templateMatrix)
+    private MatchMatrix permuteMatrix(MatchMatrix matrixToPermute,
+        MatchMatrix templateMatrix)
     {
-        String[] candidateAttributes;
-        String[] targetAttributes;
+        long[] candidateTIds;
+        long[] targetTIds;
         double[][] tempNewMatrix;
-        LinkedList<String> sortedCandidatePermutation = new LinkedList<String>();
-        LinkedList<String> sortedTargetPermutation = new LinkedList<String>();
+        LinkedList<Long> sortedCandidatePermutation = new LinkedList<Long>();
+        LinkedList<Long> sortedTargetPermutation = new LinkedList<Long>();
 
         for (int i = 0; i < matrixes.length; i++)
         {
@@ -364,33 +364,33 @@ public final class MatrixPreprocessor
                 sortedTargetPermutation.clear();
 
             // initialise the linked lists with the candidate and target attribute names
-            candidateAttributes = matrixToPermute.getCandidateAttributeNames();
-            targetAttributes = matrixToPermute.getTargetAttributeNames();
-            for (int j = 0; j < candidateAttributes.length; j++)
-                sortedCandidatePermutation.add(j, candidateAttributes[j]);
-            for (int j = 0; j < targetAttributes.length; j++)
-                sortedTargetPermutation.add(j, targetAttributes[j]);
+            candidateTIds = matrixToPermute.getCandidateTermIDs();
+            targetTIds = matrixToPermute.getTargetTermIDs();
+            for (int j = 0; j < candidateTIds.length; j++)
+                sortedCandidatePermutation.add(j, candidateTIds[j]);
+            for (int j = 0; j < targetTIds.length; j++)
+                sortedTargetPermutation.add(j, targetTIds[j]);
 
             // sort the two lists
             Collections.sort(sortedCandidatePermutation, Collator.getInstance(Locale.getDefault()));
             Collections.sort(sortedTargetPermutation, Collator.getInstance(Locale.getDefault()));
 
             // initialise the original candidate and target attribute with the right order
-            for (int j = 0; j < candidateAttributes.length; j++)
-                candidateAttributes[j] = sortedCandidatePermutation.get(j);
-            for (int j = 0; j < targetAttributes.length; j++)
-                targetAttributes[j] = sortedTargetPermutation.get(j);
+            for (int j = 0; j < candidateTIds.length; j++)
+                candidateTIds[j] = sortedCandidatePermutation.get(j);
+            for (int j = 0; j < targetTIds.length; j++)
+                targetTIds[j] = sortedTargetPermutation.get(j);
 
             // create a new match matrix with the originally calculated match values
-            tempNewMatrix = new double[targetAttributes.length][candidateAttributes.length];
-            for (int k = 0; k < candidateAttributes.length; k++)
-                for (int j = 0; j < targetAttributes.length; j++)
-                    tempNewMatrix[j][k] = matrixToPermute.getMatchConfidenceByAttributeNames(
-                        candidateAttributes[k], targetAttributes[j]);
+            tempNewMatrix = new double[targetTIds.length][candidateTIds.length];
+            for (int k = 0; k < candidateTIds.length; k++)
+                for (int j = 0; j < targetTIds.length; j++)
+                    tempNewMatrix[j][k] = matrixToPermute.getMatchConfidenceByID(
+                        candidateTIds[k], targetTIds[j]);
 
             // set the new matrix
-            matrixToPermute.rearrangeCandidateAttributesPermutation(candidateAttributes);
-            matrixToPermute.rearrangeTargetAttributesPermutation(targetAttributes);
+            matrixToPermute.rearrangeAttributesPermutation(candidateTIds,true);
+            matrixToPermute.rearrangeAttributesPermutation(targetTIds,false);
             matrixToPermute.setMatchMatrix(tempNewMatrix);
         }
         return matrixToPermute;
@@ -419,14 +419,14 @@ public final class MatrixPreprocessor
      * match matrix
      * 
      * @param templateIndex
-     * @return a {@link AbstractMatchMatrix} array
+     * @return a {@link MatchMatrix} array
      */
-    private AbstractMatchMatrix[] template(int templateIndex)
+    private MatchMatrix[] template(int templateIndex)
     {
         String[] candidateAttributes;
         String[] targetAttributes;
         double[][] tempNewMatrix;
-        AbstractMatchMatrix templateMatrix = matrixes[templateIndex];
+        MatchMatrix templateMatrix = matrixes[templateIndex];
         Vector<Vector<String>> tempNewCandAttributes = new Vector<Vector<String>>(matrixes.length);
         Vector<Vector<String>> tempNewTargetAttributes = new Vector<Vector<String>>(matrixes.length);
         Vector<Vector<String>> tempToRemoveCandAttributes = new Vector<Vector<String>>(

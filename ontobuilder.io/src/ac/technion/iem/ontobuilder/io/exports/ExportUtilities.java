@@ -225,7 +225,7 @@ public class ExportUtilities
         Vector<Object> types = new Vector<Object>();
         Enumeration<ExporterMetadata> enumr = exporters.elements();
         ExporterMetadata metadata;
-        for (int i = 0; enumr.hasMoreElements(); i++)
+        while (enumr.hasMoreElements())
         {
             metadata = enumr.nextElement();
             types.add(metadata.getClasspath() + "(" + metadata.getType() + ")");

@@ -13,7 +13,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessor;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessorTypeEnum;
@@ -38,8 +37,8 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     protected int synchronizer = 0;
     protected int numOfMatchingAlgorithms = 0;
     protected Algorithm[] algorithms;
-    protected AbstractMatchMatrix[] matrixs;
-    protected AbstractMatchMatrix combinedMatrix;
+    protected MatchMatrix[] matrixs;
+    protected MatchMatrix combinedMatrix;
     protected MetaAlgorithmThread[] maThreads;
     protected int currentStep = 1;
     protected boolean initiated = false;
@@ -96,9 +95,9 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     /**
      * Get the combined matrix
      * 
-     * @return combinedMatrix {@link AbstractMatchMatrix}
+     * @return combinedMatrix {@link MatchMatrix}
      */
-    public AbstractMatchMatrix getCombinedMatrix()
+    public MatchMatrix getCombinedMatrix()
     {
         return combinedMatrix;
     }
@@ -107,9 +106,9 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
      * Return a match matrix by an index
      * 
      * @param i the index
-     * @return {@link AbstractMatchMatrix}
+     * @return {@link MatchMatrix}
      */
-    public AbstractMatchMatrix getMatchMatrix(int i)
+    public MatchMatrix getMatchMatrix(int i)
     {
         if (matrixs == null || matrixs.length == 0)
             return null;
@@ -279,7 +278,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
             this.lastMappings = new AbstractMapping[numOfMatchingAlgorithms];
             this.algorithms = algorithms;
             this.tkm = tkm;
-            matrixs = new AbstractMatchMatrix[numOfMatchingAlgorithms];
+            matrixs = new MatchMatrix[numOfMatchingAlgorithms];
             if (useParallel)
             {
                 maThreads = new MetaAlgorithmThread[numOfMatchingAlgorithms];
@@ -921,10 +920,10 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
         /**
          * Sets the match matrix
          * 
-         * @param matrix the {@link AbstractMatchMatrix} to set
+         * @param matrix the {@link MatchMatrix} to set
          * @throws MetaAlgorithmRunningException when cannot initialize of match the schema
          */
-        public void setMatchMatrix(AbstractMatchMatrix matrix) throws MetaAlgorithmRunningException
+        public void setMatchMatrix(MatchMatrix matrix) throws MetaAlgorithmRunningException
         {
             try
             {
