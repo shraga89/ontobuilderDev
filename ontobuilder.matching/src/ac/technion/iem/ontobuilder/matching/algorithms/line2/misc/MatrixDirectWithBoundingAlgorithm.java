@@ -8,7 +8,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 /**
@@ -34,7 +33,7 @@ public class MatrixDirectWithBoundingAlgorithm extends MatrixDirectAlgorithm
      */
     public MatrixDirectWithBoundingAlgorithm(int k, AbstractGlobalAggregator fGlobalArg,
         AbstractLocalAggregator fLocalArg, AbstractGlobalAggregator hGlobalArg,
-        AbstractLocalAggregator hLocalArg, AbstractMatchMatrix combinedMatrix)
+        AbstractLocalAggregator hLocalArg, MatchMatrix combinedMatrix)
     {
         super(k, fGlobalArg, fLocalArg, combinedMatrix);
         setAlgorithmName("Matrix Direct with Bounding Algorithm");

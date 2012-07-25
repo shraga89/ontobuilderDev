@@ -7,7 +7,7 @@ import java.util.*;
  * Published in @inproceedings{marie2007stable,
   title={On the Stable Marriage of Maximum Weight Royal Couples},
   author={Marie, A. and Gal, A.},
-  booktitle={Proceedings of AAAI Workshop on Information Integration on the Web (II-Web’07), Vancouver, BC, Canada},
+  booktitle={Proceedings of AAAI Workshop on Information Integration on the Web (II-Web 07), Vancouver, BC, Canada},
   year={2007}
 }
  */

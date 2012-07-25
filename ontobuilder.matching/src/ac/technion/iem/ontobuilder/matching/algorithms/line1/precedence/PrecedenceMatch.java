@@ -317,7 +317,6 @@ public class PrecedenceMatch
             return 1;
 
         double confidence = 0;
-        int matches = 0;
 
         for (Iterator<Term> j = candidatePrecedeTerms2.iterator(); j.hasNext();)
         {
@@ -338,7 +337,6 @@ public class PrecedenceMatch
             }
             if (localConfidence >= threshold)
             {
-                matches++;
                 confidence += localConfidence;
             }
         }

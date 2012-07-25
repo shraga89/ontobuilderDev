@@ -119,10 +119,8 @@ public class Floyd_Warshall_Algorithm
     if (source == target) continue;
     int t = target;
     int s = source;
-    int lenth = 0;
     Path p = new Path(d[s][t],vCount);
     while(pred[s][t] != NIL){
-      lenth++;
       p.addFollowingEdgeToPath(new Edge(pred[s][t],t,d[pred[s][t]][t],true));
       t = pred[s][t];
     }

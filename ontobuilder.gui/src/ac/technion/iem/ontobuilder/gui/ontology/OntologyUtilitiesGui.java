@@ -2,6 +2,7 @@ package ac.technion.iem.ontobuilder.gui.ontology;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyClass;
@@ -113,11 +114,12 @@ public class OntologyUtilitiesGui
      * @param comparator the comparator to use in the match
      * @return {@link MatchInformation}
      */
-    public static MatchInformation match(ArrayList<?> originalTargetTermList,
-        ArrayList<?> targetTermList, ArrayList<?> originalCandidateTermList,
-        ArrayList<?> candidateTermList, MatchComparator comparator)
+    public static MatchInformation match(Ontology candidate, Ontology target,
+        ArrayList<?> targetTermList, ArrayList<?> candidateTermList, MatchComparator comparator)
     {
-        MatchInformation matchInformation = new MatchInformation();
+    	Vector<Term> originalTargetTermList = target.getTerms(true); 
+    	Vector<Term> originalCandidateTermList = candidate.getTerms(true);
+        MatchInformation matchInformation = new MatchInformation(candidate,target);
 
         String columnNames[] =
         {
@@ -190,11 +192,12 @@ This section deprecated since updateMatch now updates mismatch lists as well*/
         return matchInformation;
     }
 
-    public static MatchInformation matchFull(ArrayList<?> originalTargetTermList,
-        ArrayList<?> targetTermList, ArrayList<?> originalCandidateTermList,
-        ArrayList<?> candidateTermList, MatchComparator comparator)
-    {
-        MatchInformation matchInformation = new MatchInformation();
+    public static MatchInformation matchFull(Ontology candidate, Ontology target,
+            ArrayList<?> targetTermList, ArrayList<?> candidateTermList, MatchComparator comparator)
+        {
+        	Vector<Term> originalTargetTermList = target.getTerms(true); 
+        	Vector<Term> originalCandidateTermList = candidate.getTerms(true);
+            MatchInformation matchInformation = new MatchInformation(candidate,target);
 
         String columnNames[] =
         {

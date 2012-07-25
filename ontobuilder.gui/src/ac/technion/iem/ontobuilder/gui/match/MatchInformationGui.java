@@ -7,17 +7,16 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
-import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
 import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
+import ac.technion.iem.ontobuilder.gui.ontology.TermGui;
 import ac.technion.iem.ontobuilder.gui.utils.StringUtilitiesGui;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.GraphUtilities;
 import ac.technion.iem.ontobuilder.matching.match.Match;
@@ -207,7 +206,7 @@ public class MatchInformationGui
             {
                 PropertiesHandler.getResourceString("ontology.match.algorithm"),
                 _matchInformation.getAlgorithm() != null ? _matchInformation.getAlgorithm()
-                    .getName() : _matchInformation.getMetaAlgorithm().getAlgorithmName()
+                    .getName() : (_matchInformation.getMetaAlgorithm() == null ? "non specified" : _matchInformation.getMetaAlgorithm().getAlgorithmName())
             },
             {
                 PropertiesHandler.getResourceString("ontology.match.totalTarget"),
@@ -297,12 +296,18 @@ public class MatchInformationGui
     }
 
     /**
-     * @return {@link JGraph} with the matches
+     * @return {@link JGraph} with the matches with comparison 
+     * to the exact match (TODO: if exists)
      */
     public JGraph getGraph(MatchInformation exact)
     {
-        // List badMatches = SchemaMatchingsUtilities.diffBestMatches(st, exact);
-        ArrayList<Match> goodMatches = MatchInformation.intersectMatchLists(_matchInformation.getCopyOfMatches(), exact.getCopyOfMatches());
+    	boolean hasExact = (exact != null);
+    	ArrayList<Match> goodMatches = null;
+    	if (hasExact)
+    	{
+            goodMatches = MatchInformation.intersectMatchLists(_matchInformation.getCopyOfMatches(), exact.getCopyOfMatches());
+            
+    	}
         JGraph graph = new JGraph(new DefaultGraphModel());
         graph.setEditable(false);
         ArrayList<DefaultGraphCell> cells = new ArrayList<DefaultGraphCell>();
@@ -322,33 +327,32 @@ public class MatchInformationGui
         for (Match match : _matchInformation.getCopyOfMatches())
         {
 
-            //MatchedAttributePair pair = new MatchedAttributePair(match.getAttribute1(),match.getAttribute2(), match.getMatchedPairWeight(),match.getId1(),match.getId2());
-
-            String targetTerm = match.getTargetTerm().toString();
-            String candidateTerm = match.getTargetTerm().toString();
+            Term targetTerm = match.getTargetTerm();
+            Term candidateTerm = match.getCandidateTerm();
 
             DefaultGraphCell targetTermCell = null, candidateTermCell = null;
             boolean targetSelected = false;
             boolean candidateSelected = false;
-            for (Iterator<DefaultGraphCell> j = cells.iterator(); j.hasNext();)
+            for (DefaultGraphCell cell : cells)
             {
-                Object object = j.next();
-                if (object instanceof DefaultGraphCell)
+                Object userObject = cell.getUserObject();
+                if (!targetSelected && userObject != null && 
+                		userObject.getClass().equals(TermGui.class))
                 {
-                    DefaultGraphCell cell = (DefaultGraphCell) object;
-                    Object userObject = cell.getUserObject();
-                    if (!targetSelected && userObject != null &&
-                        OntologyUtilities.oneIdRemoval(userObject.toString()).equals(targetTerm))
-                    {
-                        targetTermCell = cell;
-                        targetSelected = true;
-                    }
-                    else if (!candidateSelected && userObject != null &&
-                        OntologyUtilities.oneIdRemoval(userObject.toString()).equals(candidateTerm))
-                    {
-                        candidateTermCell = cell;
-                        candidateSelected = true;
-                    }
+                	if (((TermGui)userObject).getTerm().equals(targetTerm))
+	                {
+	                    targetTermCell = cell;
+	                    targetSelected = true;
+	                }
+                }
+                else if (!candidateSelected && userObject != null &&
+                		userObject.getClass().equals(TermGui.class))
+                {
+                	if (((TermGui)userObject).getTerm().equals(candidateTerm))
+	                {
+	                    candidateTermCell = cell;
+	                    candidateSelected = true;
+	                }
                 }
 
                 if (candidateSelected && targetSelected)
@@ -359,14 +363,22 @@ public class MatchInformationGui
                 DefaultPort toCandidatePort = new DefaultPort("toCandidate");
                 targetTermCell.add(toCandidatePort);
                 String portName;
-                if (goodMatches.contains(match))
+                if (hasExact && goodMatches != null)
                 {
-                    portName = "toGoodTarget";
+                	if (goodMatches.contains(match))
+                    {
+                        portName = "toGoodTarget";
+                    }
+                    else
+                    {
+                        portName = "toBadTarget";
+                    }
                 }
                 else
                 {
-                    portName = "toBadTarget";
+                	portName = "toTarget";
                 }
+                
                 DefaultPort toTargetPort = new DefaultPort(portName);
                 candidateTermCell.add(toTargetPort);
                 DefaultEdge edge = new DefaultEdge(nf.format(match.getEffectiveness()));

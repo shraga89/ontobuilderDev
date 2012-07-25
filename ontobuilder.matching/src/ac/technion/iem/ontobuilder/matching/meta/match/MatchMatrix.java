@@ -18,7 +18,7 @@ import ac.technion.iem.ontobuilder.matching.utils.ArrayConversion;
  * </p>
  * Extends {@link AbstractMatchMatrix}
  */
-public class MatchMatrix extends AbstractMatchMatrix
+public class MatchMatrix
 {
 
     private ArrayList<Term> candidateTerms;
@@ -35,6 +35,7 @@ public class MatchMatrix extends AbstractMatchMatrix
     //supports getting max confidence for a term in O(1) filled when first used (O(n^2) for first invocation of getMaxConfidence)
     private HashMap<Term,Double> candidateTermMaxConf = new HashMap<Term,Double>();
     private HashMap<Term,Double> targetTermMaxConf = new HashMap<Term,Double>();
+	protected double[][] confidenceMatrix;
     
     private static int printIndex = 0;
 
@@ -435,7 +436,7 @@ public class MatchMatrix extends AbstractMatchMatrix
      * terms of candidate and
      * @param targetTerms - list of Terms of target ontology
      */
-    public void copyWithEmptyMatrix(AbstractMatchMatrix matrix)
+    public void copyWithEmptyMatrix(MatchMatrix matrix)
     {
         confidenceMatrix = new double[matrix.getRowCount()][matrix.getColCount()];
         candidateTerms = ((MatchMatrix) matrix).getCandidateTerms();
@@ -666,33 +667,19 @@ public class MatchMatrix extends AbstractMatchMatrix
     }
 
     /**
-     * Rearrange the list of the candidate attributes according to a new permutation
+     * Rearrange the list of the candidate terms according to a new permutation
      * 
-     * @param newPermutation the new permutation of candidate attributes names
+     * @param newPermutation the new permutation of candidate attributes termIDs
      */
-    public void rearrangeCandidateAttributesPermutation(String[] newPermutation)
+    public void rearrangeAttributesPermutation(long[] newPermutation,boolean isCandidate)
     {
         ArrayList<Term> newAttrPermutation = new ArrayList<Term>(newPermutation.length);
         for (int i = 0; i < newPermutation.length; i++)
-            newAttrPermutation.add(i, getTermByName(newPermutation[i], getCandidateTerms()));
-        candidateTerms.clear();
-        candidateTerms = null;
-        candidateTerms = newAttrPermutation;
-    }
-
-    /**
-     * Rearrange the list of the target attributes according to a new permutation
-     * 
-     * @param newPermutation the new permutation of target attributes names
-     */
-    public void rearrangeTargetAttributesPermutation(String[] newPermutation)
-    {
-        ArrayList<Term> newAttrPermutation = new ArrayList<Term>(newPermutation.length);
-        for (int i = 0; i < newPermutation.length; i++)
-            newAttrPermutation.add(i, getTermByName(newPermutation[i], getTargetTerms()));
-        targetTerms.clear();
-        targetTerms = null;
-        targetTerms = newAttrPermutation;
+            newAttrPermutation.add(i, getTermByID(newPermutation[i], isCandidate));
+        ArrayList<Term> termList = (isCandidate?candidateTerms:targetTerms);
+        termList.clear();
+        termList = null;
+        termList = newAttrPermutation;
     }
     
     /**
@@ -737,5 +724,70 @@ public class MatchMatrix extends AbstractMatchMatrix
 		}
 	
 		
+	}
+
+	/**
+	 * Sets a confidence value in the Confidence Matrix to '0' if the original value isn't higher
+	 * than the threshold
+	 * 
+	 * @param th - the threshold
+	 */
+	public void applyThreshold(double th) {
+	    for (int i = 0; i < getRowCount(); i++)
+	        for (int j = 0; j < getColCount(); j++)
+	        {
+	            confidenceMatrix[i][j] = (confidenceMatrix[i][j] >= th ? confidenceMatrix[i][j] : 0);
+	        }
+	}
+
+	/**
+	 * Set match confidence for a specific pair
+	 * 
+	 * @param i - row position
+	 * @param j - column position
+	 * @param confidence value
+	 */
+	public void setMatchConfidenceAt(int i, int j, double confidence) {
+	    if (confidenceMatrix == null)
+	        throw new NullPointerException("match matrix hasn't been constructed yet");
+	    if (0 > i || i >= getRowCount() || 0 > j || j >= getColCount())
+	        throw new IllegalArgumentException("i=" + i + ",j=" + j + ",row=" + getRowCount() +
+	            ",col=" + getColCount());
+	    else
+	        confidenceMatrix[i][j] = confidence;
+	}
+
+	/**
+	 * Get the match confidence for a specific pair
+	 * 
+	 * @param i - row position
+	 * @param j - column position
+	 * @return the confidence value
+	 */
+	public double getMatchConfidenceAt(int i, int j) {
+	    if (0 > i || i >= getRowCount() || 0 > j || j >= getColCount())
+	        throw new IllegalArgumentException("i=" + i + ",j=" + j + ",row=" + getRowCount() +
+	            ",col=" + getColCount());
+	    if (confidenceMatrix == null)
+	        throw new NullPointerException("match matrix hasn't been constructed yet");
+	    return confidenceMatrix[i][j];
+	}
+
+	/**
+	 * Normalise the Confidence Matrix value by dividing each pair's value in the maximum value in
+	 * the matrix
+	 */
+	public void normalize() {
+	    double maxValue = 0;
+	    for (int i = 0; i < getRowCount(); i++)
+	        for (int j = 0; j < getColCount(); j++)
+	            maxValue = maxValue < confidenceMatrix[i][j] ? confidenceMatrix[i][j] : maxValue;
+	    if (maxValue != 0)
+	    {
+	        for (int i = 0; i < getRowCount(); i++)
+	            for (int j = 0; j < getColCount(); j++)
+	                confidenceMatrix[i][j] /= maxValue;
+	    }
+	
 	}
 }

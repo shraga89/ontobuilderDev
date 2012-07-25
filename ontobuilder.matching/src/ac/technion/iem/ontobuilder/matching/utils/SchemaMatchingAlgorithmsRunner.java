@@ -22,7 +22,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.KBest_Alg
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.SecondBestMatchingAlgorithm_Algorithm2;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.TopKAlgorithm;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
@@ -461,7 +460,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Initialisation
      */
-    public void init(AbstractMatchMatrix matrix)
+    public void init(MatchMatrix matrix)
     {
         if (matrix == null)
             throw new NullPointerException("matrix = null");

@@ -159,7 +159,6 @@ public class PivotMatch
             return 1;
 
         double confidence = 0;
-        int matches = 0;
 
         if (useOneToOneMatch)
         {
@@ -197,7 +196,6 @@ public class PivotMatch
                 }
                 if (localConfidence >= threshold)
                 {
-                    matches++;
                     confidence += localConfidence;
                 }
             }

@@ -220,7 +220,7 @@ public class ImportUtilities
         Vector<Object> types = new Vector<Object>();
         Enumeration<ImporterMetadata> enumr = importers.elements();
         ImporterMetadata metadata;
-        for (int i = 0; enumr.hasMoreElements(); i++)
+        while (enumr.hasMoreElements())
         {
             metadata = (ImporterMetadata) enumr.nextElement();
             types.add(metadata.getClasspath() + "(" + metadata.getType() + ")");

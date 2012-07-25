@@ -6,7 +6,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.misc.MatrixDirectWi
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.misc.SMThersholdAlgorithm;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
+import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 // Singleton pattern
 /**
@@ -67,7 +67,7 @@ public final class MetaAlgorithmsFactory
         throws MetaAlgorithmsFactoryException
     {
         String errorMsg = "illegal params for Matrix Direct Algorithm\n"
-            + "expected: (k:Integer,globalArg:AbstractGlobalAggregator,localArg:AbstractLocalAggregator,combinedMatrix:AbstractMatchMatrix)";
+            + "expected: (k:Integer,globalArg:AbstractGlobalAggregator,localArg:AbstractLocalAggregator,combinedMatrix:MatchMatrix)";
         if (params == null || params.length != 4)
             throw new MetaAlgorithmsFactoryException(errorMsg);
         for (int i = 0; i < 4; i++)
@@ -79,7 +79,7 @@ public final class MetaAlgorithmsFactory
         int k = 0;
         AbstractGlobalAggregator globalArg = null;
         AbstractLocalAggregator localArg = null;
-        AbstractMatchMatrix combinedMatrix = null;
+        MatchMatrix combinedMatrix = null;
         for (int i = 0; i < 4; i++)
         {
             if (params[i] instanceof Integer)
@@ -100,10 +100,10 @@ public final class MetaAlgorithmsFactory
                 localArg = (AbstractLocalAggregator) params[i];
                 continue;
             }
-            else if (params[i] instanceof AbstractMatchMatrix)
+            else if (params[i] instanceof MatchMatrix)
             {
                 foundCombinedMatrix = true;
-                combinedMatrix = (AbstractMatchMatrix) params[i];
+                combinedMatrix = (MatchMatrix) params[i];
                 continue;
             }
         }
@@ -126,7 +126,7 @@ public final class MetaAlgorithmsFactory
     {
         String errorMsg = "illegal params for " +
             (hybrid ? "Hybrid Algorithm" : "Matrix Direct Algorithm\n") +
-            "expected: (k:Integer,fGlobalArg:AbstractGlobalAggregator,fLocalArg:AbstractLocalAggregator,hGlobalArg:AbstractGlobalAggregator,hLocalArg:AbstractLocalAggregator,combinedMatrix:AbstractMatchMatrix)";
+            "expected: (k:Integer,fGlobalArg:AbstractGlobalAggregator,fLocalArg:AbstractLocalAggregator,hGlobalArg:AbstractGlobalAggregator,hLocalArg:AbstractLocalAggregator,combinedMatrix:MatchMatrix)";
         if (params == null || params.length != 6)
             throw new MetaAlgorithmsFactoryException(errorMsg);
         for (int i = 0; i < 6; i++)
@@ -140,7 +140,7 @@ public final class MetaAlgorithmsFactory
         AbstractLocalAggregator fLocalArg = null;
         AbstractGlobalAggregator hGlobalArg = null;
         AbstractLocalAggregator hLocalArg = null;
-        AbstractMatchMatrix combinedMatrix = null;
+        MatchMatrix combinedMatrix = null;
         for (int i = 0; i < 6; i++)
         {
             if (params[i] instanceof Integer)
@@ -177,10 +177,10 @@ public final class MetaAlgorithmsFactory
                 }
                 continue;
             }
-            else if (params[i] instanceof AbstractMatchMatrix)
+            else if (params[i] instanceof MatchMatrix)
             {
                 foundCombinedMatrix = true;
-                combinedMatrix = (AbstractMatchMatrix) params[i];
+                combinedMatrix = (MatchMatrix) params[i];
                 continue;
             }
         }

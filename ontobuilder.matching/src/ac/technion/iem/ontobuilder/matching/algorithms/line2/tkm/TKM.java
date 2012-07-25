@@ -3,7 +3,6 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 /**
@@ -12,7 +11,7 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 public interface TKM
 {
 
-    public void init(AbstractMatchMatrix matrix) throws TKMInitializationException;
+    public void init(MatchMatrix matrix) throws TKMInitializationException;
 
     public void setInitialSchema(long[] schema) throws TKMInitializationException;// S1
 
