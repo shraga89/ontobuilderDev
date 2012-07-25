@@ -1573,7 +1573,7 @@ public class OntologyMergeWizard
 
             // Graph
             final JPanel graphPanel = new JPanel(new BorderLayout());
-            final JGraph graph = matchInformationGui.getGraph(matchInformation);
+            final JGraph graph = matchInformationGui.getGraph(exactMapping);
             MatchGraphStatus mgsTemp = null;
             try
             {
