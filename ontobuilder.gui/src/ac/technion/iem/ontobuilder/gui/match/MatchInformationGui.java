@@ -207,7 +207,7 @@ public class MatchInformationGui
             {
                 PropertiesHandler.getResourceString("ontology.match.algorithm"),
                 _matchInformation.getAlgorithm() != null ? _matchInformation.getAlgorithm()
-                    .getName() : _matchInformation.getMetaAlgorithm().getAlgorithmName()
+                    .getName() : (_matchInformation.getMetaAlgorithm() == null ? "non specified" : _matchInformation.getMetaAlgorithm().getAlgorithmName())
             },
             {
                 PropertiesHandler.getResourceString("ontology.match.totalTarget"),
