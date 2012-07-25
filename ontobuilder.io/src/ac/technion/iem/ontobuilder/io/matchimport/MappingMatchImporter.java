@@ -131,7 +131,7 @@ public class MappingMatchImporter implements MatchImporter {
 	    		strRead=readbuffer.readLine();
 				}
 		
-			
+			readbuffer.close();
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e) {
