@@ -165,9 +165,10 @@ public class XSDImporterUsingXSOM implements Importer
 		//TODO check why simple elements are not assigned the correct OntologyClass
 		//Make sure this is a complex element, if not, return a simple element
 		//debug: System.out.println("complex element:" + complexElement.getName());
-		if (!complexElement.getType().isComplexType())
+		boolean causedCycle = causesCycle(parent,complexElement);
+		if (!complexElement.getType().isComplexType() || causedCycle)
 			try {
-				return makeTermFromSimpleElement(parent, complexElement);
+				return makeTermFromSimpleElement(parent, complexElement, causedCycle);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -181,7 +182,7 @@ public class XSDImporterUsingXSOM implements Importer
 			try {
 				String ctName = ct.getName();
 				if (!ctTerms.containsKey(ctName))
-					ctTerms.put(ctName, makeTermFromComplexType(null, ct));
+					ctTerms.put(ctName, makeTermFromComplexType(t, ct));
 				Term ctTerm = ctTerms.get(ct.getName());
 				t = recCloneTerm(ctTerm);
 				//If names have changed, remove the subterms' relationships to this term since they will be reset when the complexType is instantiated
@@ -227,6 +228,27 @@ public class XSDImporterUsingXSOM implements Importer
 	}
 	
 	/**
+	 * Checks if the addition of the complexElement as a complex type to the 
+	 * supplied parent will cause a cycle. 
+	 * @param parent
+	 * @param complexElement
+	 * @return
+	 */
+	private boolean causesCycle(Term parent, XSElementDecl complexElement) {
+		Term currentp = parent;
+		while (currentp != null)
+		{
+			assert(currentp.getDomain() != null);
+			assert(complexElement != null);
+			assert(complexElement.getType() != null);
+			if (currentp.getDomain().getName().equals(complexElement.getType().getName()))
+				return true;
+			currentp = currentp.getParent();
+		}
+		return false;
+	}
+
+	/**
 	 * Term's clone method does not clone the subterms, this solves the issue
 	 * @param term Term to be cloned
 	 * @return new term, clone of supplied term with cloned attributes
@@ -241,14 +263,16 @@ public class XSDImporterUsingXSOM implements Importer
 
 	/**
 	 * Makes a Term object from the element supplied. Assumes element is a simple element. Throws exception if not. 
-	 * @param parent Term to which this Term will be connceted, used to set the parent and ontology properties of new Term
+	 * @param parent Term to which this Term will be connected, used to set the parent and ontology properties of new Term
 	 * @param e element to be converted
+	 * @param forceComplex forces conversion of a complex element to a simple element. 
 	 * @return Term which is assumed to be later added to parent term
 	 * @throws Exception if not a simple element
 	 */
-	private Term makeTermFromSimpleElement(Term parent,XSElementDecl e) throws Exception
+	private Term makeTermFromSimpleElement(Term parent,XSElementDecl e, boolean forceComplex) throws Exception
 	{
-		if (!e.getType().isSimpleType()) throw new Exception("Expected simple element, recieved complex element");
+		if (!forceComplex)
+			if (!e.getType().isSimpleType()) throw new Exception("Expected simple element, recieved complex element");
 		return makeTerm(parent,e);
 	}
 	
@@ -313,7 +337,11 @@ public class XSDImporterUsingXSOM implements Importer
 				{
 					for (XSParticle p1 : p.asParticle().getTerm().asModelGroup())
 					{
-						term.addTerm(makeTermFromElement(term,p1.getTerm().asElementDecl()));
+						if (p1.getTerm().getClass() == ElementDecl.class) //simple sequence
+							term.addTerm(makeTermFromElement(term,p1.getTerm().asElementDecl()));
+						else if (p1.getTerm().getClass() == ModelGroupImpl.class)
+							for (XSParticle p2 : p1.asParticle().getTerm().asModelGroup())
+							{term.addTerm(makeTermFromElement(term,p2.getTerm().asElementDecl()));}
 					}
 				}
 			}

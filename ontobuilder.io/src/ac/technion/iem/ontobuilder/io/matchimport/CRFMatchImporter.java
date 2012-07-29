@@ -122,11 +122,11 @@ public class CRFMatchImporter implements MatchImporter {
 			List<ProvenancePair> list = handler.getPairs();
 			for (ProvenancePair p : list)
 			{
-				Term c = mi.getCandidateOntology().getTermByProvenance(p.getLeftP());
+				Term c = mi.getCandidateOntology().getTermByProvenance(p.getLeftP(),'/');
 				if (c==null)
 					{System.err.println("Attribute with provenenance:" + p.getLeftP() + "not found in " + mi.getCandidateOntology().getName());
 					continue;}
-				Term t = mi.getTargetOntology().getTermByProvenance(p.getRightP());
+				Term t = mi.getTargetOntology().getTermByProvenance(p.getRightP(),'/');
 				if (t==null)
 				{
 					System.err.println("Attribute with provenenance:" + p.getRightP() + "not found in " + mi.getTargetOntology().getName());

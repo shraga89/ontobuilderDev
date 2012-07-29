@@ -1222,25 +1222,38 @@ public class Ontology extends OntologyObject
 	}
 	
 
+	
+	
     /**
      * Returns a term according to the provenence supplied.
      * Assumes provenence is of form: root.node.  ...etc...  .node.term 
      * @param provenenace
      * @return Term is found null otherwise
      */
-    public Term getTermByProvenance(String provenance)
+	public Term getTermByProvenance(String provenance)
+	{
+		return getTermByProvenance(provenance,'.');
+	}
+	
+	/**
+	 * Returns a term according to the provenence supplied.
+	 * @param provenance
+	 * @param seperator Char which seperates between provenance elements (e.g. '.' or '/')
+	 * @return Term if found, null otherwise
+	 */
+	public Term getTermByProvenance(String provenance,char seperator)
     {
     	StringBuffer sb = new StringBuffer();
     	ArrayList<String> prov = new ArrayList<String>(); 
     	for (char c: provenance.toCharArray())
     	{
-    		if (c != '.')
+    		if (c != seperator)
     		{
     			sb.append(c);
     		}
     		else
     		{
-    			prov.add(sb.toString());
+    			if (sb.length()>0) prov.add(sb.toString());
     			sb = new StringBuffer();
     		}
     	}
