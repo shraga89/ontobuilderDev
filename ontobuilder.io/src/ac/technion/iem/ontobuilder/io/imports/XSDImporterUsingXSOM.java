@@ -1,12 +1,27 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
+import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyClass;
 import ac.technion.iem.ontobuilder.core.ontology.Relationship;
@@ -33,113 +48,219 @@ import com.sun.xml.xsom.parser.XSOMParser;
  */
 public class XSDImporterUsingXSOM implements Importer
 {
+	private Ontology xsdOntology;
+	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
     /**
-     * Imports an ontology from an XML file
+     * Imports an ontology from an XSD file
      * 
      * @param file the {@link File} to read the ontology from
      * @throws ImportException when the XML Schema import failed
      */
-	private Ontology xsdOntology;
-	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
 	public Ontology importFile(File file) throws ImportException
     {
-        // creating an empty ontology with the name of the file
+		return importFile(file,null);
+    }
+	
+	/**
+     * Imports an ontology from an XSD file and mines domain entries
+     * from the instances supplied in the xml file
+     * 
+     * @param file the {@link File} to read the ontology from
+     * @throws ImportException when the XML Schema import failed
+     */
+	public Ontology importFile(File file, File instances) throws ImportException
+    {
+        // create an empty ontology with the name of the file
         xsdOntology = new Ontology(file.getName().substring(0, file.getName().length()-4));
         xsdOntology.setFile(file);
         xsdOntology.setLight(true);
+        XSSchemaSet result;
+        XSOMParser parser;
+        
+        //Parse XSD
         try
         {
-        	//Parse XSD and Recursively collect complex types from imports
-        	XSOMParser parser = new XSOMParser();
+        	parser = new XSOMParser();
         	parser.setErrorHandler(new DraconianErrorHandler());
         	parser.setEntityResolver(new XSDEntityResolver());
         	parser.parse(file);
-        	XSSchemaSet result = parser.getResult();
-        	
-        	/*Translate parsed schema to ontology:
-        	 * 1. Make an OntologyClass object for each simple type and complex type
-        	 * 2. Connect between each complex type's OntologyClass and it's base type's OntologyClass
-        	 * 3. Make term tree from elements by:
-        	 * 		1. recursively adding complex type elements as subterms
-        	 * 		2. replacing extension markers with terms from the referenced type
-        	 */
-        	
-        	//Make OntologyClass object for each simple type
-        	Iterator<XSSimpleType> it1 = result.iterateSimpleTypes();
-        	OntologyClass ontologyClass;
-        	while (it1.hasNext())
-        	{
-        		XSSimpleType newType = it1.next();
-				xsdOntology.addClass(createOntologyClass(xsdOntology,newType));
-        	}
-        	
-        	//Add ontology class for each complex type
-        	HashMap<OntologyClass,ArrayList<OntologyClass>> relationships = new HashMap<OntologyClass,ArrayList<OntologyClass>>();
-        	Iterator<XSComplexType> it2 = result.iterateComplexTypes();
-        	while (it2.hasNext())
-        	{ 
-        		
-        		XSComplexType newType = it2.next();
-				//Make ontology class
-        		ontologyClass = createOntologyClass(xsdOntology,newType);
-        		//Record parent child relationships to later create them in classes
-        		ArrayList<OntologyClass> superClasses;
-        		XSType baseType = newType.getBaseType();
-        		if (!baseType.equals(newType)) //if no base type, it will reference itself
-        		{
-	        		if (relationships.keySet().contains(ontologyClass))
-	        		{
-	        			superClasses = relationships.get(ontologyClass);
-	        		}
-	        		else
-	        		{
-	        			superClasses = new ArrayList<OntologyClass>();
-	        		}
-	        		superClasses.add(createOntologyClass(xsdOntology,baseType));
-	        		relationships.put(ontologyClass, superClasses);
-        		}
-				xsdOntology.addClass(ontologyClass);
-        	}
-        	
-        	it2 = result.iterateComplexTypes();
-        	while (it2.hasNext())
-        	{ 
-        		
-        		XSComplexType newType = it2.next();
-	        	//make Term and collect, Will be used to create terms in complex elements using this complex type
-				Term classT = makeTermFromComplexType(null, newType);
-				this.ctTerms.put(newType.getName(), classT);
-        	}
-        	//Build ontology class tree
-        	for (OntologyClass child : relationships.keySet())
-        	{
-        		for (OntologyClass superClass : relationships.get(child))
-        			child.setSuperClass(superClass);
-        	}
-        	
-        	/*3. Make term tree from elements by:
-           	 * 		1. recursively adding complex type elements as subterms
-           	 * 		2. replacing extension markers with terms from the referenced type
-           	 * */
-        	//Make all terms
-        	for (XSSchema s : result.getSchemas())
-        	{
-        		Map<String, XSElementDecl> eMap = s.getElementDecls();
-        		for (XSElementDecl e : eMap.values())
-        		{
-        			Term t = makeTermFromElement(null,e);
-        			xsdOntology.addTerm(t);
-        		}
-        	}
-        	return xsdOntology;
+        	result = parser.getResult();
         }
         catch (Exception e)
         {
             e.printStackTrace();
             throw new ImportException("XML Schema Import failed");
         }
+        
+        //create classes and terms from result
+        createOntology(result);
+        
+        //mine domain from instances
+        if (instances!=null) 
+        	createDomainsFromInstances(file,instances);
+        
+        return xsdOntology;
+        
 
     }
+
+	/**
+	 * Parses instances into ontology domains
+	 * @param parser 
+	 * @param instances
+	 */
+	private void createDomainsFromInstances(File schema, File instances) {
+		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(true);
+
+		HashMap<String,ArrayList<String>> provMap = new HashMap<String,ArrayList<String>>();
+		try {
+			SchemaFactory schemaFactory = 
+				    SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+			factory.setSchema(schemaFactory.newSchema(
+				    new Source[] {new StreamSource(schema)}));
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			builder.setErrorHandler(new DraconianErrorHandler());
+			Document document = builder.parse(instances);
+			getNodesRecursive("",document.getFirstChild(),provMap);
+			//Create domains
+			for (Term t : xsdOntology.getTerms(true))
+			{
+				if (provMap.containsKey(t.getProvenance()))
+				{
+					Domain d = new Domain(t.getName() + "Dom");
+					HashSet<String> instanceSet = new HashSet<String>(provMap.get(t.getProvenance()));
+					for(String i : instanceSet)
+						d.addEntry(new DomainEntry(d,i));
+					t.setDomain(d);
+				}
+				else
+				{
+					System.err.println("No instances found in provMap for " + t.getProvenance());
+				}
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		
+	}
+
+	private void getNodesRecursive(String prov ,Node node,
+			HashMap<String,ArrayList<String>> provMap) {
+		
+		String newProv = prov + (prov.length()==0?"":".") + node.getNodeName();
+		for (int i=0;i<node.getChildNodes().getLength();i++)
+		{
+			Node child = node.getChildNodes().item(i);
+			switch (child.getNodeType())
+			{
+			case Node.TEXT_NODE:
+				ArrayList<String> instanceList = 
+				(provMap.containsKey(newProv)?provMap.get(newProv):new ArrayList<String>());
+				instanceList.add(child.getNodeValue());
+				provMap.put(newProv,instanceList);
+				break;
+			case Node.ATTRIBUTE_NODE:
+				getNodesRecursive(newProv,child,provMap);
+				break;
+			case Node.ELEMENT_NODE:
+				getNodesRecursive(newProv,child,provMap);
+				break;
+				
+			}	
+		}
+	
+	}
+
+	/**
+	 * Translate parsed schema to ontology:
+	 * 1. Make an OntologyClass object for each simple type and complex type
+	 * 2. Connect between each complex type's OntologyClass and it's base type's OntologyClass
+	 * 3. Make term tree from elements by:
+	 * 		1. recursively adding complex type elements as subterms
+	 * 		2. replacing extension markers with terms from the referenced type
+	 * @param result parsed XSD
+	 */
+	private void createOntology(XSSchemaSet result) {
+		
+		
+		//Make OntologyClass object for each simple type
+		Iterator<XSSimpleType> it1 = result.iterateSimpleTypes();
+		OntologyClass ontologyClass;
+		while (it1.hasNext())
+		{
+			XSSimpleType newType = it1.next();
+			xsdOntology.addClass(createOntologyClass(xsdOntology,newType));
+		}
+		
+		//Add ontology class for each complex type
+		HashMap<OntologyClass,ArrayList<OntologyClass>> relationships = new HashMap<OntologyClass,ArrayList<OntologyClass>>();
+		Iterator<XSComplexType> it2 = result.iterateComplexTypes();
+		while (it2.hasNext())
+		{ 
+			
+			XSComplexType newType = it2.next();
+			//Make ontology class
+			ontologyClass = createOntologyClass(xsdOntology,newType);
+			//Record parent child relationships to later create them in classes
+			ArrayList<OntologyClass> superClasses;
+			XSType baseType = newType.getBaseType();
+			if (!baseType.equals(newType)) //if no base type, it will reference itself
+			{
+				if (relationships.keySet().contains(ontologyClass))
+				{
+					superClasses = relationships.get(ontologyClass);
+				}
+				else
+				{
+					superClasses = new ArrayList<OntologyClass>();
+				}
+				superClasses.add(createOntologyClass(xsdOntology,baseType));
+				relationships.put(ontologyClass, superClasses);
+			}
+			xsdOntology.addClass(ontologyClass);
+		}
+		
+		it2 = result.iterateComplexTypes();
+		while (it2.hasNext())
+		{ 
+			
+			XSComplexType newType = it2.next();
+			//make Term and collect, Will be used to create terms in complex elements using this complex type
+			Term classT;
+			try {
+				classT = makeTermFromComplexType(null, newType);
+				this.ctTerms.put(newType.getName(), classT);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		//Build ontology class tree
+		for (OntologyClass child : relationships.keySet())
+		{
+			for (OntologyClass superClass : relationships.get(child))
+				child.setSuperClass(superClass);
+		}
+		
+		/*3. Make term tree from elements by:
+		 * 		1. recursively adding complex type elements as subterms
+		 * 		2. replacing extension markers with terms from the referenced type
+		 * */
+		//Make all terms
+		for (XSSchema s : result.getSchemas())
+		{
+			Map<String, XSElementDecl> eMap = s.getElementDecls();
+			for (XSElementDecl e : eMap.values())
+			{
+				Term t = makeTermFromElement(null,e);
+				xsdOntology.addTerm(t);
+			}
+		}
+	}
 
 	/**
 	 * @param xsdOntology

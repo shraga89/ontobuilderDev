@@ -180,4 +180,9 @@ public class WSDLImporter implements Importer
             throw new ImportException("WSDL File Import Failed");
         }
     }
+
+	@Override
+	public Ontology importFile(File schemaFile, File instanceFile)
+			throws ImportException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("WSDL Importer doesn't support instances");	}
 }

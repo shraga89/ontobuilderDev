@@ -128,4 +128,9 @@ public class XSDImporter implements Importer
         }
         return complexTerm;
     }
+
+	@Override
+	public Ontology importFile(File schemaFile, File instanceFile)
+			throws ImportException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("XSD Importer doesn't support instances");	}
 }

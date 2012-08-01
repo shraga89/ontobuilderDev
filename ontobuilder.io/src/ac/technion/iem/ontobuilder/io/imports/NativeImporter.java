@@ -32,4 +32,10 @@ public class NativeImporter implements Importer {
 		return res;
 	}
 
+	@Override
+	public Ontology importFile(File schemaFile, File instanceFile)
+			throws ImportException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("Native Importer doesn't support instances");
+	}
+
 }

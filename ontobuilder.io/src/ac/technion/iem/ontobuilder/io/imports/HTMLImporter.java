@@ -32,4 +32,10 @@ public class HTMLImporter implements Importer
         }
 
     }
+
+	@Override
+	public Ontology importFile(File schemaFile, File instanceFile)
+			throws ImportException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("HTML Importer doesn't support instances");
+	}
 }
