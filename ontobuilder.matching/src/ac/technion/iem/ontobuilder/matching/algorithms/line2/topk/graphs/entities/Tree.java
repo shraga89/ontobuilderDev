@@ -1,8 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Vector;
+import java.util.Set;
 
 /**
  * <p>
@@ -74,15 +75,15 @@ public class Tree
     {
         // new version add by Haggai 2/11/03
         // root = new TreeNode(g); old version
-        Iterator<Edge> it = g.getEdgesSet().getMembers().iterator();
-        Vector<Edge> zeroWeightEdges = new Vector<Edge>();
+        Iterator<Edge> it = g.getEdgesSet().iterator();
+        Set<Edge> zeroWeightEdges = new HashSet<Edge>();
         while (it.hasNext()) // O(E)
         {
             Edge edge = it.next();
             if (edge.getEdgeWeight() == 0)
                 zeroWeightEdges.add(edge);
         }
-        EdgesSet initialSe = new EdgesSet(zeroWeightEdges, g.getEdgesSet().getVc());
+        Set<Edge> initialSe = new HashSet<Edge>(zeroWeightEdges);
         root = new TreeNode(g, initialSe);
         try
         {

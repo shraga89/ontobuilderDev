@@ -26,7 +26,7 @@ public class EdgeArray
         this.g = g;
         this.initVal = initVal;
         edges = new HashMap<Edge, Object>(g.getVSize());
-        Edge[] edgesArray = (Edge[]) g.getEdgesSet().getMembers().toArray();
+        Edge[] edgesArray = (Edge[]) g.getEdgesSet().toArray();
         for (int i = 0; i < edgesArray.length; i++) // O(V)
         {
             edges.put(edgesArray[i], initVal);
@@ -42,7 +42,7 @@ public class EdgeArray
     {
         this.g = g;
         edges = new HashMap<Edge, Object>(g.getVSize());
-        Edge[] edgesArray = (Edge[]) g.getEdgesSet().getMembers().toArray(new Edge[0]);
+        Edge[] edgesArray = (Edge[]) g.getEdgesSet().toArray(new Edge[0]);
         for (int i = 0; i < edgesArray.length; i++) // O(V)
         {
             edges.put(edgesArray[i], new Double(((Edge) edgesArray[i]).getEdgeWeight()));

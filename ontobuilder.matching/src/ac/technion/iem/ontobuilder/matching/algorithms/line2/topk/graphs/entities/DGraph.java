@@ -1,6 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * <p>
@@ -20,11 +22,11 @@ public class DGraph extends BipartiteGraph
     private static final long serialVersionUID = -1884529504194465221L;
 
     /** E1 edges group */
-    private EdgesSet e1;
+    private Set<Edge> e1;
     /** E2 edges group */
-    private EdgesSet e2;
+    private Set<Edge> e2;
     /** the best matching of the bipartite graph from where the Dgraph was created */
-    private EdgesSet matching;
+    private Set<Edge> matching;
 
     /**
      * Constructs a DGraph
@@ -32,16 +34,18 @@ public class DGraph extends BipartiteGraph
      * @param bg - associated {@link BipartiteGraph}
      * @param m - the best match in that bipartite graph
      */
-    public DGraph(BipartiteGraph bg, EdgesSet m)
+    public DGraph(BipartiteGraph bg, Set<Edge> m)
     {// O(E+V^2)
-        super(new EdgesSet(bg.getVSize()), bg.getRightVertexesSet(), bg.getLeftVertexesSet());
-        e1 = new EdgesSet(bg.getVSize());
-        e2 = new EdgesSet(bg.getVSize());
+        super(new HashSet<Edge>(), bg.getRightVertexesSet(), bg.getLeftVertexesSet());
+        e1 = new HashSet<Edge>();
+        e2 = new HashSet<Edge>();
         matching = m;
         setEdgesSet(bg.getEdgesSet());
         bulidE1();
         bulidE2();
-        setEdgesSet(EdgesSet.union(e1, e2));
+        Set<Edge> union = new HashSet<Edge>(e1);
+        union.addAll(e2);
+        setEdgesSet(union);
         buildAdjMatrix();
     }
 
@@ -52,9 +56,9 @@ public class DGraph extends BipartiteGraph
     {
         try
         {
-            e1.nullify();
-            e2.nullify();
-            matching.nullify();
+            e1.clear();
+            e2.clear();
+            matching.clear();
             super.nullify();
         }
         catch (NullPointerException e)
@@ -67,12 +71,12 @@ public class DGraph extends BipartiteGraph
      */
     private void bulidE1()
     {
-        Iterator<Edge> itM = matching.getMembers().iterator();
+        Iterator<Edge> itM = matching.iterator();
         while (itM.hasNext())
         {// O(V)
             Edge eTmp = (Edge) itM.next();
             eTmp.setDirected(true);
-            e1.addMember(eTmp);
+            e1.add(eTmp);
         }
     }
 
@@ -81,15 +85,16 @@ public class DGraph extends BipartiteGraph
      */
     private void bulidE2()
     {
-        EdgesSet eTmp = EdgesSet.minus(edgesSet, e1);
-        Iterator<Edge> it = eTmp.getMembers().iterator();
+    	Set<Edge> eTmp = new HashSet<Edge>(edgesSet);
+    	eTmp.removeAll(e1);
+        Iterator<Edge> it = eTmp.iterator();
         while (it.hasNext())
         {// O(E)
             Edge toAdd = (Edge) it.next();
             toAdd.turnOverEdgeDirection();
             toAdd.turnOverWeight();
             toAdd.setDirected(true);
-            e2.addMember(toAdd);
+            e2.add(toAdd);
         }
     }
 
@@ -98,7 +103,7 @@ public class DGraph extends BipartiteGraph
      * 
      * @return E1 an {@link EdgesSet}
      */
-    public EdgesSet getE1()
+    public Set<Edge> getE1()
     {
         return e1;
     }
@@ -108,7 +113,7 @@ public class DGraph extends BipartiteGraph
      * 
      * @return E2, an {@link EdgesSet}
      */
-    public EdgesSet getE2()
+    public Set<Edge> getE2()
     {
         return e2;
     }
@@ -120,9 +125,9 @@ public class DGraph extends BipartiteGraph
      */
     public String toString()
     {
-        String eg1 = e1.printEdgesSet();
-        String eg2 = e2.printEdgesSet();
-        String m = matching.printEdgesSet();
+        String eg1 = e1.toString();
+        String eg2 = e2.toString();
+        String m = matching.toString();
         int vc = getVSize();
         return "Dgraph info:\n" + " E1 = " + eg1 + "\n E2 = " + eg2 + " \n Matching = " + m +
             "\n Vcount = " + vc + "";
@@ -133,7 +138,7 @@ public class DGraph extends BipartiteGraph
      * 
      * @return best matching in the associated bipartite graph
      */
-    public EdgesSet getBestMatching()
+    public Set<Edge> getBestMatching()
     {
         return matching;
     }

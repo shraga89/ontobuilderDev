@@ -1,10 +1,13 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Tree;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.TreeNode;
 
@@ -52,9 +55,9 @@ public class KBest_Algorithm implements TopKAlgorithm
     /**
      * Run the algorithm. Each invocation returns the next best matching
      * 
-     * @return an {@link EdgesSet}
+     * @return an list of edges
      */
-    public EdgesSet runAlgorithm() throws Exception
+    public Set<Edge> runAlgorithm() throws Exception
     {
         try
         {
@@ -89,7 +92,7 @@ public class KBest_Algorithm implements TopKAlgorithm
      * 
      * @return an {@link EdgesSet}
      */
-    public EdgesSet getNextMatching(boolean openFronter) throws Exception // O(V^4)
+    public Set<Edge> getNextMatching(boolean openFronter) throws Exception // O(V^4)
     {
         try
         {
@@ -97,26 +100,28 @@ public class KBest_Algorithm implements TopKAlgorithm
             {
                 // new - 7/4/05 - if no mapping possible return the empty mapping
                 if (tr.getLeaves().isEmpty())
-                    return new EdgesSet(0);
+                    return new HashSet<Edge>(0);
                 // throw new Exception("Top K Tree empty");
                 //
                 maxLeaf = tr.removeMaxLeaf();// removes the max Leaf of the tree from the leafs list
                                              // O(1)
-                EdgesSet diff = EdgesSet.minus(maxLeaf.getMatching(), maxLeaf.getSi()); // D(w)<-M(w)\Si(w)
-                                                                                        // O(E)
+                List<Edge> diff = new ArrayList<Edge>(maxLeaf.getMatching());
+                Set<Edge> minus = new HashSet<Edge>(maxLeaf.getMatching());
+                minus.removeAll(maxLeaf.getSi()); // D(w)<-M(w)\Si(w)
+
                 int t = diff.size(); // O(1)
                 for (int j = 0; j < t; j++)
                 {// maxLeaf sons developing
                     TreeNode tmpNode = new TreeNode(graph);// O(V^2)
-                    tmpNode.setSet(maxLeaf.getSe(), (Edge) diff.getMember(j)); // Se(wj) = Se(w)U{ej}
+                    tmpNode.setSet(maxLeaf.getSe(), (Edge) diff.get(j)); // Se(wj) = Se(w)U{ej}
                                                                               // O(E)
                     tmpNode.setSi(maxLeaf.getSi());// O(1)
                     for (int l = 0; l < j; l++)
                     { // Si(wj) = Si(w)UU{el} l = 1,...,j-1 O(j-1)
-                        Vector<Edge> tmp = new Vector<Edge>();
-                        tmp.add(diff.getMember(l));
-                        tmpNode.setSi(EdgesSet.union(new EdgesSet(tmpNode.getSi().getMembers(),
-                            graph.getVSize()), new EdgesSet(tmp, graph.getVSize())));// O(E)
+                        List<Edge> tmp = new LinkedList<Edge>();
+                        tmp.add(diff.get(l));
+                        
+                        tmpNode.getSi().addAll(tmp);// O(E)
                     }
                     tmpNode.compute1to1Matching(); // O(V^3)
                     tr.addLeaf(tmpNode); // insertion sort O(leafs)
@@ -129,7 +134,7 @@ public class KBest_Algorithm implements TopKAlgorithm
             // added by Haggai 4/1/05
             //
             // new version 10/1/04
-            EdgesSet match = maxLeaf.getMatching();
+            Set<Edge> match = maxLeaf.getMatching();
             maxLeaf.nullify(false);
             maxLeaf = null;
             // diff = null;
@@ -149,10 +154,10 @@ public class KBest_Algorithm implements TopKAlgorithm
      * Get the local second best matching
      * @return an {@link EdgesSet}
      */
-    public EdgesSet getLocalSecondBestMatching()
+    public Set<Edge> getLocalSecondBestMatching()
     {
         if (tr.getLeaves().size() < 2)
-            return new EdgesSet(0);
+            return new HashSet<Edge>();
         return secondBestLeaf.getMatching();
     }
 
@@ -161,29 +166,28 @@ public class KBest_Algorithm implements TopKAlgorithm
      * @param nonUniformVersion the non uniform version (1 or 2)
      * @return a list of {@link EdgesSet}
      */
-    public Vector<EdgesSet> getNextHeuristicMatchings(byte nonUniformVersion) throws Exception
+    public List<Set<Edge>> getNextHeuristicMatchings(byte nonUniformVersion) throws Exception
     {
-        Vector<EdgesSet> matchings = new Vector<EdgesSet>();
+        List<Set<Edge>> matchings = new ArrayList<Set<Edge>>();
         // new - 7/4/05 - if no mapping possible return the empty mapping
         if (tr.getLeaves().isEmpty())
             return matchings;
         //
         maxLeaf = tr.getMaxLeaf();
-        EdgesSet diff = EdgesSet.minus(maxLeaf.getMatching(), maxLeaf.getSi()); // D(w)<-M(w)\Si(w)
-                                                                                // O(E)
+        List<Edge> diff = new ArrayList<Edge>(maxLeaf.getMatching());
+        diff.removeAll(maxLeaf.getSi());// D(w)<-M(w)\Si(w)
+
         int t = diff.size(); // O(1)
         for (int j = 0; j < t; j++)
         { // maxLeaf sons developing
             TreeNode tmpNode = new TreeNode(graph); // O(V^2)
-            tmpNode.setSet(maxLeaf.getSe(), (Edge) diff.getMember(j)); // Se(wj) = Se(w)U{ej} O(E)
+            tmpNode.setSet(maxLeaf.getSe(), (Edge) diff.get(j)); // Se(wj) = Se(w)U{ej} O(E)
             tmpNode.setSi(maxLeaf.getSi()); // O(1)
             for (int l = 0; l < j; l++)
             { // Si(wj) = Si(w)UU{el} l = 1,...,j-1 O(j-1)
-                Vector<Edge> tmp = new Vector<Edge>();
-                tmp.add(diff.getMember(l));
-                tmpNode.setSi(EdgesSet.union(
-                    new EdgesSet(tmpNode.getSi().getMembers(), graph.getVSize()), new EdgesSet(tmp,
-                        graph.getVSize()))); // O(E)
+                List<Edge> tmp = new LinkedList<Edge>();
+                tmp.add(diff.get(l));
+                tmpNode.getSi().addAll(tmp); // O(E)
             }
             tmpNode.computeNto1Matching(nonUniformVersion); // O(V^2) N to 1 Matching
             matchings.add(tmpNode.getMatching());

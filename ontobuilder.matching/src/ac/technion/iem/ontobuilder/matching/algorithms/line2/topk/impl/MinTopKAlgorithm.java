@@ -1,13 +1,16 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Path;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.GraphUtilities;
@@ -28,14 +31,14 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
 
     private int usedEdgeIndex = 0;
 
-    private EdgesSet out = null;// 2.3
+    private Set<Edge> out = null;// 2.3
 
     private Edge t, e;
     private Graph g;
     private int state = 1;
-    private EdgesSet es;
-    private EdgesSet toReturn = null;
-    private EdgesSet temp;
+    private List<Edge> es;
+    private Set<Edge> toReturn = null;
+    private Set<Edge> temp;
     private boolean treeBuilt = false;
     private TreeNode tree = null;
     private LinkedList<Path> paths = new LinkedList<Path>();
@@ -47,7 +50,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * 
      * @return an {@link EdgesSet}, currently <code>null</code> always
      */
-    public EdgesSet getLocalSecondBestMatching()
+    public Set<Edge> getLocalSecondBestMatching()
     {
         return null;
     }
@@ -58,7 +61,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * @return a list of {@link EdgesSet}, currently <code>null</code> always
      * @throws Exception
      */
-    public Vector<EdgesSet> getNextHeuristicMatchings() throws Exception
+    public List<Set<Edge>> getNextHeuristicMatchings() throws Exception
     {
         return null;
     }
@@ -72,9 +75,9 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     public MinTopKAlgorithm(BipartiteGraph g)
     {
         graph = g;
-        edges = new LinkedList<Edge>(graph.getEdgesSet().getMembers());
+        edges = new LinkedList<Edge>(graph.getEdgesSet());
         Collections.sort(edges);// 1.
-        out = new EdgesSet(graph.getVSize());// 2.3
+        out = new HashSet<Edge>();// 2.3
     }
 
     /**
@@ -82,7 +85,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * 
      * @return an {@link EdgesSet}
      */
-    public EdgesSet runAlgorithm() throws Exception
+    public Set<Edge> runAlgorithm() throws Exception
     {
         try
         {
@@ -114,7 +117,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * 
      * @return {@link EdgesSet} with the next best matching
      */
-    public EdgesSet getNextMatching() throws Exception
+    public Set<Edge> getNextMatching() throws Exception
     {
         try
         {
@@ -151,7 +154,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
                 else
                 {
                     // debug
-                    System.out.print(toReturn.printEdgesSet());
+                    System.out.print(toReturn.toString());
                     //
                     return toReturn;
                 }
@@ -174,11 +177,11 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
             return 0;
         g = GraphUtilities.removeLowWeightEdges(graph, t.getEdgeWeight());// 2.2
         if (out == null)
-            out = new EdgesSet(g.getVSize());// 2.3
+            out = new HashSet<Edge>();// 2.3
         usedEdgeIndex = 0;// for state 2
-        es = GraphUtilities.getEdgesWithWeight(g, t.getEdgeWeight());// 2.4/
+        es = new ArrayList<Edge>(GraphUtilities.getEdgesWithWeight(g, t.getEdgeWeight()));// 2.4/
         // debug
-        System.out.println("es" + (i++) + ": " + es.printEdgesSet());
+        System.out.println("es" + (i++) + ": " + es.toString());
         //
         treeBuilt = false;
         if (es.isEmpty())
@@ -190,10 +193,13 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     {
         // System.out.println(">>>State (2)");
         state = 2;
-        if (usedEdgeIndex == es.getMembers().size())
+        if (usedEdgeIndex == es.size())
             return true;
-        e = (Edge) es.getMember(usedEdgeIndex++);
-        temp = EdgesSet.minus(g.getEdgesSet(), EdgesSet.union(out, e));
+        e = (Edge) es.get(usedEdgeIndex++);
+        Set<Edge> union = new HashSet<Edge>(out);
+        union.add(e);
+        temp = new HashSet<Edge>(g.getEdgesSet());
+        temp.removeAll(union);
         return false;
     }
 
@@ -204,7 +210,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
         toReturn = findNextCombination(g, temp, e);// 2.4.1+2.4.2
         if (toReturn == null || toReturn.isEmpty())
             return true;
-        out.addMember(e);// 2.4.3
+        out.add(e);// 2.4.3
         return false;
     }
 
@@ -216,7 +222,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * @param e the {@link Edge}
      * @return a new {@link EdgesSet}
      */
-    public EdgesSet findNextCombination(Graph g, EdgesSet es, Edge e)
+    public Set<Edge> findNextCombination(Graph g, Set<Edge> es, Edge e)
     {
         if (treeBuilt)
         {
@@ -229,7 +235,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
         {
             paths = new LinkedList<Path>();
             tree = buildTreeRec(es, null, new TreeNode(e));
-            constructPaths(tree, new Path(0, es.getVc()));
+            constructPaths(tree, new Path(0, es.size()));
             treeBuilt = true;
             if (!paths.isEmpty())
                 return paths.removeFirst().getPathEdges();
@@ -268,10 +274,10 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * @param current the current {@link TreeNode}
      * @return a the {@link TreeNode}
      */
-    private TreeNode buildTreeRec(EdgesSet es, TreeNode parent, TreeNode current)
+    private TreeNode buildTreeRec(Set<Edge> es, TreeNode parent, TreeNode current)
     {
-        EdgesSet tempES = (EdgesSet) es.clone();
-        Iterator<Edge> it = tempES.getMembers().iterator();
+    	Set<Edge> tempES = new HashSet<Edge>(es);
+        Iterator<Edge> it = tempES.iterator();
         Vector<Edge> toRemove = new Vector<Edge>();
         while (it.hasNext())
         {
@@ -288,20 +294,22 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
             tempES.remove(it.next());
         }
         current.setParent(parent);
-        it = tempES.getMembers().iterator();
+        it = tempES.iterator();
         while (it.hasNext())
         {
             current.addChild(new TreeNode(((Edge) it.next())));
         }
-        EdgesSet toExclude = new EdgesSet(tempES.getVc());
+        Set<Edge> toExclude = new HashSet<Edge>();
         if (current.hasChilds())
         {
             Iterator<TreeNode> it2 = current.getChilds().iterator();
             while (it2.hasNext())
             {
                 TreeNode node = it2.next();
-                buildTreeRec(EdgesSet.minus(tempES, toExclude), current, node);
-                toExclude.addMember(node.getEdge());
+                Set<Edge> tmp = new HashSet<Edge>(tempES);
+                tmp.removeAll(toExclude);
+                buildTreeRec(tmp, current, node);
+                toExclude.add(node.getEdge());
             }
         }
         return current;

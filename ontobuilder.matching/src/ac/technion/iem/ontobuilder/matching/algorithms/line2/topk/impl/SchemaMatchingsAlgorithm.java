@@ -1,6 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
+import java.util.Set;
+
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 
 
 /**
@@ -19,7 +21,7 @@ public interface SchemaMatchingsAlgorithm
 {
     public void nullify();
 
-    public EdgesSet runAlgorithm() throws Exception;
+    public Set<Edge> runAlgorithm() throws Exception;
 
     public String getAlgorithmName();
 }

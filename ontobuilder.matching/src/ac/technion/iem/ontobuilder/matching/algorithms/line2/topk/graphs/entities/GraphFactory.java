@@ -1,6 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
@@ -36,7 +38,7 @@ public abstract class GraphFactory
         int vertexCount, boolean dirGraph)
     {
         VertexesSet vg = new VertexesSet();
-        EdgesSet eg = new EdgesSet(vertexCount);
+        Set<Edge> eg = new HashSet<Edge>();
         for (int i = 0; i < vertexCount; i++)
         {// O(V)
             vg.addMember(new Vertex(i, vertexNameIDs[i], vertexNames[i]));
@@ -45,7 +47,7 @@ public abstract class GraphFactory
             // O(V^2)
             for (int j = 0; j < vertexCount; j++)
                 if (adjMatrix[i][j] != 0 && adjMatrix[i][j] != Graph.INF)
-                    eg.addMember(new Edge(i, j, adjMatrix[i][j], dirGraph));
+                    eg.add(new Edge(i, j, adjMatrix[i][j], dirGraph));
         return new Graph(eg, vg);
     }
 
@@ -97,7 +99,7 @@ public abstract class GraphFactory
                     rightVertexIDs.add(rightVertexCount - numOfDummyVertexesToAdd + i, BipartiteGraph.ID_DUMMY_VERTEX);
             }
         }
-        EdgesSet eg = new EdgesSet(rightVertexCount + leftVertexCount);
+        Set<Edge> eg = new HashSet<Edge>();
         for (int i = 0; i < leftVertexCount; i++)
         {
             if (!(leftVertexIDs.get(i) == BipartiteGraph.ID_DUMMY_VERTEX ))
@@ -120,7 +122,7 @@ public abstract class GraphFactory
             // O(V^2)
             for (int j = 0; j < (rightVertexCount + leftVertexCount); j++)
                 if (adjMatrix[i][j] != Graph.INF && i != j)
-                    eg.addMember(new Edge(i, j, adjMatrix[i][j], dirGraph));
+                    eg.add(new Edge(i, j, adjMatrix[i][j], dirGraph));
         return new BipartiteGraph(eg, rvg, lvg);
     }
 
@@ -171,7 +173,7 @@ public abstract class GraphFactory
         MaxWeightBipartiteMatchingAlgorithm algo = new MaxWeightBipartiteMatchingAlgorithm(bg, c,
             pot);
         /****** new version 14/11/03 ******/
-        EdgesSet bestMatching = algo.runAlgorithm();
+        Set<Edge> bestMatching = algo.runAlgorithm();
         return new DGraph(bg, bestMatching);
     }
 
@@ -182,7 +184,7 @@ public abstract class GraphFactory
      * @param bestMatching - best matching in the graph
      * @return built Dgraph
      */
-    public final static DGraph buildDgraph(BipartiteGraph bg, EdgesSet bestMatching)
+    public final static DGraph buildDgraph(BipartiteGraph bg, Set<Edge> bestMatching)
     {
         return new DGraph(bg, bestMatching);
     }

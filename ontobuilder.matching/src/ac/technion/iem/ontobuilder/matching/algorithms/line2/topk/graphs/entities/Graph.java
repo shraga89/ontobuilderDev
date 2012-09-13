@@ -1,7 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * <p>
@@ -24,7 +26,7 @@ public class Graph implements Serializable
     /** used to sign that two vertexes in the graph are not connected */
     public static final double INF = Double.POSITIVE_INFINITY;
     /** edges of the graph */
-    protected EdgesSet edgesSet;
+    protected Set<Edge> edgesSet;
     /** Vertexes of the graph */
     protected VertexesSet vertexesSet = new VertexesSet();
     /** Adjacency matrix of the graph (hold also edges weights) */
@@ -43,7 +45,7 @@ public class Graph implements Serializable
      * @param e {@link EdgesSet} of the graph
      * @param v {@link VertexesSet} of the graph
      */
-    public Graph(EdgesSet e, VertexesSet v)
+    public Graph(Set<Edge> e, VertexesSet v)
     {
         edgesSet = e;
         vertexesSet = v;
@@ -76,7 +78,7 @@ public class Graph implements Serializable
     {
         try
         {
-            edgesSet.nullify();
+            edgesSet.clear();
             vertexesSet.nullify();
             adjMatrix = null;
         }
@@ -110,7 +112,7 @@ public class Graph implements Serializable
      */
     public void addEdgeToGraph(Edge toAdd)
     {
-        edgesSet.addMember(toAdd);
+        edgesSet.add(toAdd);
         adjMatrix[toAdd.getSourceVertexID()][toAdd.getTargetVertexID()] = toAdd.getEdgeWeight();
     }
 
@@ -137,7 +139,7 @@ public class Graph implements Serializable
      * 
      * @param e edges group to set
      */
-    public void setEdgesSet(EdgesSet e)
+    public void setEdgesSet(Set<Edge> e)
     {
         edgesSet = e;
     }
@@ -147,7 +149,7 @@ public class Graph implements Serializable
      * 
      * @return edges group of the graph
      */
-    public EdgesSet getEdgesSet()
+    public Set<Edge> getEdgesSet()
     {
         return edgesSet;
     }
@@ -185,7 +187,7 @@ public class Graph implements Serializable
                     adjMatrix[i][j] = 0;
                 else
                     adjMatrix[i][j] = INF;
-        Iterator<Edge> it = edgesSet.getMembers().iterator();
+        Iterator<Edge> it = edgesSet.iterator();
         while (it.hasNext())
         {// O(E)
             Edge eTmp = (Edge) it.next();
@@ -211,16 +213,16 @@ public class Graph implements Serializable
      * @param e edge to search its adjacent edges on its vertexes
      * @return all adjacent edges
      */
-    public EdgesSet getAllAdjacentEdges(Edge e)
+    public Set<Edge> getAllAdjacentEdges(Edge e)
     {// O(V)
-        EdgesSet result = new EdgesSet(vertexesSet.size());
+    	Set<Edge> result = new HashSet<Edge>();
         for (int i = 0; i < vertexesSet.size(); i++)
         {// O(V)
             if (adjMatrix[e.getSourceVertexID()][i] != Graph.INF && i != e.getTargetVertexID())
-                result.addMember(new Edge(e.getSourceVertexID(), i,
+                result.add(new Edge(e.getSourceVertexID(), i,
                     adjMatrix[e.getSourceVertexID()][i], true));
             if (adjMatrix[i][e.getTargetVertexID()] != Graph.INF && i != e.getSourceVertexID())
-                result.addMember(new Edge(i, e.getTargetVertexID(), adjMatrix[i][e
+                result.add(new Edge(i, e.getTargetVertexID(), adjMatrix[i][e
                     .getTargetVertexID()], true));
         }
         return result;
@@ -262,7 +264,7 @@ public class Graph implements Serializable
      */
     public Iterator<Edge> getEdgesIterator()
     {
-        return edgesSet.getMembers().iterator();
+        return edgesSet.iterator();
     }
 
     /**
@@ -280,7 +282,7 @@ public class Graph implements Serializable
      */
     public Object clone()
     {
-        Graph clonedGraph = new Graph((EdgesSet) edgesSet.clone(),
+        Graph clonedGraph = new Graph(new HashSet<Edge>(edgesSet),
             (VertexesSet) vertexesSet.clone());
         clonedGraph.buildAdjMatrix();
         return clonedGraph;

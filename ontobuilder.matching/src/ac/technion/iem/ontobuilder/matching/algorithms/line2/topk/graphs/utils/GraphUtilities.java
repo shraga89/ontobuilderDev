@@ -1,9 +1,10 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
 
@@ -20,15 +21,15 @@ public final class GraphUtilities
      * @param v the {@link Vertex}
      * @return the {@link EdgesSet}
      */
-    public static EdgesSet getVertexOutEdges(Graph g, Vertex v) // O(E)
+    public static Set<Edge> getVertexOutEdges(Graph g, Vertex v) // O(E)
     {
-        EdgesSet vOutEdges = new EdgesSet(g.getEdgesSet().getVc());
+    	Set<Edge> vOutEdges = new HashSet<Edge>();
         Iterator<Edge> edgesIterator = g.getEdgesIterator();
         while (edgesIterator.hasNext())
         {
             Edge edge = (Edge) edgesIterator.next();
             if (edge.getSourceVertexID() == v.getVertexID())
-                vOutEdges.addMember(edge);
+                vOutEdges.add(edge);
         }
         return vOutEdges;
     }
@@ -43,14 +44,13 @@ public final class GraphUtilities
     public static Graph removeLowWeightEdges(Graph g, double w)
     {
         Graph g_ = (Graph) g.clone();
-        EdgesSet toRemove = new EdgesSet(g_.getVSize());
-        for (int i = 0; i < g_.getEdgesSet().getMembers().size(); i++)
+        Set<Edge> toRemove = new HashSet<Edge>();
+        for (Edge e : g_.getEdgesSet())
         {
-            Edge e = (Edge) g_.getEdgesSet().getMembers().get(i);
             if (e.getEdgeWeight() < w)
-                toRemove.addMember(e);
+                toRemove.add(e);
         }
-        g_.setEdgesSet(EdgesSet.minus(g_.getEdgesSet(), toRemove));
+        g_.getEdgesSet().removeAll(toRemove);
         return g_;
     }
 
@@ -61,14 +61,14 @@ public final class GraphUtilities
      * @param w the weight to compare to
      * @return the {@link EdgesSet}
      */
-    public static EdgesSet getEdgesWithWeight(Graph g, double w)
+    public static Set<Edge> getEdgesWithWeight(Graph g, double w)
     {
-        EdgesSet es = new EdgesSet(g.getVSize());
-        for (Iterator<Edge> it = g.getEdgesSet().getMembers().iterator(); it.hasNext();)
+    	Set<Edge> es = new HashSet<Edge>();
+        for (Iterator<Edge> it = g.getEdgesSet().iterator(); it.hasNext();)
         {
             Edge e = (Edge) it.next();
             if (e.getEdgeWeight() == w)
-                es.addMember(e.clone());
+                es.add(e.clone());
         }
         return es;
     }
@@ -80,15 +80,15 @@ public final class GraphUtilities
      * @param v the vertex
      * @return the {@link EdgesSet}
      */
-    public static EdgesSet getVertexAdjEdges(Graph g, Vertex v) // O(E)
+    public static Set<Edge> getVertexAdjEdges(Graph g, Vertex v) // O(E)
     {
-        EdgesSet vAdjEdges = new EdgesSet(g.getEdgesSet().getVc());
+    	Set<Edge> vAdjEdges = new HashSet<Edge>();
         Iterator<Edge> edgesIterator = g.getEdgesIterator();
         while (edgesIterator.hasNext())
         {
             Edge edge = (Edge) edgesIterator.next();
             if (edge.getSourceVertexID() == v.getVertexID())
-                vAdjEdges.addMember(edge);
+                vAdjEdges.add(edge);
         }
         return vAdjEdges;
     }

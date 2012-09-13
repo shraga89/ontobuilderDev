@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
@@ -14,7 +15,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKMRunningExcep
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.DGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.GraphFactory;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.GraphIsNotBipartiteException;
@@ -50,7 +50,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /** the associated bipartite graph for the match */
     private BipartiteGraph bg;
     /** the best match in the graph */
-    private EdgesSet bestMatching;
+    private Set<Edge> bestMatching;
     /** next match index */
     private int k = 0;
     /** holds the best matches */
@@ -118,7 +118,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
             adjMatrix = null;
             kba.nullify();
             bg.nullify();
-            bestMatching.nullify();
+            bestMatching.clear();
         }
         catch (NullPointerException e)
         {
@@ -260,10 +260,10 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param matching
      * @return the matched attributes pairs list
      */
-    private MatchedAttributePair[] preparePairs(EdgesSet matching)
+    private MatchedAttributePair[] preparePairs(Set<Edge> matching)
     {// O(E)
-        MatchedAttributePair[] mp = new MatchedAttributePair[matching.getMembers().size()];
-        Iterator<Edge> it = matching.getMembers().iterator();
+        MatchedAttributePair[] mp = new MatchedAttributePair[matching.size()];
+        Iterator<Edge> it = matching.iterator();
         for (int i = 0; it.hasNext(); i++)
         {
             Edge e = (Edge) it.next();
@@ -343,16 +343,16 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         throws TKMRunningException
     {
         Vector<AbstractMapping> mappings = new Vector<AbstractMapping>();
-        Vector<EdgesSet> matchings;
+        List<Set<Edge>> matchings;
         try
         {
             matchings = kba.getNextHeuristicMatchings(nonUniformVersion);
-            Iterator<EdgesSet> it = matchings.iterator();
+            Iterator<Set<Edge>> it = matchings.iterator();
             SchemaTranslator st;
             while (it.hasNext())
             {
                 st = new SchemaTranslator();
-                st.setSchemaPairs(preparePairs((EdgesSet) it.next()));
+                st.setSchemaPairs(preparePairs((Set<Edge>) it.next()));
                 mappings.add(st);
             }
             return mappings;
@@ -434,7 +434,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
             if (k == 0)
             {
                 dGraph = GraphFactory.buildDgraph((BipartiteGraph) bg.clone());
-                EdgesSet bestMatch = dGraph.getBestMatching();
+                Set<Edge> bestMatch = dGraph.getBestMatching();
                 MatchedAttributePair[] matchedPairs = preparePairs(bestMatch);
                 // bestMatches.add(0,new SchemaTranslator(matchedPairs));//old version
                 if (accumulate)
@@ -444,7 +444,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
                 dGraph = GraphFactory.buildDgraph((BipartiteGraph) bg.clone(), bestMatching);
             SecondBestMatchingAlgorithm_Algorithm2 sbma = new SecondBestMatchingAlgorithm_Algorithm2(
                 dGraph);
-            EdgesSet secondBestMatch = sbma.runAlgorithm();
+            Set<Edge> secondBestMatch = sbma.runAlgorithm();
             MatchedAttributePair[] matchedPairs = preparePairs(secondBestMatch);
             SchemaTranslator st = new SchemaTranslator(matchedPairs);
             k = 2;

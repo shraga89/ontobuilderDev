@@ -1,7 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * <p>
@@ -80,13 +82,13 @@ public class Path
      * 
      * @return the {@link EdgesSet} building the path
      */
-    public EdgesSet getPathEdges()
+    public Set<Edge> getPathEdges()
     {// O(E)
         Iterator<Edge> it = pathEdges.iterator();
-        EdgesSet toReturn = new EdgesSet(vertexesCount);
+        Set<Edge> toReturn = new HashSet<Edge>();
         while (it.hasNext())
         {
-            toReturn.addMember(it.next());
+            toReturn.add(it.next());
         }
         return toReturn;
     }

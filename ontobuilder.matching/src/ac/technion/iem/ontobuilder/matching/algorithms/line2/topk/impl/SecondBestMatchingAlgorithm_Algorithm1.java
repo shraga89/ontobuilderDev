@@ -1,11 +1,13 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 
@@ -35,7 +37,7 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
     /**
      * The best matching in the graph
      */
-    private EdgesSet bestMatching;
+    private Set<Edge> bestMatching;
 
     /**
      * Constructs a SecondBestMatchingAlgorithm_Algorithm1
@@ -43,7 +45,7 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
      * @param bg - {@link BipartiteGraph}
      * @param bm - an {@link EdgesSet}, the best matching in the bipartite graph
      */
-    public SecondBestMatchingAlgorithm_Algorithm1(BipartiteGraph bg, EdgesSet bm)
+    public SecondBestMatchingAlgorithm_Algorithm1(BipartiteGraph bg, Set<Edge> bm)
     {
         bGraph = bg;
         bestMatching = bm;
@@ -57,7 +59,7 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
         try
         {
             bGraph.nullify();
-            bestMatching.nullify();
+            bestMatching.clear();
         }
         catch (NullPointerException e)
         {
@@ -70,12 +72,12 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
      * 
      * @return an {@link EdgesSet} with the best matching
      */
-    public EdgesSet runAlgorithm()
+    public Set<Edge> runAlgorithm()
     {
-        Vector<EdgesSet> matches = new Vector<EdgesSet>();
+        Vector<Set<Edge>> matches = new Vector<Set<Edge>>();
         Vector<MaxWeightBipartiteMatchingAlgorithm> maxAlgorithms = new Vector<MaxWeightBipartiteMatchingAlgorithm>();
         MaxWeightBipartiteMatchingAlgorithm mwbma;
-        Iterator<Edge> it = bestMatching.getMembers().iterator();
+        Iterator<Edge> it = bestMatching.iterator();
         while (it.hasNext())
         {
             Edge eToRemove = it.next();
@@ -89,12 +91,12 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
             bGraph.addEdgeToGraph(eToRemove);
             maxAlgorithms.add(mwbma);
         }
-        Iterator<EdgesSet> it2 = matches.iterator();
-        EdgesSet secondBest = new EdgesSet(bestMatching.getVc());
+        Iterator<Set<Edge>> it2 = matches.iterator();
+        Set<Edge> secondBest = new HashSet<Edge>();
         while (it2.hasNext())
         {
-            EdgesSet candidate = it2.next();
-            secondBest = secondBest.getEdgesSetWeight() >= candidate.getEdgesSetWeight() ? secondBest : candidate;
+        	Set<Edge> candidate = it2.next();
+            secondBest = EdgeUtil.getEdgesSetWeight(secondBest) >= EdgeUtil.getEdgesSetWeight(candidate) ? secondBest : candidate;
         }
         Iterator<MaxWeightBipartiteMatchingAlgorithm> it3 = maxAlgorithms.iterator();
         while (it3.hasNext()) // clean up...

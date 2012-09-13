@@ -3,7 +3,11 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entiti
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
@@ -32,15 +36,15 @@ public class TreeNode implements Serializable
     /** reference to the graph of the algorithm */
     private BipartiteGraph graph;
     /** holds the matching associated with these node */
-    private EdgesSet matching;
+    private Set<Edge> matching;
     /** The si */
-    private EdgesSet si;
+    private Set<Edge> si;
     /** The se */
-    private EdgesSet se;
+    private Set<Edge> se;
     /** The weight of the assosiated matching */
     private double matchWeight = -1;
     /** reference to nodes sons */
-    private Vector<TreeNode> mySons = new Vector<TreeNode>();
+    private List<TreeNode> mySons = new ArrayList<TreeNode>();
     /** node id in the tree */
     private int nodeid;
 
@@ -70,7 +74,7 @@ public class TreeNode implements Serializable
      * @param g the {@link BipartiteGraph}
      * @param initialSe an {@link EdgesSet}
      */
-    public TreeNode(BipartiteGraph g, EdgesSet initialSe)
+    public TreeNode(BipartiteGraph g, Set<Edge> initialSe)
     {
         graph = g;
         se = initialSe;// changed here
@@ -90,9 +94,9 @@ public class TreeNode implements Serializable
             if (deeping)
             {// added here deeping flag...10/1/04
                 graph.nullify();
-                matching.nullify();
-                si.nullify();
-                se.nullify();
+                matching.clear();
+                si.clear();
+                se.clear();
                 Iterator<TreeNode> it = mySons.iterator();
                 while (it.hasNext())
                     it.next().nullify(deeping);
@@ -113,18 +117,18 @@ public class TreeNode implements Serializable
      * @param eg the si of the nodes father, an {@link EdgesSet}
      * @param e the ej, an {@link Edge}
      */
-    public void setSet(EdgesSet eg, Edge e) // O(E)
+    public void setSet(Set<Edge> eg, Edge e) // O(E)
     {
         Vector<Edge> tmp = new Vector<Edge>();
         tmp.add(e);
-        se = EdgesSet.union(new EdgesSet(eg.getMembers(), graph.getVSize()), new EdgesSet(tmp,
-            graph.getVSize()));
+        se = new HashSet<Edge>(eg);
+        se.addAll(tmp);
     }
 
     /**
      * @param eg {@link EdgesSet}
      */
-    public void setSi(EdgesSet eg) // O(1)
+    public void setSi(Set<Edge> eg) // O(1)
     {
         si = eg;
     }
@@ -142,7 +146,7 @@ public class TreeNode implements Serializable
      */
     public void initSE()// O(1)
     {
-        se = new EdgesSet(graph.getVSize());
+        se = new HashSet<Edge>();
     }
 
     /**
@@ -150,13 +154,13 @@ public class TreeNode implements Serializable
      */
     public void initSI() // O(1)
     {
-        si = new EdgesSet(graph.getVSize());
+        si = new HashSet<Edge>();
     }
 
     /**
      * @return the match associated with the node, an {@link EdgesSet}
      */
-    public EdgesSet getMatching()
+    public Set<Edge> getMatching()
     {
         return matching;
     }
@@ -164,7 +168,7 @@ public class TreeNode implements Serializable
     /**
      * @return si, an {@link EdgesSet}
      */
-    public EdgesSet getSi()
+    public Set<Edge> getSi()
     {
         return si;
     }
@@ -172,7 +176,7 @@ public class TreeNode implements Serializable
     /**
      * @return se, an {@link EdgesSet}
      */
-    public EdgesSet getSe()
+    public Set<Edge> getSe()
     {
         return se;
     }
@@ -185,13 +189,13 @@ public class TreeNode implements Serializable
         fw.write(System.getProperty("line.separator") + "\n\nNode Details:\n*************");
         fw.write(System.getProperty("line.separator") + "Node id:" + nodeid);
         fw.write(System.getProperty("line.separator") + "Matching:");
-        fw.write(matching.printEdgesSet());
+        fw.write(matching.toString());
         fw.write(System.getProperty("line.separator") + "Matching weight:" +
-            matching.getEdgesSetWeight());
+        		EdgeUtil.getEdgesSetWeight(matching));
         fw.write(System.getProperty("line.separator") + "Se:");
-        fw.write(se.printEdgesSet());
+        fw.write(se.toString());
         fw.write(System.getProperty("line.separator") + "Si:");
-        fw.write(si.printEdgesSet());
+        fw.write(si.toString());
         if (mySons.size() == 0)
             fw.write(System.getProperty("line.separator") + "Node is a leaf");
         else
@@ -245,30 +249,31 @@ public class TreeNode implements Serializable
     {
         try
         {
-            EdgesSet eTmp = EdgesSet.minus(graph.getEdgesSet(), se);// E'<-E\Se O(E)
-            Iterator<Edge> it = si.getMembers().iterator();
+            
+        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdgesSet());
+        	eTmp.removeAll(se);// E'<-E\Se O(E)
+            Iterator<Edge> it = si.iterator();
             // will hold all edges to remove from the graph
-            EdgesSet adjacentEdges = new EdgesSet(graph.getVSize());
+            Set<Edge> adjacentEdges = new HashSet<Edge>();
             while (it.hasNext())
             { // O(E)
-                adjacentEdges = EdgesSet.union(adjacentEdges,
-                    graph.getAllAdjacentEdges((Edge) it.next()));
+                adjacentEdges.addAll(graph.getAllAdjacentEdges((Edge) it.next()));
             }
-            eTmp = EdgesSet.minus(eTmp, adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
+            eTmp.removeAll(adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
             /******** new version 14/11/03 ***********/
             BipartiteGraph bg = null;
             EdgeArray c = null;
             VertexArray pot = null;
             MaxWeightBipartiteMatchingAlgorithm aBest = null;
-            bg = new BipartiteGraph((EdgesSet) eTmp.clone(), graph.getRightVertexesSet(),
+            bg = new BipartiteGraph(new HashSet<Edge>(eTmp), graph.getRightVertexesSet(),
                 graph.getLeftVertexesSet());
             c = new EdgeArray(bg);
             pot = new VertexArray(bg, new Double(0));
             aBest = new MaxWeightBipartiteMatchingAlgorithm(bg, c, pot);
             /******** new version ***********/
             matching = aBest.runAlgorithm();// O(V^3)
-            matching = EdgesSet.union(matching, si); // M<-M U Si O(E)
-            matchWeight = matching.getEdgesSetWeight(); // sets the weight of this node
+            matching.addAll(si); // M<-M U Si O(E)
+            matchWeight = EdgeUtil.getEdgesSetWeight(matching); // sets the weight of this node
             /**** added 29/12/03 *****/
             aBest.nullify();// release algorithm resources
             /*************************/
@@ -298,39 +303,40 @@ public class TreeNode implements Serializable
     {
         try
         {
-            EdgesSet eTmp = EdgesSet.minus(graph.getEdgesSet(), se); // E'<-E\Se O(E)
-            Iterator<Edge> it = si.getMembers().iterator();
+        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdgesSet());
+        	eTmp.removeAll(se);
+            Iterator<Edge> it = si.iterator();
             // will hold all edges to remove from the graph
-            EdgesSet adjacentEdges = new EdgesSet(graph.getVSize());
+            Set<Edge> adjacentEdges = new HashSet<Edge>();
             if (nonUniformVersion == 1)
             {
                 while (it.hasNext())
                 { // O(E)
-                    adjacentEdges = EdgesSet.union(adjacentEdges,
-                        graph.getAllAdjacentEdges((Edge) it.next()));
+                    adjacentEdges.addAll(graph.getAllAdjacentEdges((Edge) it.next()));
                 }
-                eTmp = EdgesSet.minus(eTmp, adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
+                eTmp.removeAll(adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
             }
             BipartiteGraph bg = null;
-            bg = new BipartiteGraph((EdgesSet) eTmp.clone(), graph.getRightVertexesSet(),
+            bg = new BipartiteGraph(new HashSet<Edge>(eTmp), graph.getRightVertexesSet(),
                 graph.getLeftVertexesSet());
-            matching = new EdgesSet(bg.getVSize());
+            matching = new HashSet<Edge>();
             // N to 1 matching...
             VertexesSet leftVS = bg.getLeftVertexesSet();
             Iterator<Vertex> vit = leftVS.getMembers().iterator();
             while (vit.hasNext())
             {
                 Vertex v = (Vertex) vit.next();
-                Edge et = si.getEdgeThatStartsWith(v.getVertexID());
+                Edge et = EdgeUtil.getEdgeThatStartsWith(v.getVertexID(), si);
+                
                 if (et != null)
                 {
-                    matching.addMember(et);
+                    matching.add(et);
                 }
                 else
                 {
-                    Edge e = bg.getEdgesSet().getMaximalEdgeThatStartsWith(v.getVertexID());
+                    Edge e = EdgeUtil.getMaximalEdgeThatStartsWith(v.getVertexID(), bg.getEdgesSet());
                     if (e != null)
-                        matching.addMember(e);
+                        matching.add(e);
                 }
             }
 
@@ -378,7 +384,7 @@ public class TreeNode implements Serializable
     /**
      * @param matching an {@link EdgesSet}
      */
-    public void setMatching(EdgesSet matching)
+    public void setMatching(Set<Edge> matching)
     {
         this.matching = matching;
     }
@@ -402,7 +408,7 @@ public class TreeNode implements Serializable
     /**
      * @return the sons (a list of {@link TreeNode})
      */
-    public Vector<TreeNode> getMySons()
+    public List<TreeNode> getMySons()
     {
         return mySons;
     }
@@ -418,7 +424,7 @@ public class TreeNode implements Serializable
     /**
      * @param eg an {@link EdgesSet}
      */
-    public void setSet(EdgesSet eg)
+    public void setSet(Set<Edge> eg)
     {
         se = eg;
     }

@@ -1,8 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.Set;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 
 /**
  * <p>Title: TopKAlgorithm</p>
@@ -11,9 +12,9 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 public interface TopKAlgorithm extends SchemaMatchingsAlgorithm
 {
 
-    public EdgesSet getNextMatching(boolean openFronter) throws Exception;
+    public Set<Edge> getNextMatching(boolean openFronter) throws Exception;
 
-    public EdgesSet getLocalSecondBestMatching();
+    public Set<Edge> getLocalSecondBestMatching();
 
-    public Vector<EdgesSet> getNextHeuristicMatchings(byte nonUniformVersion) throws Exception;
+    public List<Set<Edge>> getNextHeuristicMatchings(byte nonUniformVersion) throws Exception;
 }

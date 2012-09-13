@@ -1,11 +1,13 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Stack;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgesSet;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
@@ -74,13 +76,13 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      * 
      * @return an {@link EdgesSet}
      */
-    public EdgesSet runAlgorithm()
+    public Set<Edge> runAlgorithm()
     {
-        EdgesSet result = new EdgesSet(g.getEdgesSet().getVc());
+    	Set<Edge> result = new HashSet<Edge>();
         // for all nodes(v,G) pot[v] = 0;
         // this will be done by giving pot:= VertexArray(g,new Double(0))
         if (g.getEdgesSet().isEmpty())
-            return new EdgesSet(g.getEdgesSet().getVc());
+            return result;
         // check that all edges are directed from A to B
         // this should be a precondition also
         VertexArray free = new VertexArray(g, new Boolean(true));
@@ -114,7 +116,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 Edge eMax = null;
                 double C_max = 0;
                 Iterator<Edge> vertexAdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a)
-                    .getMembers().iterator();
+                    .iterator();
                 while (vertexAdjEdgesIterator.hasNext())
                 {
                     Edge e = vertexAdjEdgesIterator.next();
@@ -152,14 +154,13 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         while (rightVertexesIterator.hasNext())
         {
             Vertex b = rightVertexesIterator.next();
-            Iterator<Edge> outEdgesIterator = GraphUtilities.getVertexOutEdges(g, b).getMembers()
-                .iterator();
+            Iterator<Edge> outEdgesIterator = GraphUtilities.getVertexOutEdges(g, b).iterator();
             while (outEdgesIterator.hasNext())
             {
-                result.addMember(outEdgesIterator.next());
+                result.add(outEdgesIterator.next());
             }
         }
-        result.turnOverEdges(false);
+        EdgeUtil.turnOverEdges(false,result);
         return result;
     }
 
@@ -188,8 +189,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         Vertex a1 = a;
         Edge e;
         // relax all edges out of a1
-        Iterator<Edge> a1AdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a1).getMembers()
-            .iterator();
+        Iterator<Edge> a1AdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a1).iterator();
         while (a1AdjEdgesIterator.hasNext())
         {
             e = a1AdjEdgesIterator.next();
@@ -258,7 +258,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 }
                 // relax all edges out of a11
                 Iterator<Edge> a11AdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a11)
-                    .getMembers().iterator();
+                    .iterator();
                 while (a11AdjEdgesIterator.hasNext())
                 {
                     e = (Edge) a11AdjEdgesIterator.next();
@@ -346,8 +346,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             eb = null;
             e2 = null;
             // compute edges with largest and second largest slack
-            Iterator<Edge> aAdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a).getMembers()
-                .iterator();
+            Iterator<Edge> aAdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a).iterator();
             while (aAdjEdgesIterator.hasNext())
             {
                 e = (Edge) aAdjEdgesIterator.next();

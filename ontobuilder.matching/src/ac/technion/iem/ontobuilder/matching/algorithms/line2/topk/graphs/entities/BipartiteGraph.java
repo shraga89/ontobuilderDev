@@ -1,7 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * <p>
@@ -42,7 +44,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
      * @param x - right {@link VertexesSet}
      * @param y - left {@link VertexesSet}
      */
-    public BipartiteGraph(EdgesSet e, VertexesSet x, VertexesSet y)
+    public BipartiteGraph(Set<Edge> e, VertexesSet x, VertexesSet y)
     {
         super(e, VertexesSet.union(x, y));
         rightVertexesSet = x;
@@ -149,7 +151,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
      */
     public Object clone()
     {
-        BipartiteGraph clonedBipartiteGraph = new BipartiteGraph((EdgesSet) edgesSet.clone(),
+        BipartiteGraph clonedBipartiteGraph = new BipartiteGraph(new HashSet<Edge>(edgesSet),
             (VertexesSet) rightVertexesSet.clone(), (VertexesSet) leftVertexesSet.clone());
         clonedBipartiteGraph.buildAdjMatrix();
         return clonedBipartiteGraph;
