@@ -157,8 +157,9 @@ public class NewPrecedenceAlgorithm extends PivotAlgorithm
         algorithm.effectiveness = effectiveness;
         algorithm.combine = combine;
         algorithm.enhance = enhance;
-        algorithm.weights[0] = weights[0];
-        algorithm.weights[1] = weights[1];
+        algorithm.weights = new double[weights.length];
+        for (int i = 0; i < weights.length; i++)
+        	algorithm.weights[i] = weights[i];
         algorithm.pivotWeight = pivotWeight;
         return algorithm;
     }
