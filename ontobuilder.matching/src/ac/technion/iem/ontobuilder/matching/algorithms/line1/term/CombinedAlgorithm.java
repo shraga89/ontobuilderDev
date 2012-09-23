@@ -17,6 +17,7 @@ import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence.NewPrecedenceAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence.PrecedenceAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.precedence.PrecedenceMatch;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -33,7 +34,7 @@ public class CombinedAlgorithm extends TermValueAlgorithm
     protected double precedenceWeight;
 
     protected GraphAlgorithm graphAlgorithm;
-    protected PrecedenceAlgorithm precedenceAlgorithm;
+    protected NewPrecedenceAlgorithm precedenceAlgorithm;
 
     protected boolean enhance = true;
 
@@ -242,7 +243,7 @@ public class CombinedAlgorithm extends TermValueAlgorithm
         }
         if (precedenceAlgorithm == null)
         {
-            precedenceAlgorithm = (PrecedenceAlgorithm) AlgorithmUtilities.getAlgorithm(
+            precedenceAlgorithm = (NewPrecedenceAlgorithm) AlgorithmUtilities.getAlgorithm(
                 PropertiesHandler.getResourceString("algorithm.precedence")).makeCopy();
             if (precedenceAlgorithm == null)
                 return null;
@@ -300,8 +301,8 @@ public class CombinedAlgorithm extends TermValueAlgorithm
 
             PrecedenceMatch precedenceMatch = new PrecedenceMatch(termValueMatchMatrix,
                 originalTargetTerms, originalCandidateTerms);
-            precedenceMatch.setPrecedeWeight(precedenceAlgorithm.getPrecedeWeight());
-            precedenceMatch.setSucceedWeight(precedenceAlgorithm.getSucceedWeight());
+            precedenceMatch.setPrecedeWeight(precedenceAlgorithm.getWeights()[0]);
+            precedenceMatch.setSucceedWeight(precedenceAlgorithm.getWeights()[1]);
             precedenceMatch.setThreshold(threshold);
             double precedenceMatchMatrix[][] = precedenceMatch.match();
 
