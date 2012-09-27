@@ -15,6 +15,7 @@ package ac.technion.iem.ontobuilder.matching.match;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -23,9 +24,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.jdom.DocType;
-import org.jdom.Element;
+import org.w3c.dom.Element;
 import org.jdom.output.XMLOutputter;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
@@ -33,6 +44,7 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.files.StringOutputStream;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 
 /**
@@ -532,20 +544,87 @@ public class MatchInformation
     }
 
     /**
+     * Saves a match into XML representation
+     * 
+     * @param matchIndex the match index
+     * @param candSchemataName candidate schema name
+     * @param targetSchemataName target schema name
+     * @param filePath path of the file to save
+     * @throws SchemaMatchingsException
+     */
+    public void saveMatchToXML(int matchIndex, String candSchemataName, String targetSchemataName,
+        String filePath) throws SchemaMatchingsException
+    {
+        try
+        {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setIgnoringComments(true);
+            DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Comment comment = doc.createComment("This is the " + matchIndex + " Best matching\n" +
+                "Use topkmatch.xsd to parse and validate the information (XMLSchema)");
+            doc.appendChild(comment);
+            Element bestMatch = doc.createElement("BestMatch");
+            bestMatch.setAttribute("MatchIndex", Integer.toString(matchIndex));
+            bestMatch.setAttribute("MatchWeight", Double
+                .toString((getGlobalScore() != -1 ? getGlobalScore() :0.0)));
+            bestMatch.setAttribute("CandidateOntology", candSchemataName);
+            bestMatch.setAttribute("TargetOntology", targetSchemataName);
+            doc.appendChild(bestMatch);
+            Element matchedPair = null;
+            Double w = new Double((matches.size()==0?0.0:1/(double)matches.size()));
+            for (Match m :  matches)
+            {
+                matchedPair = doc.createElement("MatchedTerms");
+                matchedPair.setAttribute("Weight",
+                    w.toString());
+                Element candidateTerm = doc.createElement("CandidateTerm");
+                Text text = doc.createTextNode(m.getCandidateTerm().toString());
+                candidateTerm.appendChild(text);
+                if (m.getCandidateTerm().getId() != -1)
+                    candidateTerm.setAttribute("id", Long.toString(m.getCandidateTerm().getId()));
+                Element targetTerm = doc.createElement("TargetTerm");
+                text = doc.createTextNode(m.getTargetTerm().toString());
+                targetTerm.appendChild(text);
+                if (m.getTargetTerm().getId() != -1)
+                    targetTerm.setAttribute("id", Long.toString(m.getTargetTerm().getId()));
+                matchedPair.appendChild(candidateTerm);
+                matchedPair.appendChild(targetTerm);
+                bestMatch.appendChild(matchedPair);
+            }
+            comment = doc
+                .createComment("For any questions regarding the Top K Framework please send to:ontobuilder@ie.technion.ac.il");
+            doc.appendChild(comment);
+            File xmlfile = new File(filePath + (filePath.indexOf(".xml") == -1 ? ".xml" : ""));
+            // Use a Transformer for output
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new FileOutputStream(xmlfile));
+            transformer.transform(source, result);
+        }
+        catch (Throwable e)
+        {
+            throw new SchemaMatchingsException(e.getMessage());
+        }
+    }
+
+    /**
      * Creates a match Information Element from the matchInformation object
      * 
      * @return {@link Element}
+     * @deprecated
      */
-    public Element getXMLRepresentation()
+    public org.jdom.Element getXMLRepresentation()
     {
         NumberFormat nf = NumberFormat.getInstance();
 
-        Element matchInformationElement = new Element("matchInformation");
+        org.jdom.Element matchInformationElement = new org.jdom.Element("matchInformation");
 
-        Element targetOntologyElement = new Element("targetOntology");
+        org.jdom.Element targetOntologyElement = new org.jdom.Element("targetOntology");
         matchInformationElement.addContent(targetOntologyElement);
         targetOntologyElement.setAttribute("name", targetOntology.getName());
-        Element targetTermsElement = new Element("terms");
+        org.jdom.Element targetTermsElement = new org.jdom.Element("terms");
         targetOntologyElement.addContent(targetTermsElement);
         ArrayList<?> targetTerms = OntologyUtilities.denormalizeTerms(OntologyUtilities
             .filterTermListRemovingTermsOfClass(
@@ -554,10 +633,10 @@ public class MatchInformation
         for (Iterator<?> i = targetTerms.iterator(); i.hasNext();)
             targetTermsElement.addContent(((Term) i.next()).getInputFullNameAsXML());
 
-        Element candidateOntologyElement = new Element("candidateOntology");
+        org.jdom.Element candidateOntologyElement = new org.jdom.Element("candidateOntology");
         matchInformationElement.addContent(candidateOntologyElement);
         candidateOntologyElement.setAttribute("name", candidateOntology.getName());
-        Element candidateTermsElement = new Element("terms");
+        org.jdom.Element candidateTermsElement = new org.jdom.Element("terms");
         candidateOntologyElement.addContent(candidateTermsElement);
         ArrayList<?> candidateTerms = OntologyUtilities.denormalizeTerms(OntologyUtilities
             .filterTermListRemovingTermsOfClass(
@@ -566,29 +645,32 @@ public class MatchInformation
         for (Iterator<?> i = candidateTerms.iterator(); i.hasNext();)
             candidateTermsElement.addContent(((Term) i.next()).getInputFullNameAsXML());
 
-        Element algorithmElement = new Element("algorithm").setText(algorithm.getName());
-        matchInformationElement.addContent(algorithmElement);
-        algorithmElement.setAttribute("threshold", nf.format(algorithm.getThreshold()));
-
-        Element statisticsElement = new Element("statistics").addContent(new Element("recall")
+        if (algorithm!=null)
+        {
+        	org.jdom.Element algorithmElement = new org.jdom.Element("algorithm").setText(algorithm.getName());
+        	matchInformationElement.addContent(algorithmElement);
+            algorithmElement.setAttribute("threshold", nf.format(algorithm.getThreshold()));
+        }
+        
+        org.jdom.Element statisticsElement = new org.jdom.Element("statistics").addContent(new org.jdom.Element("recall")
             .setText(nf.format((candidateTerms.size() - mismatchesCandidateOntology.size()) /
                 (double) candidateTerms.size() * 100)));
         matchInformationElement.addContent(statisticsElement);
 
-        Element matchesElement = new Element("matches");
+        org.jdom.Element matchesElement = new org.jdom.Element("matches");
         matchInformationElement.addContent(matchesElement);
         matchesElement.setAttribute("total", matches.size() + "");
         for (Iterator<Match> i = matches.iterator(); i.hasNext();)
         {
             Match match = (Match) i.next();
-            Element matchElement = new Element("match");
+            org.jdom.Element matchElement = new org.jdom.Element("match");
             matchesElement.addContent(matchElement);
 
-            Element targetElement = new Element("target");
+            org.jdom.Element targetElement = new org.jdom.Element("target");
             matchElement.addContent(targetElement);
             targetElement.addContent(match.getTargetTerm().getInputFullNameAsXML());
 
-            Element candidateElement = new Element("candidate");
+            org.jdom.Element candidateElement = new org.jdom.Element("candidate");
             matchElement.addContent(candidateElement);
             candidateElement.addContent(match.getCandidateTerm().getInputFullNameAsXML());
 
@@ -596,16 +678,16 @@ public class MatchInformation
                 matchElement.setAttribute("confidence", nf.format(match.getEffectiveness()));
         }
 
-        Element mismatchesElement = new Element("mismatches");
+        org.jdom.Element mismatchesElement = new org.jdom.Element("mismatches");
         matchInformationElement.addContent(mismatchesElement);
 
-        Element targetMismatchesElement = new Element("targetMismatches");
+        org.jdom.Element targetMismatchesElement = new org.jdom.Element("targetMismatches");
         mismatchesElement.addContent(targetMismatchesElement);
         for (Iterator<Mismatch> i = mismatchesTargetOntology.iterator(); i.hasNext();)
             targetMismatchesElement.addContent(((Mismatch) i.next()).getTerm()
                 .getInputFullNameAsXML());
 
-        Element candidateMismatchesElement = new Element("candidateMismatches");
+        org.jdom.Element candidateMismatchesElement = new org.jdom.Element("candidateMismatches");
         mismatchesElement.addContent(candidateMismatchesElement);
         for (Iterator<Mismatch> i = mismatchesCandidateOntology.iterator(); i.hasNext();)
             candidateMismatchesElement.addContent(((Mismatch) i.next()).getTerm()

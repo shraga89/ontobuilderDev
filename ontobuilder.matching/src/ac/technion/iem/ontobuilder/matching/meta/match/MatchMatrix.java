@@ -206,6 +206,7 @@ public class MatchMatrix
             searchInHash = candidateHashIndex;
         else
             searchInHash = targetHashIndex;
+        assert(term !=null);
         Integer i = (Integer) searchInHash.get(term);
         if (i == null)
             return -1;
