@@ -74,7 +74,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     /**
      * Run the algorithm
      * 
-     * @return an {@link EdgesSet}
+     * @return a set of edges
      */
     public Set<Edge> runAlgorithm()
     {

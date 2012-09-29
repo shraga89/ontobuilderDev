@@ -37,11 +37,11 @@ public abstract class GraphFactory
     public final static Graph buildGraph(double[][] adjMatrix, long[] vertexNameIDs, String[] vertexNames,
         int vertexCount, boolean dirGraph)
     {
-        VertexesSet vg = new VertexesSet();
+    	Set<Vertex> vg = new HashSet<Vertex>();
         Set<Edge> eg = new HashSet<Edge>();
         for (int i = 0; i < vertexCount; i++)
         {// O(V)
-            vg.addMember(new Vertex(i, vertexNameIDs[i], vertexNames[i]));
+            vg.add(new Vertex(i, vertexNameIDs[i], vertexNames[i]));
         }
         for (int i = 0; i < vertexCount; i++)
             // O(V^2)
@@ -75,8 +75,8 @@ public abstract class GraphFactory
     	
     	if (!isBipartiteGraph(adjMatrix, rightVertexCount, leftVertexCount))
             throw new GraphIsNotBipartiteException(adjMatrix, rightVertexCount, leftVertexCount);
-        VertexesSet rvg = new VertexesSet();
-        VertexesSet lvg = new VertexesSet();
+    	Set<Vertex> rvg = new HashSet<Vertex>();
+    	Set<Vertex> lvg = new HashSet<Vertex>();
         if (rightVertexCount != leftVertexCount)
         {
             boolean rightVertexesSetBigger = (rightVertexCount > leftVertexCount) ? true : false;
@@ -104,19 +104,19 @@ public abstract class GraphFactory
         {
             if (!(leftVertexIDs.get(i) == BipartiteGraph.ID_DUMMY_VERTEX ))
             {
-                lvg.addMember(new Vertex(i, leftVertexIDs.get(i),leftVertexNames[i]));
+                lvg.add(new Vertex(i, leftVertexIDs.get(i),leftVertexNames[i]));
             }
             else
             {
-                lvg.addMember(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
+                lvg.add(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
             }
         }
         for (int i = leftVertexCount; i < (leftVertexCount + rightVertexCount); i++)
         {
             if (!(rightVertexIDs.get(i - leftVertexCount) == BipartiteGraph.ID_DUMMY_VERTEX))
-                rvg.addMember(new Vertex(i, rightVertexIDs.get(i - leftVertexCount), rightVertexNames[i - leftVertexCount]));
+                rvg.add(new Vertex(i, rightVertexIDs.get(i - leftVertexCount), rightVertexNames[i - leftVertexCount]));
             else
-                rvg.addMember(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
+                rvg.add(new Vertex(i, BipartiteGraph.ID_DUMMY_VERTEX - i,"Dummy Vertex"));
         }
         for (int i = 0; i < (rightVertexCount + leftVertexCount); i++)
             // O(V^2)

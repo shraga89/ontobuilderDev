@@ -101,7 +101,7 @@ public class DGraph extends BipartiteGraph
     /**
      * Get E1 group
      * 
-     * @return E1 an {@link EdgesSet}
+     * @return E1 a set of edges
      */
     public Set<Edge> getE1()
     {
@@ -111,7 +111,7 @@ public class DGraph extends BipartiteGraph
     /**
      * Get E2 group
      * 
-     * @return E2, an {@link EdgesSet}
+     * @return E2, a set of edges
      */
     public Set<Edge> getE2()
     {

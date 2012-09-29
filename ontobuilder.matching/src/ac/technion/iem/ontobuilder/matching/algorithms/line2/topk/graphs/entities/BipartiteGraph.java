@@ -25,9 +25,9 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     private static final long serialVersionUID = 7953761776911271034L;
 
     /** holds the right vertexes group of the graph */
-    protected VertexesSet rightVertexesSet;
+    protected Set<Vertex> rightVertexesSet;
     /** holds the left vertexes group of the graph */
-    protected VertexesSet leftVertexesSet;
+    protected Set<Vertex> leftVertexesSet;
 
     /**
      * Constructs a BipartiteGraph
@@ -40,13 +40,17 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     /**
      * Constructs a BipartiteGraph
      * 
-     * @param e - {@link EdgesSet}
-     * @param x - right {@link VertexesSet}
-     * @param y - left {@link VertexesSet}
+     * @param e  
+     * @param x - right vertices 
+     * @param y - left vertices
      */
-    public BipartiteGraph(Set<Edge> e, VertexesSet x, VertexesSet y)
+    public BipartiteGraph(Set<Edge> e, Set<Vertex> x, Set<Vertex> y)
     {
-        super(e, VertexesSet.union(x, y));
+    	super();
+    	super.edgesSet = e;
+    	Set<Vertex> union = new HashSet<Vertex>(x);
+    	union.addAll(y);
+    	super.vertexesSet = union;
         rightVertexesSet = x;
         leftVertexesSet = y;
     }
@@ -54,9 +58,9 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     /**
      * Sets the right vertexes set
      * 
-     * @param rightVertexesSet the right {@link VertexesSet}
+     * @param rightVertexesSet the right group
      */
-    public void setRightVertexesSet(VertexesSet rightVertexesSet)
+    public void setRightVertexesSet(Set<Vertex> rightVertexesSet)
     {
         this.rightVertexesSet = rightVertexesSet;
     }
@@ -64,9 +68,9 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     /**
      * Sets the left vertexes set
      * 
-     * @param leftVertexesSet the left {@link VertexesSet}
+     * @param leftVertexesSet the left group
      */
-    public void setLeftVertexesSet(VertexesSet leftVertexesSet)
+    public void setLeftVertexesSet(Set<Vertex> leftVertexesSet)
     {
         this.leftVertexesSet = leftVertexesSet;
     }
@@ -78,8 +82,8 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     {
         try
         {
-            rightVertexesSet.nullify();
-            leftVertexesSet.nullify();
+            rightVertexesSet.clear();
+            leftVertexesSet.clear();
             super.nullify();
         }
         catch (NullPointerException e)
@@ -90,27 +94,27 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     /**
      * @return right vertexes group
      */
-    public VertexesSet getRightVertexesSet()
+    public Set<Vertex> getRightVertexesSet()
     {
         return rightVertexesSet;
     }
 
     /**
-     * @return left {@link VertexesSet}
+     * @return left 
      */
-    public VertexesSet getLeftVertexesSet()
+    public Set<Vertex> getLeftVertexesSet()
     {
         return leftVertexesSet;
     }
 
     public Iterator<Vertex> getLeftVertexSetIterator()
     {
-        return leftVertexesSet.getMembers().iterator();
+        return leftVertexesSet.iterator();
     }
 
     public Iterator<Vertex> getRightVertexSetIterator()
     {
-        return rightVertexesSet.getMembers().iterator();
+        return rightVertexesSet.iterator();
     }
 
     /**
@@ -124,7 +128,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     {
         if (left)
         {
-            Iterator<Vertex> it = leftVertexesSet.getMembers().iterator();
+            Iterator<Vertex> it = leftVertexesSet.iterator();
             while (it.hasNext())
             {
                 Vertex v = (Vertex) it.next();
@@ -135,7 +139,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
         }
         else
         {// right
-            Iterator<Vertex> it = rightVertexesSet.getMembers().iterator();
+            Iterator<Vertex> it = rightVertexesSet.iterator();
             while (it.hasNext())
             {
                 Vertex v = (Vertex) it.next();
@@ -152,7 +156,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     public Object clone()
     {
         BipartiteGraph clonedBipartiteGraph = new BipartiteGraph(new HashSet<Edge>(edgesSet),
-            (VertexesSet) rightVertexesSet.clone(), (VertexesSet) leftVertexesSet.clone());
+            new HashSet<Vertex>(rightVertexesSet), new HashSet<Vertex>(leftVertexesSet));
         clonedBipartiteGraph.buildAdjMatrix();
         return clonedBipartiteGraph;
     }

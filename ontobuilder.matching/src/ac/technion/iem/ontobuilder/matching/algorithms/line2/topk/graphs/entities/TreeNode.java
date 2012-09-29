@@ -72,7 +72,7 @@ public class TreeNode implements Serializable
      * new version added by Haggai 2/11/03 Constructs a TreeNode
      * 
      * @param g the {@link BipartiteGraph}
-     * @param initialSe an {@link EdgesSet}
+     * @param initialSe a set of edges
      */
     public TreeNode(BipartiteGraph g, Set<Edge> initialSe)
     {
@@ -114,7 +114,7 @@ public class TreeNode implements Serializable
     /**
      * Se(wj) = Se(w)U{ej} O(1)
      * 
-     * @param eg the si of the nodes father, an {@link EdgesSet}
+     * @param eg the si of the nodes father, a set of edges
      * @param e the ej, an {@link Edge}
      */
     public void setSet(Set<Edge> eg, Edge e) // O(E)
@@ -126,7 +126,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @param eg {@link EdgesSet}
+     * @param eg set of edges
      */
     public void setSi(Set<Edge> eg) // O(1)
     {
@@ -158,7 +158,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @return the match associated with the node, an {@link EdgesSet}
+     * @return the match associated with the node, a set of edges
      */
     public Set<Edge> getMatching()
     {
@@ -166,7 +166,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @return si, an {@link EdgesSet}
+     * @return si, a set of edges
      */
     public Set<Edge> getSi()
     {
@@ -174,7 +174,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @return se, an {@link EdgesSet}
+     * @return se, a set of edges
      */
     public Set<Edge> getSe()
     {
@@ -321,8 +321,8 @@ public class TreeNode implements Serializable
                 graph.getLeftVertexesSet());
             matching = new HashSet<Edge>();
             // N to 1 matching...
-            VertexesSet leftVS = bg.getLeftVertexesSet();
-            Iterator<Vertex> vit = leftVS.getMembers().iterator();
+            Set<Vertex> leftVS = bg.getLeftVertexesSet();
+            Iterator<Vertex> vit = leftVS.iterator();
             while (vit.hasNext())
             {
                 Vertex v = (Vertex) vit.next();
@@ -382,7 +382,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @param matching an {@link EdgesSet}
+     * @param matching a set of edges
      */
     public void setMatching(Set<Edge> matching)
     {
@@ -422,7 +422,7 @@ public class TreeNode implements Serializable
     }
 
     /**
-     * @param eg an {@link EdgesSet}
+     * @param eg a set of edges
      */
     public void setSet(Set<Edge> eg)
     {

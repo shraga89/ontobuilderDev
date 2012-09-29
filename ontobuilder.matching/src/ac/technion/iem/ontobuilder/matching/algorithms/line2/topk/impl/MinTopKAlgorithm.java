@@ -48,7 +48,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     /**
      * Get the local second best matching
      * 
-     * @return an {@link EdgesSet}, currently <code>null</code> always
+     * @return a set of edges, currently <code>null</code> always
      */
     public Set<Edge> getLocalSecondBestMatching()
     {
@@ -58,7 +58,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     /**
      * Get the next heuristic matching
      * 
-     * @return a list of {@link EdgesSet}, currently <code>null</code> always
+     * @return a list of sets of edges, currently <code>null</code> always
      * @throws Exception
      */
     public List<Set<Edge>> getNextHeuristicMatchings() throws Exception
@@ -83,7 +83,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     /**
      * Each invocation returns the next best matching
      * 
-     * @return an {@link EdgesSet}
+     * @return a set of edges
      */
     public Set<Edge> runAlgorithm() throws Exception
     {
@@ -115,7 +115,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     /**
      * Returns the next in order best matching
      * 
-     * @return {@link EdgesSet} with the next best matching
+     * @return set of edges with the next best matching
      */
     public Set<Edge> getNextMatching() throws Exception
     {
@@ -218,9 +218,9 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
      * Find the next path combination
      * 
      * @param g the {@link Graph}
-     * @param es the {@link EdgesSet}
+     * @param es the set of edges
      * @param e the {@link Edge}
-     * @return a new {@link EdgesSet}
+     * @return a new set of edges
      */
     public Set<Edge> findNextCombination(Graph g, Set<Edge> es, Edge e)
     {
@@ -269,7 +269,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     /**
      * Builds a tree recursively
      *
-     * @param es an {@link EdgesSet}
+     * @param es a set of edges
      * @param parent the parent {@link TreeNode}
      * @param current the current {@link TreeNode}
      * @return a the {@link TreeNode}

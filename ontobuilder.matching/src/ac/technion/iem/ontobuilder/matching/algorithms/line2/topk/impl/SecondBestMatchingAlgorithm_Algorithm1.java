@@ -43,7 +43,7 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
      * Constructs a SecondBestMatchingAlgorithm_Algorithm1
      * 
      * @param bg - {@link BipartiteGraph}
-     * @param bm - an {@link EdgesSet}, the best matching in the bipartite graph
+     * @param bm - a set of edges, the best matching in the bipartite graph
      */
     public SecondBestMatchingAlgorithm_Algorithm1(BipartiteGraph bg, Set<Edge> bm)
     {
@@ -70,7 +70,7 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
      * runs the algorithm<br>
      * O(V^4)
      * 
-     * @return an {@link EdgesSet} with the best matching
+     * @return a set of edges with the best matching
      */
     public Set<Edge> runAlgorithm()
     {

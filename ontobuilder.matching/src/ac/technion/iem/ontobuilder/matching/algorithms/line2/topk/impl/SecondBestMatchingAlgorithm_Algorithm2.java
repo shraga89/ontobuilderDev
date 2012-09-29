@@ -60,7 +60,7 @@ public class SecondBestMatchingAlgorithm_Algorithm2 implements SchemaMatchingsAl
      * Runs the algorithm <br>
      * O(V^3)
      * 
-     * @return the second best matching, an {@link EdgesSet}
+     * @return the second best matching, a set of edges
      * @throws NegativeCycleInGraphException - the graph included negative cycle<br>
      * as part of the Floyd Warshall algorithm check
      */

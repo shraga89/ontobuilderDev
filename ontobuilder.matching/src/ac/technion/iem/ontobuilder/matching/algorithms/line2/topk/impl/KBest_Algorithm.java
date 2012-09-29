@@ -90,7 +90,7 @@ public class KBest_Algorithm implements TopKAlgorithm
      * Returns the next in order best matching <br>
      * O(V^4)
      * 
-     * @return an {@link EdgesSet}
+     * @return a set of edges
      */
     public Set<Edge> getNextMatching(boolean openFronter) throws Exception // O(V^4)
     {
@@ -152,7 +152,7 @@ public class KBest_Algorithm implements TopKAlgorithm
 
     /**
      * Get the local second best matching
-     * @return an {@link EdgesSet}
+     * @return a set of edges
      */
     public Set<Edge> getLocalSecondBestMatching()
     {
@@ -164,7 +164,7 @@ public class KBest_Algorithm implements TopKAlgorithm
     /**
      * Get the next heuristic matching
      * @param nonUniformVersion the non uniform version (1 or 2)
-     * @return a list of {@link EdgesSet}
+     * @return a list of set of edges
      */
     public List<Set<Edge>> getNextHeuristicMatchings(byte nonUniformVersion) throws Exception
     {

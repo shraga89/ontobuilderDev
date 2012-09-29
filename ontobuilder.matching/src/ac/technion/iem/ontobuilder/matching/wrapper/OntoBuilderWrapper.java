@@ -192,7 +192,7 @@ public final class OntoBuilderWrapper extends OntoBuilder
         }
         catch (Throwable e)
         {
-            throw new OntoBuilderWrapperException(e.getMessage(),e);
+	            throw new OntoBuilderWrapperException(e.getMessage(),e);
         }
     }
 

@@ -28,7 +28,7 @@ public class Graph implements Serializable
     /** edges of the graph */
     protected Set<Edge> edgesSet;
     /** Vertexes of the graph */
-    protected VertexesSet vertexesSet = new VertexesSet();
+    protected Set<Vertex> vertexesSet = new HashSet<Vertex>();
     /** Adjacency matrix of the graph (hold also edges weights) */
     protected double[][] adjMatrix;
 
@@ -42,10 +42,10 @@ public class Graph implements Serializable
     /**
      * Constructs a Graph
      * 
-     * @param e {@link EdgesSet} of the graph
-     * @param v {@link VertexesSet} of the graph
+     * @param e set of edges of the graph
+     * @param v set of vertices of the graph
      */
-    public Graph(Set<Edge> e, VertexesSet v)
+    public Graph(Set<Edge> e, Set<Vertex> v)
     {
         edgesSet = e;
         vertexesSet = v;
@@ -54,9 +54,9 @@ public class Graph implements Serializable
     /**
      * Set the vertexes set in the graph
      * 
-     * @param vertexesSet the {@link VertexesSet}
+     * @param vertexesSet the set of vertices
      */
-    public void setVertexesSet(VertexesSet vertexesSet)
+    public void setVertexesSet(Set<Vertex> vertexesSet)
     {
         this.vertexesSet = vertexesSet;
     }
@@ -79,7 +79,7 @@ public class Graph implements Serializable
         try
         {
             edgesSet.clear();
-            vertexesSet.nullify();
+            vertexesSet.clear();
             adjMatrix = null;
         }
         catch (NullPointerException e)
@@ -124,7 +124,7 @@ public class Graph implements Serializable
      */
     public Vertex getVertex(int vID)
     {// O(V)
-        Iterator<Vertex> it = vertexesSet.getMembers().iterator();
+        Iterator<Vertex> it = vertexesSet.iterator();
         while (it.hasNext())
         {
             Vertex v = it.next();
@@ -159,7 +159,7 @@ public class Graph implements Serializable
      * 
      * @return vertexes of the graph
      */
-    public VertexesSet getVertexesSet()
+    public Set<Vertex> getVertexesSet()
     {
         return vertexesSet;
     }
@@ -233,7 +233,7 @@ public class Graph implements Serializable
      */
     public void printVertexs()
     {
-        Iterator<Vertex> it = vertexesSet.getMembers().iterator();
+        Iterator<Vertex> it = vertexesSet.iterator();
         System.out.println("Vertexes info:");
         while (it.hasNext())
         {
@@ -272,7 +272,7 @@ public class Graph implements Serializable
      */
     public Iterator<Vertex> getVertexesIterator()
     {
-        return vertexesSet.getMembers().iterator();
+        return vertexesSet.iterator();
     }
 
     /**
@@ -283,7 +283,7 @@ public class Graph implements Serializable
     public Object clone()
     {
         Graph clonedGraph = new Graph(new HashSet<Edge>(edgesSet),
-            (VertexesSet) vertexesSet.clone());
+            new HashSet<Vertex>(vertexesSet));
         clonedGraph.buildAdjMatrix();
         return clonedGraph;
     }

@@ -80,7 +80,7 @@ public class Path
     /**
      * Get the edges in the path
      * 
-     * @return the {@link EdgesSet} building the path
+     * @return the edges building the path
      */
     public Set<Edge> getPathEdges()
     {// O(E)

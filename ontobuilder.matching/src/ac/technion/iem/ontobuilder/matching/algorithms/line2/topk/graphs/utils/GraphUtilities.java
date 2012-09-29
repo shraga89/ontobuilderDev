@@ -19,7 +19,7 @@ public final class GraphUtilities
      * 
      * @param g the {@link Graph}
      * @param v the {@link Vertex}
-     * @return the {@link EdgesSet}
+     * @return the set of edges
      */
     public static Set<Edge> getVertexOutEdges(Graph g, Vertex v) // O(E)
     {
@@ -59,7 +59,7 @@ public final class GraphUtilities
      * 
      * @param g the {@link Graph}
      * @param w the weight to compare to
-     * @return the {@link EdgesSet}
+     * @return the set of edges
      */
     public static Set<Edge> getEdgesWithWeight(Graph g, double w)
     {
@@ -78,7 +78,7 @@ public final class GraphUtilities
      * 
      * @param g the {@link Graph}
      * @param v the vertex
-     * @return the {@link EdgesSet}
+     * @return the set of edges
      */
     public static Set<Edge> getVertexAdjEdges(Graph g, Vertex v) // O(E)
     {

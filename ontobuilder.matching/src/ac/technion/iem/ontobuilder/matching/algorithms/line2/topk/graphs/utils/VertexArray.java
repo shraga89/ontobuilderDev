@@ -26,7 +26,7 @@ public class VertexArray
         this.g = g;
         this.initVal = initVal;
         vertexes = new HashMap<Vertex, Object>(g.getVSize());
-        Vertex[] vertexesArray = (Vertex[]) g.getVertexesSet().getMembers().toArray(new Vertex[0]);
+        Vertex[] vertexesArray = (Vertex[]) g.getVertexesSet().toArray(new Vertex[0]);
         for (int i = 0; i < vertexesArray.length; i++)
         {// O(V)
             vertexes.put(vertexesArray[i], initVal);
