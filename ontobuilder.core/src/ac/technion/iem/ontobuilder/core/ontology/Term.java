@@ -1217,7 +1217,7 @@ public class Term extends OntologyClass
                         superClass.name.equalsIgnoreCase("decomposition") ? (terms.size() > 0 ? ((Term) terms
                             .get(0)).superClass.name : "") : superClass.name);
         }
-        termElement.setAttribute("name", (String) getAttributeValue("name"));
+        termElement.setAttribute("name", (getAttributeValue("name")==null?new String():(String)getAttributeValue("name")));
         return termElement;
     }
 

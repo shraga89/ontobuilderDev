@@ -159,6 +159,7 @@ public class NativeMatchImporter implements MatchImporter {
                     NodeList currentChilds = current.getChildNodes();
                     for (int k = 0; k < currentChilds.getLength(); k++)
                     {
+                    	if(!currentChilds.item(k).getClass().getName().equals("com.sun.org.apache.xerces.internal.dom.DeferredElementImpl")) continue;
                         Element child = (Element) currentChilds.item(k);
                         if (child.getNodeName().compareTo("CandidateTerm") == 0)
                         {
@@ -199,6 +200,8 @@ public class NativeMatchImporter implements MatchImporter {
                     if (candId == null || targetId == null) continue;
                     Term c = mi.getMatrix().getTermByID(Long.parseLong(candId), true);
                     Term t = mi.getMatrix().getTermByID(Long.parseLong(targetId), false);
+                    assert(c!=null);
+                    assert(t!=null);
                     mi.updateMatch(t, c, 1.0);
                 }
             }
