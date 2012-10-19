@@ -27,10 +27,10 @@ import ac.technion.iem.ontobuilder.gui.tools.utils.ExceptionsHandler;
 import ac.technion.iem.ontobuilder.gui.tools.utils.FileChoosingUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.xml.XMLUtilities;
+import ac.technion.iem.ontobuilder.io.matchimport.NativeMatchImporter;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 
 /**
@@ -183,9 +183,10 @@ public class ExactMappingTool extends JPanel
                 {
                     try
                     {
+                    	NativeMatchImporter ni = new NativeMatchImporter();
+                  
                         ((ExactTabelModel) dataTable.getModel())
-                            .updateFromPrevMapping(SchemaMatchingsUtilities
-                                .readXMLBestMatchingFile(file.getAbsolutePath()));
+                            .updateFromPrevMapping(ni.importMatch(new MatchInformation(candOnto,targetOnto), file));
                     }
                     catch (Exception e)
                     {
@@ -339,15 +340,16 @@ public class ExactMappingTool extends JPanel
             }
             ExactTabelModel model = (ExactTabelModel) dataTable.getModel();
             int[] selectedIndexes = model.getSelectedPairsIndexes();
-            MatchedAttributePair[] matchPairs = new MatchedAttributePair[selectedIndexes.length];
+            ArrayList<Match> matchPairs = new ArrayList<Match>();
             for (int i = 0; i < selectedIndexes.length; i++)
             {
             	Term c = (Term)model.getValueAt(selectedIndexes[i], 0);
             	Term t = (Term)model.getValueAt(selectedIndexes[i], 1);
-                matchPairs[i] = new MatchedAttributePair(c.getName(),t.getName(), 1.0,c.getId(), t.getId());
+                matchPairs.add(new Match(c,t,1.0));
             }
             validate(matchPairs);
-            SchemaTranslator st = new SchemaTranslator(matchPairs);
+            MatchInformation mi = new MatchInformation(candOnto,targetOnto);
+            mi.setMatches(matchPairs);
             // Filters
             ArrayList<FileFilter> filters = new ArrayList<FileFilter>();
             filters.add(XMLUtilities.xmlFileFilter);
@@ -366,7 +368,7 @@ public class ExactMappingTool extends JPanel
                         .getAbsolutePath() : file.getParentFile().getAbsolutePath() +
                         File.separator + lastReadCandOntology + "_" + lastReadTargetOntology +
                         "_EXACT.xml");
-                    st.saveMatchToXML(0, lastReadCandOntology, lastReadTargetOntology, filePath);
+                    mi.saveMatchToXML(0, lastReadCandOntology, lastReadTargetOntology, filePath);
                     JOptionPane.showMessageDialog(this, "saved to:" + filePath + "\n" +
                         "Total Saved: " + selectedIndexes.length + " matches",
                         "Save Exact Mapping", JOptionPane.INFORMATION_MESSAGE);
@@ -388,21 +390,21 @@ public class ExactMappingTool extends JPanel
     }
 
     /**
-     * Validate the MatchedAttributePair array
+     * Validate the MatchedPair array
      *
-     * @param matchPairs a {@link MatchedAttributePair} array
+     * @param matchPairs a {@link Match} array
      * @throws Exception when the exact mapping is not 1:1
      */
-    private void validate(MatchedAttributePair[] matchPairs) throws Exception
+    private void validate(ArrayList<Match> matchPairs) throws Exception
     {
-        for (int i = 0; i < matchPairs.length; i++)
+        for (int i = 0; i < matchPairs.size(); i++)
         {
-            String current = matchPairs[i].getAttribute1();
-            for (int j = 0; j < matchPairs.length; j++)
+            long current = matchPairs.get(i).getCandidateTerm().getId();
+            for (int j = 0; j < matchPairs.size(); j++)
             {
                 if (i == j)
                     continue;
-                if (isGuardActive() && current.equals(matchPairs[j].getAttribute1()))
+                if (isGuardActive() && current==matchPairs.get(j).getCandidateTerm().getId())
                     throw new Exception("Exact mapping supposed to be 1:1\n");
             }
         }

@@ -221,6 +221,7 @@ abstract public class AbstractAlgorithm implements Algorithm
                 Term originalTargetTerm = (Term) originalTargetTerms.get(i);
                 if (matchMatrix[j][i] >= threshold && matchMatrix[j][i] >= maxEffectiveness)
                 {
+                	assert(maxEffectiveness<=1.0);
                     maxEffectiveness = matchMatrix[j][i];
                     maxTargetTerm = originalTargetTerm;
                 }

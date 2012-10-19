@@ -105,10 +105,8 @@ import ac.technion.iem.ontobuilder.matching.meta.aggregators.AverageGlobalAggreg
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AverageLocalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.SumGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.SumLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingAlgorithmsRunner;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 import com.jgraph.JGraph;
 import com.jrefinery.chart.ChartFactory;
@@ -149,7 +147,7 @@ public class OntologyMetaTopKWizard
     private AbstractLocalAggregator localf;
     private AbstractLocalAggregator localh;
     private int k;
-    private Vector<AbstractMapping> topKMatchings;
+    private Vector<MatchInformation> topKMatchings;
     private HashMap<String, MatchInformation> matchInfos;
 
     /**
@@ -267,9 +265,9 @@ public class OntologyMetaTopKWizard
     /**
      * Run the meta algorithm
      * 
-     * @return a vector of {@link AbstractMapping}
+     * @return a vector of {@link MatchInformation}
      */
-    private Vector<AbstractMapping> runMetaAlgorithm()
+    private Vector<MatchInformation> runMetaAlgorithm()
     {
         if (metaAlgorithmName
             .equals(MetaAlgorithmNamesEnum.THERSHOLD_ALGORITHM.getName()))
@@ -287,9 +285,9 @@ public class OntologyMetaTopKWizard
     /**
      * Run the MATRIX_DIRECT_ALGORITHM
      * 
-     * @return a vector of {@link AbstractMapping}
+     * @return a vector of {@link MatchInformation}
      */
-    private Vector<AbstractMapping> runMD()
+    private Vector<MatchInformation> runMD()
     {
         Object[] params = new Object[4];
         int numSelectedMatchers = selectedAlgs.size();
@@ -343,9 +341,9 @@ public class OntologyMetaTopKWizard
     /**
      * Run the MATRIX_DIRECT_WITH_BOUNDING_ALGORITHM
      * 
-     * @return a vector of {@link AbstractMapping}
+     * @return a vector of {@link MatchInformation}
      */
-    private Vector<AbstractMapping> runMDB()
+    private Vector<MatchInformation> runMDB()
     {
         Object[] params = new Object[6];
         int numSelectedMatchers = selectedAlgs.size();
@@ -402,9 +400,9 @@ public class OntologyMetaTopKWizard
     /**
      * Run the THERSHOLD_ALGORITHM
      * 
-     * @return a vector of {@link AbstractMapping}
+     * @return a vector of {@link MatchInformation}
      */
-    private Vector<AbstractMapping> runTA()
+    private Vector<MatchInformation> runTA()
     {
         SMThersholdAlgorithm ta = null;
         Object wait = new Object();
@@ -481,9 +479,9 @@ public class OntologyMetaTopKWizard
     /**
      * Run the HYBRID_ALGORITHM
      * 
-     * @return a vector of {@link AbstractMapping}
+     * @return a vector of {@link MatchInformation}
      */
-    private Vector<AbstractMapping> runCrossThreshold()
+    private Vector<MatchInformation> runCrossThreshold()
     {
         Object wait = new Object();
         Object[] params = new Object[6];
@@ -524,7 +522,7 @@ public class OntologyMetaTopKWizard
         }
         hybrid.useStatistics();
         if (exactMapping != null)
-            hybrid.setExactMapping(new SchemaTranslator(exactMapping));
+            hybrid.setExactMapping(exactMapping);
         hybrid.normalizeMatrixes();
         try
         {
@@ -2085,18 +2083,18 @@ public class OntologyMetaTopKWizard
     /**
      * Generate a tabbed pane for the meta matcher
      * 
-     * @param matches a vector of {@link AbstractMapping}
+     * @param matches a vector of {@link MatchInformation}
      * @return a {@link JTabbedPane}
      */
-    private JTabbedPane generateTabbedPaneForMetaMatcher(final Vector<AbstractMapping> matches)
+    private JTabbedPane generateTabbedPaneForMetaMatcher(final Vector<MatchInformation> matches)
     {
-        SchemaTranslator match = (SchemaTranslator) matches.get(0);
+    	MatchInformation match = matches.get(0);
         MatchMatrix mmatrix = (MatchMatrix) metaAlg.getMatchMatrix(0);
         if (mmatrix == null)
         {
             mmatrix = (MatchMatrix) metaAlg.getCombinedMatrix();
         }
-        final MatchInformation matchInformation = match.getMatchInfromation(candidate, target, mmatrix);
+        final MatchInformation matchInformation = match.clone();
 //        matchInformation.setTargetOntologyTermsTotal(mmatrix.getCandidateTerms().size());
 //        matchInformation.setTargetOntology(target);
 //        matchInformation.setCandidateOntologyTermsTotal(mmatrix.getTargetTerms().size());
@@ -2155,13 +2153,9 @@ public class OntologyMetaTopKWizard
                 int numMatches = matches.size();
                 XYSeries pAtK = new XYSeries("Precision@K");
                 XYSeries rAtK = new XYSeries("Recall@K");
-                SchemaTranslator st;
                 for (int i = 0; i < numMatches; i++)
                 {
-                	st = (SchemaTranslator) matches.get(i);
-                	MatchInformation mi = new MatchInformation(candidate,target);
-                	mi.setMatches(st.toOntoBuilderMatchList(mi, false));
-                    
+                	MatchInformation mi = matches.get(i);
                     try
                     {
                         pAtK.add(new XYDataPair(new Integer(i + 1), new Double(
@@ -2705,13 +2699,11 @@ public class OntologyMetaTopKWizard
                 try
                 {
 
-                    SchemaTranslator st = (SchemaTranslator) topKMatchings.get(0);
-                    // TODO: 6/5/2007 here there may some bug - fix it
-                    ArrayList<Match> matchs = st.toOntoBuilderMatchList((MatchMatrix) (metaAlg
-                        .getMatchMatrix(0) != null ? metaAlg.getMatchMatrix(0) : metaAlg
-                        .getCombinedMatrix()));
+                	//matchInformation = topKMatchings.get(0);
+                    MatchMatrix matchs = (metaAlg.getMatchMatrix(0) != null 
+                    		? metaAlg.getMatchMatrix(0) : metaAlg.getCombinedMatrix());
                     // //////////
-                    matchInformation.setMatches(matchs);
+                    matchInformation.setMatrix(matchs);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
                     graph.setScale(mgs.getScale());
                     mgs.setDisplayedGraph(graph);
@@ -2731,7 +2723,7 @@ public class OntologyMetaTopKWizard
                         // precisionLabel.setText("N/A");
                     }
                     ((MatchTableModel) matchTable.getModel()).refreshData(
-                        matchInformationGui.getTableModelData(), matchs.size());
+                        matchInformationGui.getTableModelData(), matchInformation.getNumMatches());
                 }
                 catch (Exception sme)
                 {
@@ -2770,11 +2762,11 @@ public class OntologyMetaTopKWizard
                         return;// do nothing
                     int index = mgs.getCurrentK();
                     mgs.setCurrentK(mgs.getCurrentK() - 1);
-                    SchemaTranslator st = (SchemaTranslator) topKMatchings.get(index);// mgs.previous();
-                    ArrayList<Match> matches = st.toOntoBuilderMatchList((MatchMatrix) (metaAlg
-                        .getMatchMatrix(0) != null ? metaAlg.getMatchMatrix(0) : metaAlg
-                        .getCombinedMatrix()));
-
+                    MatchInformation mi = topKMatchings.get(index).clone();// mgs.previous();
+                    mi.setMatrix(metaAlg
+                            .getMatchMatrix(0) != null ? metaAlg.getMatchMatrix(0) : metaAlg
+                                    .getCombinedMatrix());
+                    ArrayList<Match> matches = mi.getCopyOfMatches();
                     matchInformation.setMatches(matches);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
                     graph.setScale(mgs.getScale());
@@ -2845,11 +2837,11 @@ public class OntologyMetaTopKWizard
                     }
                     int index = mgs.getCurrentK();
                     mgs.setCurrentK(mgs.getCurrentK() + 1);
-                    SchemaTranslator st = (SchemaTranslator) topKMatchings.get(index);
-                    // SchemaTranslator st = mgs.next();
-                    ArrayList<Match> matches = st.toOntoBuilderMatchList((MatchMatrix) (metaAlg
-                        .getMatchMatrix(0) != null ? metaAlg.getMatchMatrix(0) : metaAlg
-                        .getCombinedMatrix()));
+                    MatchInformation mi = topKMatchings.get(index).clone();
+                    mi.setMatrix(metaAlg
+                            .getMatchMatrix(0) != null ? metaAlg.getMatchMatrix(0) : metaAlg
+                                    .getCombinedMatrix());
+                    ArrayList<Match> matches = mi.getCopyOfMatches();
                     matchInformation.setMatches(matches);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
                     graph.setScale(mgs.getScale());
@@ -2916,14 +2908,14 @@ public class OntologyMetaTopKWizard
                 try
                 {
 
-                    SchemaTranslator st = mgs.getSt();
+                	MatchInformation st = mgs.getSt();
                     if (st == null)
                     {// 1:N matching
                      // JOptionPane.showMessageDialog(null,ApplicationUtilities.getResourceString("error")
                      // + ":" +
                      // "No Top K matching generated",ApplicationUtilities.getResourceString("error"),JOptionPane.ERROR_MESSAGE);
                      // return;
-                        st = new SchemaTranslator(mgs.getMatchInformation());
+                        st = mgs.getMatchInformation().clone();
                     }
                     // // Filters
                     // ArrayList filters=new ArrayList();
@@ -3129,7 +3121,7 @@ public class OntologyMetaTopKWizard
             // should not occur
         }
         final MatchGraphStatus mgs = mgsTemp;
-        SchemaTranslator st = null;
+        MatchInformation st = null;
         try
         {
             st = mgs.best();
@@ -3139,7 +3131,7 @@ public class OntologyMetaTopKWizard
             return null;
         }
         // TODO: 6/5/2007 here there may some bug - fix it
-        ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+        ArrayList<Match> matches = st.getCopyOfMatches();
         // //////////
         matchInformation.setMatches(matches);
         statisticsPanel.add(new JScrollPane(matchInformationGui.getStatistics(exactMapping)));
@@ -3299,9 +3291,8 @@ public class OntologyMetaTopKWizard
                 try
                 {
 
-                    SchemaTranslator st = mgs.best();
-                    // TODO: 6/5/2007 here there may some bug - fix it
-                    ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                	MatchInformation st = mgs.best();
+                    ArrayList<Match> matches = st.getCopyOfMatches();
                     // //////////
                     matchInformation.setMatches(matches);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
@@ -3358,8 +3349,8 @@ public class OntologyMetaTopKWizard
                 {
                     if (mgs.getTopkIndex() == 1)
                         return;// do nothing
-                    SchemaTranslator st = mgs.previous();
-                    ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                    MatchInformation st = mgs.previous();
+                    ArrayList<Match> matches = st.getCopyOfMatches();
 
                     matchInformation.setMatches(matches);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
@@ -3425,8 +3416,8 @@ public class OntologyMetaTopKWizard
 
                 try
                 {
-                    SchemaTranslator st = mgs.next();
-                    ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                	MatchInformation st = mgs.next();
+                    ArrayList<Match> matches = st.getCopyOfMatches();
                     matchInformation.setMatches(matches);
                     JGraph graph = matchInformationGui.getGraph(exactMapping);
                     graph.setScale(mgs.getScale());
@@ -3491,14 +3482,14 @@ public class OntologyMetaTopKWizard
 
                 try
                 {
-                    SchemaTranslator st = mgs.getSt();
+                	MatchInformation st = mgs.getSt();
                     if (st == null)
                     {// 1:N matching
                      // JOptionPane.showMessageDialog(null,ApplicationUtilities.getResourceString("error")
                      // + ":" +
                      // "No Top K matching generated",ApplicationUtilities.getResourceString("error"),JOptionPane.ERROR_MESSAGE);
                      // return;
-                        st = new SchemaTranslator(mgs.getMatchInformation());
+                        st = mgs.getMatchInformation().clone();
                     }
                     // // Filters
                     // ArrayList filters=new ArrayList();

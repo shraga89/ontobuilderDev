@@ -1,12 +1,14 @@
 package ac.technion.iem.ontobuilder.gui.tools.exactmapping;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 /**
  * <p>Title: ExactTabelModel</p>
@@ -44,18 +46,19 @@ public class ExactTabelModel extends AbstractTableModel
     /**
      * Update the current <code>ExactTabelModel</code> from the previous mapping
      * 
-     * @param st a {@link SchemaTranslator}
+     * @param st a {@link MatchInformation}
      */
-    public void updateFromPrevMapping(SchemaTranslator st)
+    public void updateFromPrevMapping(MatchInformation st)
     {
-        MatchedAttributePair[] matches = st.getMatchedPairs();
-        for (int i = 0; i < matches.length; i++)
+        ArrayList<Match> matches = st.getCopyOfMatches();
+        for (int i = 0; i < matches.size(); i++)
         {
-            MatchedAttributePair match = matches[i];
+            Match match = matches.get(i);
             for (int j = 0; j < data.length; j++)
             {
                 ExactTableRowModel row = data[j];
-                if (row.getCandTerm().getId() == match.id1 && row.getTargetTerm().getId() == match.getId2())
+                if (row.getCandTerm().equals(match.getCandidateTerm())
+                		&& row.getTargetTerm().equals(match.getTargetTerm()))
                 {
                     row.setSelected(Boolean.TRUE);
                     break;

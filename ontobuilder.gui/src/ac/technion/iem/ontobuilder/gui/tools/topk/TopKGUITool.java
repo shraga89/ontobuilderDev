@@ -370,7 +370,7 @@ public class TopKGUITool extends JFrame
             }
             mapIndex = (mapIndex == 1) ? mapIndex : --mapIndex;
             enableButtons(false);
-            SchemaTranslator st = smw.getKthBestMatching(mapIndex);
+            SchemaTranslator st = new SchemaTranslator(smw.getKthBestMatching(mapIndex));
             MatchedAttributePair[] pairs = st.getMatchedPairs();
             LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
             for (int i = 0; i < pairs.length; i++)
@@ -455,7 +455,7 @@ public class TopKGUITool extends JFrame
             }
             mapIndex++;
             enableButtons(false);
-            SchemaTranslator st = smw.getKthBestMatching(mapIndex);
+            SchemaTranslator st = new SchemaTranslator(smw.getKthBestMatching(mapIndex));
             // debug
             printDiff(st.getMatchedPairs());
             stRemember = st;
@@ -535,8 +535,8 @@ public class TopKGUITool extends JFrame
                     {
                         smw = null;
                     }
-                    smw = new SchemaMatchingsWrapper(match.getMatrix());
-                    SchemaTranslator st = smw.getBestMatching();
+                    smw = new SchemaMatchingsWrapper(match);
+                    SchemaTranslator st = new SchemaTranslator(smw.getBestMatching());
                     // debug
                     stRemember = st;
                     System.out.println("Total mapping weight:" + st.getTotalMatchWeight());
@@ -553,7 +553,7 @@ public class TopKGUITool extends JFrame
                 else
                 {
                     // Retrieve best mapping
-                    SchemaTranslator st = smw.getBestMatching();
+                    SchemaTranslator st = new SchemaTranslator(smw.getBestMatching());
                     MatchedAttributePair[] pairs = st.getMatchedPairs();
                     LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
                     for (int i = 0; i < pairs.length; i++)

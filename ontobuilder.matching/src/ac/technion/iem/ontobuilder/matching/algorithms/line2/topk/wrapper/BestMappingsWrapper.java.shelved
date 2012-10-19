@@ -5,6 +5,7 @@ import java.util.*;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.stablemarriage.StableMarriageWrapper;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
@@ -25,7 +26,7 @@ public class BestMappingsWrapper {
   public BestMappingsWrapper() {
   }
 
-  public static SchemaTranslator GetBestMapping(String mappingAlgoNameIn) {
+  public static SchemaTranslator GetBestMapping(String mappingAlgoNameIn,MatchInformation mi) {
     if (mappingAlgoNameIn == MappingAlgorithms.MAX_WEIGHT_BIPARTITE_GRAPH) {
       return GetBestMappingByMwbg();
     }
@@ -80,7 +81,7 @@ public class BestMappingsWrapper {
 
   }
 
-  private static SchemaTranslator  GetBestMappingByMwbg(){
+  private static MatchInformation  GetBestMappingByMwbg(){
     try {
       SchemaMatchingsWrapper smw = new SchemaMatchingsWrapper(matchMatrix);
       return smw.getBestMatching();

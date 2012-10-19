@@ -3,7 +3,7 @@ package ac.technion.iem.ontobuilder.io.exports;
 import java.io.File;
 import java.util.HashMap;
 
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 /**
  * <p>Title: BestMatchingExporter</p>
@@ -20,7 +20,7 @@ public class BestMatchingExporter implements Exporter
      */
     public void export(HashMap<?, ?> params, File file) throws ExportException
     {
-        SchemaTranslator st = (SchemaTranslator) params.get("Matching");
+        MatchInformation st = (MatchInformation) params.get("Matching");
         int index = ((Integer) params.get("index")).intValue();
         String candName = (String) params.get("candName");
         String targetName = (String) params.get("targetName");

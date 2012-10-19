@@ -5,6 +5,7 @@ import java.util.HashSet;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
@@ -171,10 +172,15 @@ public class PivotMatch
             	tList.addAll(targets);
             	MatchMatrix mm = matrix.createSubMatrix(cList, tList);
                 if (smw == null)
-                    smw = new SchemaMatchingsWrapper(mm);
+                {
+                	MatchInformation mi = new MatchInformation(this.candidateOntology,this.targetOntology);
+                	mi.setMatrix(mm);
+                	smw = new SchemaMatchingsWrapper(mi);
+                }
+                    
                 else
                     smw.reset(mm);
-                SchemaTranslator st = smw.getBestMatching();
+                SchemaTranslator st = new SchemaTranslator(smw.getBestMatching());
                 st = SchemaMatchingsUtilities.getSTwithThresholdSensitivity(st, threshold);
                 return candidates.size() == 0 ? 0 : st.getTotalMatchWeight() / candidates.size();
             }

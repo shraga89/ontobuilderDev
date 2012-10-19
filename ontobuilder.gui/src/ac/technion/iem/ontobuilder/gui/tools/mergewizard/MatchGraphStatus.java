@@ -6,7 +6,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.Schema
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 import com.jgraph.JGraph;
 
@@ -18,17 +17,17 @@ public class MatchGraphStatus
 {
 
     private JGraph one2ManyBestGraph = null;
-    private SchemaTranslator st = null;
+    private MatchInformation st = null;
     private JGraph displayedGraph = null;
     private double scale = 1;
     private int topkIndex = 0;
     private int currentK = 0;
-    private LinkedList<SchemaTranslator> bestMatches = null;
+    private LinkedList<MatchInformation> bestMatches = null;
     private SchemaMatchingsWrapper topk = null;
     private MatchInformation matchInformation;
 
     // debug
-    private SchemaTranslator temp;
+    private MatchInformation temp;
     private boolean debug = false;
 
     // debug
@@ -41,8 +40,8 @@ public class MatchGraphStatus
      */
     public MatchGraphStatus(MatchInformation matchInformation) throws SchemaMatchingsException
     {
-        bestMatches = new LinkedList<SchemaTranslator>();
-        topk = new SchemaMatchingsWrapper(matchInformation.getMatrix());
+        bestMatches = new LinkedList<MatchInformation>();
+        topk = new SchemaMatchingsWrapper(matchInformation);
         this.matchInformation = matchInformation;
     }
 
@@ -82,7 +81,7 @@ public class MatchGraphStatus
      * @return a {@link SchemaTranslator}
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator best() throws SchemaMatchingsException
+    public MatchInformation best() throws SchemaMatchingsException
     {
         if (currentK == 0)
         {
@@ -90,7 +89,7 @@ public class MatchGraphStatus
             currentK = 1;
         }
         topkIndex = 1;
-        SchemaTranslator best = bestMatches.getFirst();
+        MatchInformation best = bestMatches.getFirst();
         if (debug)
         {
             debug(best);
@@ -108,10 +107,10 @@ public class MatchGraphStatus
      * @return a {@link SchemaTranslator}
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator next() throws SchemaMatchingsException
+    public MatchInformation next() throws SchemaMatchingsException
     {
         ++topkIndex;
-        SchemaTranslator next;
+        MatchInformation next;
         if (topkIndex == 1)
             return best();
         if (topkIndex < currentK)
@@ -139,16 +138,16 @@ public class MatchGraphStatus
      * @return a {@link SchemaTranslator}
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator previous() throws SchemaMatchingsException
+    public MatchInformation previous() throws SchemaMatchingsException
     {
 
         topkIndex = (topkIndex > 1 ? topkIndex - 1 : 1);
-        SchemaTranslator previous;
+        MatchInformation previous;
         if (topkIndex == 1)
             return best();
         else
         {
-            previous = (SchemaTranslator) bestMatches.get(topkIndex - 1);
+            previous = bestMatches.get(topkIndex - 1);
         }
 
         if (debug)
@@ -163,7 +162,7 @@ public class MatchGraphStatus
 
     }
 
-    private void debug(SchemaTranslator newMatching)
+    private void debug(MatchInformation newMatching)
     {
         if (debug)
         {
@@ -184,19 +183,19 @@ public class MatchGraphStatus
      *
      * @return a {@link SchemaTranslator}
      */
-    public SchemaTranslator getSt()
+    public MatchInformation getSt()
     {
         return st;
     }
 
     /**
-     * Set the schema translator
+     * Set the Match Information
      *
-     * @param st a {@link SchemaTranslator}
+     * @param mi a {@link SchemaTranslator}
      */
-    public void setSt(SchemaTranslator st)
+    public void setSt(MatchInformation mi)
     {
-        this.st = st;
+        this.st = mi;
     }
 
     /**

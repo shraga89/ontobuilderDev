@@ -3,7 +3,10 @@ package ac.technion.iem.ontobuilder.matching.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -22,6 +25,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
@@ -231,23 +236,23 @@ public final class SchemaMatchingsUtilities
     /**
      * Prints the difference between to best matches to standard output
      * 
-     * @param stPrevious SchemaTranslator Object of previous invoked best matching
-     * @param stNext SchemaTranslator Object of next invoked best matching
+     * @param miPrevious MatchInformation Object of previous invoked best matching
+     * @param miNext MatchInformation Object of next invoked best matching
      */
-    public static void printDiffBestMatches(SchemaTranslator stPrevious, SchemaTranslator stNext)
+    public static void printDiffBestMatches(MatchInformation miPrevious, MatchInformation miNext)
     {
-        if (stPrevious == null || stNext == null)
+        if (miPrevious == null || miNext == null)
             throw new NullPointerException();
-        MatchedAttributePair[] nextPairs;
-        nextPairs = stNext.getMatchedPairs();
+        Set<Match> nextPairs;
+        Set<Match> previousPairs;
+        nextPairs = new HashSet<Match>(miNext.getCopyOfMatches());
+        previousPairs = new HashSet<Match>(miPrevious.getCopyOfMatches());
+        nextPairs.removeAll(previousPairs);
         System.out.println("Differences:");
-        for (int i = 0; i < nextPairs.length; i++)
+        for (Match m : nextPairs)
         {
-            if (!stPrevious.isExist(nextPairs[i]))
-                System.out
-                    .println("new pair: " + nextPairs[i].getAttribute1() + " -> " +
-                        nextPairs[i].getAttribute2() + " weight:" +
-                        nextPairs[i].getMatchedPairWeight());
+        	System.out
+                    .println("new pair: " + m.toString());
         }
         System.out.println("**********************************");
     }
@@ -618,12 +623,12 @@ public final class SchemaMatchingsUtilities
     /**
      * Checks if the total mapping weight of two schema translators is the same
      * 
-     * @param st1 first schema translator
-     * @param st2 second schema translator
+     * @param st1 first MatchInformation
+     * @param st2 second MatchInformation
      * @param precision a precision to trim the values according to
      * @return true if the mapping is the same, else false
      */
-    public static boolean isSameTotalMappingWeight(SchemaTranslator st1, SchemaTranslator st2,
+    public static boolean isSameTotalMappingWeight(MatchInformation st1, MatchInformation st2,
         int precision)
     {
         // System.out.println(DoublePrecision.getDoubleP(st1.getGlobalScore(),precision)+" <-> "+

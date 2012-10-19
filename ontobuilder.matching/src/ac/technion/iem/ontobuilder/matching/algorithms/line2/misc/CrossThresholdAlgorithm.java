@@ -3,14 +3,16 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.misc;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.xml.validation.Schema;
+
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmInitiationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmRunningException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.TAStatistics;
 
@@ -97,7 +99,7 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
             this.o1 = o1;
             this.o2 = o2;
             this.numOfMatchingAlgorithms = numOfMatchingAlgorithms;
-            this.lastMappings = new AbstractMapping[numOfMatchingAlgorithms + 1];
+            this.lastMappings = new MatchInformation[numOfMatchingAlgorithms + 1];
             this.algorithms = algorithms;
             this.tkm = tkm;
             matrixs = new MatchMatrix[numOfMatchingAlgorithms];
@@ -183,7 +185,7 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
      * @param tid the thread id
      * @param mapping an {@link AbstractMapping}
      */
-    public synchronized void notifyNewMapping(int tid, AbstractMapping mapping)
+    public synchronized void notifyNewMapping(int tid, MatchInformation mapping)
     {
         // //perform local and global aggerators calculation
         // //first check if not seen yet this mappings in one of the sorted lists
@@ -229,18 +231,18 @@ public class CrossThresholdAlgorithm extends MatrixDirectWithBoundingAlgorithm i
      * @param alpha an {@link AbstractMapping}
      * @param betas a vector of {@link AbstractMapping}
      */
-    public synchronized void notifyNewHeuristicMappings(int tid, AbstractMapping alpha,
-        Vector<AbstractMapping> betas)
+    public synchronized void notifyNewHeuristicMappings(int tid, MatchInformation alpha,
+        Vector<MatchInformation> betas)
     {
         double[] localMappingScores = new double[numOfMatchingAlgorithms];
         if (lastTidProgressedWith == tid)
         {
             double alphaVal, maxBetaVal = Double.MIN_VALUE, localVal;
             alphaVal = localArg.calcArgValue(alpha, matrixs[tid]);
-            Iterator<AbstractMapping> it = betas.iterator();
+            Iterator<MatchInformation> it = betas.iterator();
             while (it.hasNext())
             {
-                localVal = localArg.calcArgValue((AbstractMapping) it.next(), matrixs[tid]);
+                localVal = localArg.calcArgValue((MatchInformation) it.next(), matrixs[tid]);
                 maxBetaVal = maxBetaVal > localVal ? maxBetaVal : localVal;
             }
             // System.out.println("tid:"+tid+" beta val:"+maxBetaVal);

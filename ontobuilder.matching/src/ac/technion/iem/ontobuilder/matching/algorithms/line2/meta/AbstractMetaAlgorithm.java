@@ -9,17 +9,17 @@ import javax.xml.validation.Schema;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.simple.Threshold2LM;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessor;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatrixPreprocessorTypeEnum;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.MetaAlgorithmStatistics;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.TAStatistics;
 import ac.technion.iem.ontobuilder.matching.utils.DoublePrecision;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingsUtilities;
 
 /**
  * <p>
@@ -42,10 +42,10 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     protected MetaAlgorithmThread[] maThreads;
     protected int currentStep = 1;
     protected boolean initiated = false;
-    protected Hashtable<Integer, AbstractMapping> mappings = new Hashtable<Integer, AbstractMapping>();
+    protected Hashtable<Integer, MatchInformation> mappings = new Hashtable<Integer, MatchInformation>();
     private boolean useParallel;
-    protected LinkedList<AbstractMapping> highestMappings = new LinkedList<AbstractMapping>();
-    protected AbstractMapping[] lastMappings;
+    protected LinkedList<MatchInformation> highestMappings = new LinkedList<MatchInformation>();
+    protected MatchInformation[] lastMappings;
     protected int k;
     protected TKM tkm;
     protected boolean preprocessMatrixes = true;
@@ -72,7 +72,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     protected int lastTotalGeneratedTopKNum = 0;
     protected int lastCurrentStep = 0;
     protected boolean recallRun = false;
-    protected AbstractMapping exactMapping;
+    protected MatchInformation exactMapping;
     protected boolean recallReport = false;
 
     /**
@@ -126,15 +126,18 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     }
 
     /**
-     * Sets an exact mapping using a SchemaTranslator Object according to the threshold, if such
+     * Sets an exact mapping using a MatchInformation Object according to the threshold, if such
      * exists
      * 
-     * @param e an {@link AbstractMapping}
+     * @param e an {@link MatchInformation}
      */
-    public void setExactMapping(AbstractMapping e)
+    public void setExactMapping(MatchInformation e)
     {
         if (threshold > 0)
-            e = SchemaMatchingsUtilities.getSTwithThresholdSensitivity(e, threshold);
+        {
+        	Threshold2LM t = new Threshold2LM(threshold);
+        	e = t.match(e);
+        }
         this.exactMapping = e;
     }
 
@@ -275,7 +278,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
             this.o1 = o1;
             this.o2 = o2;
             this.numOfMatchingAlgorithms = numOfMatchingAlgorithms;
-            this.lastMappings = new AbstractMapping[numOfMatchingAlgorithms];
+            this.lastMappings = new MatchInformation[numOfMatchingAlgorithms];
             this.algorithms = algorithms;
             this.tkm = tkm;
             matrixs = new MatchMatrix[numOfMatchingAlgorithms];
@@ -385,7 +388,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
             return true;
         else
         {
-            AbstractMapping worst = (AbstractMapping) highestMappings.get(0);
+        	MatchInformation worst = highestMappings.get(0);
             return worst.getGlobalScore() < score;
         }
     }
@@ -415,8 +418,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
         {
 
             if (recallRun)
-                recall = SchemaMatchingsUtilities.calculateRecall(exactMapping,
-                    (AbstractMapping) highestMappings.get(i));
+                recall = highestMappings.get(i).getRecall(exactMapping);
             // DEBUG
             if (debugMode)
             {
@@ -424,12 +426,12 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
                     i +
                     " score:" +
                     DoublePrecision.getDoubleP(
-                        ((AbstractMapping) highestMappings.get(i)).getGlobalScore(), 10) +
+                    		highestMappings.get(i).getGlobalScore(), 10) +
                     " need:" + DoublePrecision.getDoubleP(score, 10) + " recall:" + recall);
             }
             // DEBUG
             if (DoublePrecision.getDoubleP(
-                ((AbstractMapping) highestMappings.get(i)).getGlobalScore(), 10) >= DoublePrecision
+            		highestMappings.get(i).getGlobalScore(), 10) >= DoublePrecision
                 .getDoubleP(score, 10))
                 countMappings++;
             if (recallRun)
@@ -475,9 +477,9 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
      * Enter a new high-mapping and sort (in an ascending order). If there are too many mappings,
      * remove the one with the lowest score.
      * 
-     * @param an {@link AbstractMapping}
+     * @param an {@link MatchInformation}
      */
-    protected void enterNewHighMapping(AbstractMapping mapping)
+    protected void enterNewHighMapping(MatchInformation mapping)
     {
         // find index to insert and insert
         // TODO: Haggai - make it sorted every time
@@ -490,15 +492,15 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     /**
      * Get the K best mappings
      * 
-     * @return a list of {@link AbstractMapping}
+     * @return a list of {@link MatchInformation}
      */
-    public Vector<AbstractMapping> getAllKBestMappings()
+    public Vector<MatchInformation> getAllKBestMappings()
     {
         Collections.sort(highestMappings);
-        Vector<AbstractMapping> kBestMappings = new Vector<AbstractMapping>();
+        Vector<MatchInformation> kBestMappings = new Vector<MatchInformation>();
         for (int i = 0; i < k; i++)
         {
-            AbstractMapping aMapping = highestMappings.isEmpty() ? (mappings.get(i + 1)) : highestMappings
+            MatchInformation aMapping = highestMappings.isEmpty() ? mappings.get(i + 1) : highestMappings
                 .get(i);
             kBestMappings.add(aMapping);
         }
@@ -510,12 +512,12 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
      * 
      * @param k the index of mapping to return
      */
-    public AbstractMapping getKthBestMapping(int k)
+    public MatchInformation getKthBestMapping(int k)
     {
         if (k < 1 || k > this.k)
             throw new IllegalArgumentException("k is illigal best mapping index,only have:" +
                 this.k + "best mappings");
-        return (AbstractMapping) (highestMappings.isEmpty() ? mappings.get(new Integer(k)) : highestMappings
+        return (MatchInformation) (highestMappings.isEmpty() ? mappings.get(new Integer(k)) : highestMappings
             .get(k - 1));
     }
 
@@ -613,15 +615,15 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
     /**
      * Not implemented
      */
-    public void notifyNewMapping(int tid, AbstractMapping mapping)
+    public void notifyNewMapping(int tid, MatchInformation mapping)
     {
     }
 
     /**
      * Not implemented
      */
-    public void notifyNewHeuristicMappings(int tid, AbstractMapping alpha,
-        Vector<AbstractMapping> betas)
+    public void notifyNewHeuristicMappings(int tid, MatchInformation alpha,
+        Vector<MatchInformation> betas)
     {
     }
 
@@ -647,7 +649,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
             int cnt = 0;
             System.out.println("::: " + highestMappings.size());
             for (int i = 0; i < highestMappings.size(); i++)
-                if (((AbstractMapping) highestMappings.get(i)).getGlobalScore() != 0)
+                if (((MatchInformation) highestMappings.get(i)).getGlobalScore() != 0)
                     cnt++;
             statistics.setNumOfUsefullMappings(cnt);
         }
@@ -771,9 +773,9 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
      * Add a new mapping if a similar one does not exist
      * 
      * @param tid thread id
-     * @param mapping the {@link AbstractMapping} to add
+     * @param mapping the {@link MatchInformation} to add
      */
-    protected void newMapping(int tid, AbstractMapping mapping)
+    protected void newMapping(int tid, MatchInformation mapping)
     {
         // perform local and global aggerators calculation
         // first check if not seen yet this mappings in one of the sorted lists
@@ -822,8 +824,8 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
         private byte nonUniformVersion;
         private boolean tempFlag = true;
         private boolean lastTidThatProgressed = true;
-        private AbstractMapping lastSecondMapping;
-        private Vector<AbstractMapping> lastPesduMappings;
+        private MatchInformation lastSecondMapping;
+        private Vector<MatchInformation> lastPesduMappings;
 
         /**
          * Constructs a MetaAlgorithmThread with the meta algorithm and a thread id
@@ -951,7 +953,7 @@ public abstract class AbstractMetaAlgorithm implements MetaAlgorithm
          * @return the next best mapping
          * @throws MetaAlgorithmRunningException
          */
-        public AbstractMapping continueInOneStep() throws MetaAlgorithmRunningException
+        public MatchInformation continueInOneStep() throws MetaAlgorithmRunningException
         {
             try
             {

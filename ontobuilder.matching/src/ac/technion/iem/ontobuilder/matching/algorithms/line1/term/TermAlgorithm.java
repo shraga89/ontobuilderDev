@@ -514,7 +514,8 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             System.out.println("\tOverall effectivity: " + effectiveness);
             System.out.println("****************************************************");
         }
-
+        if (effectiveness>1.0)
+        	return true;
         return effectiveness >= threshold;
     }
 

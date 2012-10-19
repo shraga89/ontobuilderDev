@@ -32,10 +32,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.jdom.DocType;
-import org.w3c.dom.Element;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
@@ -51,7 +51,7 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
  * <p>Title: MatchInformation</p>
  * TODO: move the hashcode mechanism from schema translator to here
  */
-public class MatchInformation
+public class MatchInformation implements Comparable<MatchInformation>
 {
 	
     protected Algorithm algorithm; /*Records the algorithm that created this match information object, 
@@ -1037,7 +1037,17 @@ This section deprecated since updateMatch now updates mismatch lists as well*/
 	 * @return the globalScore
 	 */
 	public double getGlobalScore() {
-		return globalScore;
+        if (globalScore != -1)
+            return globalScore;
+        else
+            return getTotalMatchWeight();
+	}
+
+	public double getTotalMatchWeight() {
+		double weight = 0;
+        for (int i = 0; i < matches.size(); i++)
+            weight += matches.get(i).getEffectiveness();
+        return weight;
 	}
 
 	/**
@@ -1047,5 +1057,16 @@ This section deprecated since updateMatch now updates mismatch lists as well*/
 		this.globalScore = globalScore;
 	}
     
-    
+    /**
+     * Compares two mappings and returns a higher rank for the mapping with a higher global score
+     */
+    public int compareTo(MatchInformation m)
+    {
+        if (m.getGlobalScore() > this.getGlobalScore())
+            return -1;
+        else if (m.getGlobalScore() < this.getGlobalScore())
+            return 1;
+        else
+            return 0;
+    }
 }

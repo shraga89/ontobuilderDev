@@ -65,7 +65,7 @@ public class TopK
                 MatchInformation match = obw.loadMatchAlgorithm(
                     MatchingAlgorithmsNamesEnum.values()[topKpUtils.getMatchAlgorithm()]).match(
                     candidateOntology, targetOntology);
-                smw = new SchemaMatchingsWrapper(match.getMatrix());
+                smw = new SchemaMatchingsWrapper(match);
                 SchemaTranslator st = null;
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 int matchIndex = 0;
@@ -74,7 +74,7 @@ public class TopK
                     matchIndex++;
                     if (debugMode)
                         stRemember = st;
-                    st = smw.getNextBestMatching();
+                    st = new SchemaTranslator(smw.getNextBestMatching());
                     if (debugMode)
                         printDiff(st.getMatchedPairs());
                     st.saveMatchToXML(

@@ -91,7 +91,6 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformationFormatTypesEnum;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 import ac.technion.iem.ontobuilder.matching.match.Mismatch;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 import com.jgraph.JGraph;
 import com.jrefinery.chart.ChartFactory;
@@ -1797,9 +1796,9 @@ public class OntologyMergeWizard
                     try
                     {
 
-                        SchemaTranslator st = mgs.best();
+                    	MatchInformation st = mgs.best();
                         // TODO: 6/5/2007 here there may some bug - fix it
-                        ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                        ArrayList<Match> matches = st.getCopyOfMatches();
                         // //////////
                         matchInformation.setMatches(matches);
                         JGraph graph = matchInformationGui.getGraph(exactMapping);
@@ -1860,8 +1859,8 @@ public class OntologyMergeWizard
                     {
                         if (mgs.getTopkIndex() == 1)
                             return;// do nothing
-                        SchemaTranslator st = mgs.previous();
-                        ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                        MatchInformation st = mgs.previous();
+                        ArrayList<Match> matches = st.getCopyOfMatches();
 
                         matchInformation.setMatches(matches);
                         JGraph graph = matchInformationGui.getGraph(exactMapping);
@@ -1930,8 +1929,8 @@ public class OntologyMergeWizard
 
                     try
                     {
-                        SchemaTranslator st = mgs.next();
-                        ArrayList<Match> matches = st.toOntoBuilderMatchList(mgs.getTopk());
+                    	MatchInformation st = mgs.next();
+                        ArrayList<Match> matches = st.getCopyOfMatches();
                         matchInformation.setMatches(matches);
                         JGraph graph = matchInformationGui.getGraph(exactMapping);
                         graph.setScale(mgs.getScale());
@@ -2000,14 +1999,14 @@ public class OntologyMergeWizard
                     try
                     {
 
-                        SchemaTranslator st = mgs.getSt();
+                    	MatchInformation st = mgs.getSt();
                         if (st == null)
                         {// 1:N matching
                         // JOptionPane.showMessageDialog(null,ApplicationUtilities.getResourceString("error")
                         // + ":" +
                         // "No Top K matching generated",ApplicationUtilities.getResourceString("error"),JOptionPane.ERROR_MESSAGE);
                         // return;
-                            st = new SchemaTranslator(mgs.getMatchInformation());
+                            st = mgs.getMatchInformation().clone();
                         }
                         // // Filters
                         // ArrayList filters=new ArrayList();
@@ -2068,7 +2067,9 @@ public class OntologyMergeWizard
                                 Exporter exporter = ExportUtilities.getExporterPlugin(FileUtilities
                                     .getFileExtension(file));
                                 HashMap<String, Comparable<?>> params = new HashMap<String, Comparable<?>>();
-                                params.put("Matching", st);
+                                /*TODO fix this by adding comparble to MatchInformation: 
+                                params.put("Matching", st.getCopyOfMatches());
+                                End TODO*/
                                 params.put("index", new Integer(mgs.getTopkIndex()));
                                 params.put("candName", matchInformation.getCandidateOntology()
                                     .getName());

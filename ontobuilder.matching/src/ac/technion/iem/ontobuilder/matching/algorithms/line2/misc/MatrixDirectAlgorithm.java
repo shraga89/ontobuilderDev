@@ -1,14 +1,16 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.misc;
 
+import javax.xml.validation.Schema;
+
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.AbstractMetaAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmInitiationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmRunningException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.MetaAlgorithmStatistics;
 
@@ -59,7 +61,7 @@ public class MatrixDirectAlgorithm extends AbstractMetaAlgorithm
             // do k best mapping searches with using TKM
             while (!canHalt())
             {
-                AbstractMapping newMapping = _tkm.getNextBestMapping(true);
+            	MatchInformation newMapping = _tkm.getNextBestMapping(true);
                 double localScore = localArg.calcArgValue(newMapping, combinedMatrix);
                 newMapping.setGlobalScore(localScore);
                 mappings.put(new Integer(currentStep), newMapping);

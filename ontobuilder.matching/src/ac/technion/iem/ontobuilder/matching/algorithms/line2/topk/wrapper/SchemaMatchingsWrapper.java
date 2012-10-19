@@ -2,9 +2,9 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKMInitializationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKMRunningException;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
 import ac.technion.iem.ontobuilder.matching.utils.SchemaMatchingAlgorithmsRunner;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 
 /**
  * <p>
@@ -29,23 +29,21 @@ public final class SchemaMatchingsWrapper
     /**
      * Constructs a SchemaMatchingsWrapper
      *
-     * @param matchMatrix a {@link MatchMatrix}
+     * @param mi a {@link MatchInformation}
      * @throws SchemaMatchingsException
      * @throws IllegalArgumentException
      */
-    public SchemaMatchingsWrapper(MatchMatrix matchMatrix) throws SchemaMatchingsException,
+    public SchemaMatchingsWrapper(MatchInformation mi) throws SchemaMatchingsException,
         IllegalArgumentException
     {
         if (matchMatrix == null)
             throw new IllegalArgumentException("Must specify match information");
-        this.matchMatrix = matchMatrix;
+        this.matchMatrix = mi.getMatrix();
         candidateTermIDs = matchMatrix.getCandidateTermIDs();
         targetTermIDs = matchMatrix.getTargetTermIDs();
         try
         {
-            smRunner = new SchemaMatchingAlgorithmsRunner();
-            smRunner.setInitialSchema(candidateTermIDs);
-            smRunner.setMatchedSchema(targetTermIDs, matchMatrix); //very slow
+            smRunner = new SchemaMatchingAlgorithmsRunner(candidateTermIDs,targetTermIDs,mi);
         }
         catch (TKMInitializationException ge)
         {
@@ -113,7 +111,7 @@ public final class SchemaMatchingsWrapper
      * @return {@link SchemaTranslator} of the best marching
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator getBestMatching() throws SchemaMatchingsException
+    public MatchInformation getBestMatching() throws SchemaMatchingsException
     {
         if (matchMatrix == null || smRunner == null)
             throw new SchemaMatchingsException("Schema Matchings Wrapper hasn't been intialized");
@@ -126,7 +124,7 @@ public final class SchemaMatchingsWrapper
      * @return {@link SchemaTranslator} of the best marching
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator getNextBestMatching() throws SchemaMatchingsException
+    public MatchInformation getNextBestMatching() throws SchemaMatchingsException
     {
         if (matchMatrix == null || smRunner == null)
             throw new SchemaMatchingsException("Schema Matchings Wrapper hasn't been intialized");
@@ -146,7 +144,7 @@ public final class SchemaMatchingsWrapper
      * @return {@link SchemaTranslator} of the previous best marching
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator getPreviousBestMatching() throws SchemaMatchingsException
+    public MatchInformation getPreviousBestMatching() throws SchemaMatchingsException
     {
         if (matchMatrix == null || smRunner == null)
             throw new SchemaMatchingsException("Schema Matchings Wrapper hasn't been intialized");
@@ -166,7 +164,7 @@ public final class SchemaMatchingsWrapper
      * @return {@link SchemaTranslator} of the  K-th best marching
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator getKthBestMatching(int k) throws SchemaMatchingsException
+    public MatchInformation getKthBestMatching(int k) throws SchemaMatchingsException
     {
         if (matchMatrix == null || smRunner == null)
             throw new SchemaMatchingsException("Schema Matchings Wrapper hasn't been intialized");
@@ -186,7 +184,7 @@ public final class SchemaMatchingsWrapper
      * @return {@link SchemaTranslator} of the second best marching
      * @throws SchemaMatchingsException
      */
-    public SchemaTranslator getSecondBestMatching() throws SchemaMatchingsException
+    public MatchInformation getSecondBestMatching() throws SchemaMatchingsException
     {
         if (matchMatrix == null || smRunner == null)
             throw new SchemaMatchingsException("Schema Matchings Wrapper hasn't been intialized");

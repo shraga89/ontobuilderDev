@@ -328,6 +328,7 @@ public class StringUtilities
         for (Iterator<String> i = words2.iterator(); i.hasNext();)
         {
             String word2 = (String) i.next();
+            //TODO fix bug caused by use of soundex where intersection can be larger than union
             if (isWordInSet(union.subList(0, unionSize), thesaurus, useSoundex, word2))
                 addWordToSet(intersection, thesaurus, useSoundex, word2);
             else
@@ -335,6 +336,8 @@ public class StringUtilities
         }
 
         double effectiveness = (double) intersection.size() / (double) union.size();
+        if (effectiveness > 1.0)
+        	return 1.0;
         if (thesaurusUsed)
             effectiveness -= THESAURUS_PENALTY;
         if (soundexUsed)

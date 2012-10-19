@@ -5,7 +5,7 @@ import java.util.Vector;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 
 /**
@@ -26,9 +26,9 @@ public interface MetaAlgorithm
 
     public void setAlgorithmName(String algorithmName);
 
-    public Vector<AbstractMapping> getAllKBestMappings();
+    public Vector<MatchInformation> getAllKBestMappings();
 
-    public AbstractMapping getKthBestMapping(int k);
+    public MatchInformation getKthBestMapping(int k);
 
     public int getNumOfSchemaMatchers();
 

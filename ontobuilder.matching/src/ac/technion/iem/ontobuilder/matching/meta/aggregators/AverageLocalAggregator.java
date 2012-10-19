@@ -1,8 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.meta.aggregators;
 
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
 
 
@@ -48,15 +48,12 @@ public class AverageLocalAggregator extends AbstractLocalAggregator
      * @param matrix a match matrix {@link MatchMatrix}
      * @return the average if larger than the threshold, else returns 0
      */
-    public double calcArgValue(AbstractMapping mapping, MatchMatrix matrix)
+    public double calcArgValue(MatchInformation mapping, MatchMatrix matrix)
     {// O(E)
         double score = 0;
-        MatchedAttributePair pair;
-        for (int i = 0; i < mapping.getMatchedAttributesPairsCount(); i++)
+        for (Match pair : mapping.getCopyOfMatches())
         {
-            pair = mapping.getMatchedAttributePair(i);
-            score += matrix.getMatchConfidenceByAttributeNames(pair.getAttribute1(),
-                pair.getAttribute2());
+            score += matrix.getMatchConfidence(pair.getCandidateTerm(), pair.getTargetTerm());
         }
 
         int candMatrixNumAttributes = matrix.getCandidateAttributeNames().length;

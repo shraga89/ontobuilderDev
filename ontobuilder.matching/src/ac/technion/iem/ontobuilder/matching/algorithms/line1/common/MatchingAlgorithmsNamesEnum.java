@@ -10,6 +10,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.common;
  * Available algorithms: <code>Term Match</code>, <code>Value Match</code>,
  * <code>Term and Value Match</code>, <code>Combined Match</code>, <code>Precedence Match</code> and
  * <code>Graph Match</code>
+ * <code>Domain Match</code>
  */
 public enum MatchingAlgorithmsNamesEnum
 {
@@ -21,7 +22,8 @@ public enum MatchingAlgorithmsNamesEnum
     PRECEDENCE("Precedence Match"), 
     COMPOSITION("Graph Match"),
     NEW_PRECEDENCE("New Precedence Match"),
-    SIMILARITY_FLOODING("SimilarityFlooding Match");
+    SIMILARITY_FLOODING("SimilarityFlooding Match"),
+    DOMAIN("Domain Match");
 
     private String _name;
 
@@ -41,7 +43,7 @@ public enum MatchingAlgorithmsNamesEnum
         {
             TERM.getName(), VALUE.getName(), TERM_VALUE_COMBINED.getName(),
             TERM_VALUE_PRECEDENCE_COMPOSITION_COMBINED.getName(), PRECEDENCE.getName(),
-            COMPOSITION.getName(), SIMILARITY_FLOODING.getName()
+            COMPOSITION.getName(), SIMILARITY_FLOODING.getName(),DOMAIN.getName()
         };
         return allNames;
     };

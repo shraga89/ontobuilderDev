@@ -5,9 +5,9 @@ import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.AbstractMetaAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.meta.MetaAlgorithmRunningException;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractGlobalAggregator;
 import ac.technion.iem.ontobuilder.matching.meta.aggregators.AbstractLocalAggregator;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
 import ac.technion.iem.ontobuilder.matching.meta.statistics.TAStatistics;
 
 /**
@@ -112,7 +112,7 @@ public class SMThersholdAlgorithm extends AbstractMetaAlgorithm implements Thres
      * @param tid the thread id
      * @param mapping an {@link AbstractMapping}
      */
-    public synchronized void notifyNewMapping(int tid, AbstractMapping mapping)
+    public synchronized void notifyNewMapping(int tid, MatchInformation mapping)
     {
 
         // perform local and global aggerators calculation
@@ -158,18 +158,18 @@ public class SMThersholdAlgorithm extends AbstractMetaAlgorithm implements Thres
      * @param alpha an {@link AbstractMapping}
      * @param betas a vector of {@link AbstractMapping}
      */
-    public synchronized void notifyNewHeuristicMappings(int tid, AbstractMapping alpha,
-        Vector<AbstractMapping> betas)
+    public synchronized void notifyNewHeuristicMappings(int tid, MatchInformation alpha,
+        Vector<MatchInformation> betas)
     {
         double[] localMappingScores = new double[numOfMatchingAlgorithms];
         if (lastTidProgressedWith == tid)
         {
             double alphaVal, maxBetaVal = Double.MIN_VALUE, localVal;
             alphaVal = localArg.calcArgValue(alpha, matrixs[tid]);
-            Iterator<AbstractMapping> it = betas.iterator();
+            Iterator<MatchInformation> it = betas.iterator();
             while (it.hasNext())
             {
-                localVal = localArg.calcArgValue((AbstractMapping) it.next(), matrixs[tid]);
+                localVal = localArg.calcArgValue((MatchInformation) it.next(), matrixs[tid]);
                 maxBetaVal = maxBetaVal > localVal ? maxBetaVal : localVal;
             }
             // System.out.println("tid:"+tid+" beta val:"+maxBetaVal);

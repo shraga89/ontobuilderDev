@@ -3,32 +3,34 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
 
-public class NumberSniffer implements DataTypeSniffer {
+/* Check if the Value equals to a Boolean Type*/ 
+public class BooleanSniffer implements DataTypeSniffer {
 
 	@Override
 	public boolean sniff(Domain d) {
-		
+		String[] boolArray = {"TRUE","FALSE","YES","NO","1","0"};
 		boolean flag = true;
-
 			for (DomainEntry de : d.getEntries()){
-				try	{					
-					Integer.parseInt(de.toString());
+				boolean inList = false;
+				for (String str : boolArray){
+					if (de.toString().equals(str)){
+						inList = true;
+					}
 				}
-				catch (NumberFormatException e)	{
+				if (!inList){
 					flag = false;
-					break;
+					break;			
 				}
+
 			}
-		
+
 		return flag;
-	
 	}
 
 	@Override
 	public String name() {
-		return "Number";
+		// TODO Auto-generated method stub
+		return "Boolean";
 	}
-	
-	
 
 }

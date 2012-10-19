@@ -2,13 +2,13 @@ package ac.technion.iem.ontobuilder.matching.utils;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKM;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKMInitializationException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.tkm.TKMRunningException;
@@ -21,9 +21,9 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.KBest_Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.SecondBestMatchingAlgorithm_Algorithm2;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.TopKAlgorithm;
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
 /**
  * <p>
@@ -39,6 +39,7 @@ import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
  */
 public final class SchemaMatchingAlgorithmsRunner implements TKM
 {
+	private MatchInformation orig; //MatchInformation before any transformations
     /** the schema we want to translate */
     private long[] initialSchemataIDs;
     /** the matched to schema */
@@ -54,7 +55,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /** next match index */
     private int k = 0;
     /** holds the best matches */
-    private LinkedList<SchemaTranslator> bestMatches = new LinkedList<SchemaTranslator>();
+    private LinkedList<MatchInformation> bestMatches = new LinkedList<MatchInformation>();
     /** flags if invoked second best algorithm */
     private boolean usedSecondBestAlgorithm = false;
     /** batch properties */
@@ -83,6 +84,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param candidateSchemata the initial candidate schema attributes names
      * @param targetSchemata the initial target schema attributes names
      * @param weightsMatrix
+     * @deprecated use MatchInformation version
      * @throws GraphIsNotBipartiteException
      */
     public SchemaMatchingAlgorithmsRunner(long[] candidateSchemata, long[] targetSchemata,
@@ -92,6 +94,21 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         {
             setInitialSchema(candidateSchemata);
             setMatchedSchema(targetSchemata, matchMatrix);
+        }
+        catch (Throwable e)
+        {
+            throw new TKMInitializationException(e.getMessage());
+        }
+    }
+    
+    public SchemaMatchingAlgorithmsRunner(long[] candidateSchemata, long[] targetSchemata,
+    		MatchInformation mi) throws TKMInitializationException
+    {
+        try
+        {
+            setInitialSchema(candidateSchemata);
+            setMatchedSchema(targetSchemata, mi.getMatrix());
+            orig = mi;
         }
         catch (Throwable e)
         {
@@ -216,64 +233,61 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         return kba;
     }
 
-    /**
-     * Creates the graph adjacency matrix from the OntoBuilder matrix
-     * 
-     * @param m adjacency matrix
-     * @param row - row count
-     * @param col - column count
-     */
-    private void createGraphAdjMatrix(double[][] m, int row, int col)
-    {
-        adjMatrix = new double[row + col][row + col];
-        for (int i = 0; i < col; i++)
-            for (int j = 0; j < col; j++)
-                adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
-        for (int i = 0; i < col; i++)
-            for (int j = col; j < row + col; j++)
-                adjMatrix[i][j] = m[j - col][i];
-        for (int i = col; i < row + col; i++)
-            for (int j = 0; j < row + col; j++)
-                adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
-    }
+//    /**
+//     * Creates the graph adjacency matrix from the OntoBuilder matrix
+//     * 
+//     * @param m adjacency matrix
+//     * @param row - row count
+//     * @param col - column count
+//     */
+//    private void createGraphAdjMatrix(double[][] m, int row, int col)
+//    {
+//        adjMatrix = new double[row + col][row + col];
+//        for (int i = 0; i < col; i++)
+//            for (int j = 0; j < col; j++)
+//                adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
+//        for (int i = 0; i < col; i++)
+//            for (int j = col; j < row + col; j++)
+//                adjMatrix[i][j] = m[j - col][i];
+//        for (int i = col; i < row + col; i++)
+//            for (int j = 0; j < row + col; j++)
+//                adjMatrix[i][j] = (i == j) ? 0 : Graph.INF;
+//    }
 
     /**
-     * Returns a translator for the next best matching
+     * Returns a matchinformation for the next best matching
      * 
      * @return translator
      */
-    public SchemaTranslator getBestMatching()
+    public MatchInformation getBestMatching()
     {
-        SchemaTranslator st = new SchemaTranslator();
-        st.setSchemaPairs(preparePairs(bestMatching));
+    	MatchInformation res = new MatchInformation(orig.getCandidateOntology(), orig.getTargetOntology());
+        res.setMatches(preparePairs(bestMatching));
         if (k == 0)
             k++;
         // bestMatches.add(k-1,st);//old version...
         if (accumulate)
-            bestMatches.addLast(st);
-        return st;
+            bestMatches.addLast(res);
+        return res;
     }
 
     /**
-     * Prepares the matched attribute pairs for the schema translator
+     * Prepares the matchs schema translator
      * 
      * @param matching
      * @return the matched attributes pairs list
      */
-    private MatchedAttributePair[] preparePairs(Set<Edge> matching)
+    private ArrayList<Match> preparePairs(Set<Edge> matching)
     {// O(E)
-        MatchedAttributePair[] mp = new MatchedAttributePair[matching.size()];
-        Iterator<Edge> it = matching.iterator();
-        for (int i = 0; it.hasNext(); i++)
+    	ArrayList<Match> m = new ArrayList<Match>();
+        MatchMatrix mm =  orig.getMatrix();
+        for (Edge e : matching)
         {
-            Edge e = (Edge) it.next();
-            mp[i] = new MatchedAttributePair(bg.getVertex(e.getSourceVertexID()).getVertexName(),
-            		bg.getVertex(e.getTargetVertexID()).getVertexName(),
-            		e.getEdgeWeight(),
-            		bg.getVertex(e.getSourceVertexID()).getVertexNameID(),
-                bg.getVertex(e.getTargetVertexID()).getVertexNameID());
+            Term cTerm = mm.getTermByID(bg.getVertex(e.getSourceVertexID()).getVertexNameID(), true);
+            Term tTerm = mm.getTermByID(bg.getVertex(e.getTargetVertexID()).getVertexNameID(), false);
+            m.add(new Match(cTerm,tTerm,e.getEdgeWeight()));
         }
-        return mp;
+        return m;
     }
 
     /**
@@ -281,14 +295,14 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * 
      * @return schema translator for the next best matching
      */
-    public SchemaTranslator getNextBestMatching(boolean openFronter) throws TKMRunningException
+    public MatchInformation getNextBestMatching(boolean openFronter) throws TKMRunningException
     {
         try
         {
             k++;
             if (k == 1)
                 return getBestMatching();
-            SchemaTranslator st = new SchemaTranslator();
+            MatchInformation res = new MatchInformation(orig.getCandidateOntology(),orig.getTargetOntology());
             if (usedSecondBestAlgorithm)
             {
                 usedSecondBestAlgorithm = false;
@@ -296,11 +310,11 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
                                                  // third
             }
 
-            st.setSchemaPairs(preparePairs(kba.getNextMatching(openFronter)));
+            res.setMatches(preparePairs(kba.getNextMatching(openFronter)));
             // bestMatches.add(k-1,st);//old version
             if (accumulate)
-                bestMatches.addLast(st);
-            return st;
+                bestMatches.addLast(res);
+            return res;
         }
         catch (Throwable e)
         {
@@ -316,7 +330,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @return schema translator for the previous best matching
      * @throws TKMRunningException
      */
-    public SchemaTranslator getPreviousBestMatching(boolean openFronter) throws TKMRunningException
+    public MatchInformation getPreviousBestMatching(boolean openFronter) throws TKMRunningException
     {
         if (k > 1)
             --k;
@@ -326,12 +340,12 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Get the local second best mapping
      */
-    public AbstractMapping getLocalSecondBestMapping()
+    public MatchInformation getLocalSecondBestMapping()
     {
+    	MatchInformation res = new MatchInformation(orig.getCandidateOntology(), orig.getTargetOntology());
         bestMatching = kba.getLocalSecondBestMatching();
-        SchemaTranslator st = new SchemaTranslator();
-        st.setSchemaPairs(preparePairs(bestMatching));
-        return st;
+        res.setMatches(preparePairs(bestMatching));
+        return res;
     }
 
     /**
@@ -339,21 +353,19 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * 
      * @return the mapping
      */
-    public Vector<AbstractMapping> getNextHeuristicMappings(byte nonUniformVersion)
+    public Vector<MatchInformation> getNextHeuristicMappings(byte nonUniformVersion)
         throws TKMRunningException
     {
-        Vector<AbstractMapping> mappings = new Vector<AbstractMapping>();
+        Vector<MatchInformation> mappings = new Vector<MatchInformation>();
         List<Set<Edge>> matchings;
         try
         {
             matchings = kba.getNextHeuristicMatchings(nonUniformVersion);
-            Iterator<Set<Edge>> it = matchings.iterator();
-            SchemaTranslator st;
-            while (it.hasNext())
+            for (Set<Edge> eSet : matchings)
             {
-                st = new SchemaTranslator();
-                st.setSchemaPairs(preparePairs((Set<Edge>) it.next()));
-                mappings.add(st);
+            	MatchInformation res = new MatchInformation(orig.getCandidateOntology(),orig.getTargetOntology());
+                res.setMatches(preparePairs(eSet));
+                mappings.add(res);
             }
             return mappings;
         }
@@ -381,22 +393,22 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param k the i-th best mapping to get to
      * @return the K-th best matching
      */
-    public SchemaTranslator getKthBestMatching(int k, boolean openFronter)
+    public MatchInformation getKthBestMatching(int k, boolean openFronter)
         throws TKMRunningException
     {
         if (k < 1)
             throw new IllegalArgumentException("K parameter should be > 1!");
         if (this.k < k)
         {
-            SchemaTranslator st = null;
+        	MatchInformation res = null;
             while (this.k < k)
             {
-                st = getNextBestMatching(openFronter);
+                res = getNextBestMatching(openFronter);
             }
-            return st;
+            return res;
         }
         else
-            return (SchemaTranslator) bestMatches.get(k - 1);
+            return bestMatches.get(k - 1);
     }
 
     /**
@@ -423,7 +435,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
      * @param useSecondBestAlgorithm flags if to use a better algorithm for second best
      * matching.O(V^3)<br>
      */
-    public SchemaTranslator getSecondBestMatching(boolean useSecondBestAlgorithm,
+    public MatchInformation getSecondBestMatching(boolean useSecondBestAlgorithm,
         boolean openFronter) throws TKMRunningException
     {
         if (k >= 2 || !useSecondBestAlgorithm)
@@ -435,25 +447,30 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
             {
                 dGraph = GraphFactory.buildDgraph((BipartiteGraph) bg.clone());
                 Set<Edge> bestMatch = dGraph.getBestMatching();
-                MatchedAttributePair[] matchedPairs = preparePairs(bestMatch);
                 // bestMatches.add(0,new SchemaTranslator(matchedPairs));//old version
                 if (accumulate)
-                    bestMatches.addFirst(new SchemaTranslator(matchedPairs));
+                {
+                	MatchInformation res = new MatchInformation(orig.getCandidateOntology(),orig.getTargetOntology()); 
+                	res.setMatches(preparePairs(bestMatch));
+                	bestMatches.addFirst(res);
+                }
+                    
             }
             else
                 dGraph = GraphFactory.buildDgraph((BipartiteGraph) bg.clone(), bestMatching);
             SecondBestMatchingAlgorithm_Algorithm2 sbma = new SecondBestMatchingAlgorithm_Algorithm2(
                 dGraph);
             Set<Edge> secondBestMatch = sbma.runAlgorithm();
-            MatchedAttributePair[] matchedPairs = preparePairs(secondBestMatch);
-            SchemaTranslator st = new SchemaTranslator(matchedPairs);
+            MatchInformation res = new MatchInformation(orig.getCandidateOntology(),orig.getTargetOntology()); 
+        	res.setMatches(preparePairs(secondBestMatch));
             k = 2;
             // bestMatches.add(1,st);//old version
             if (accumulate)
-                bestMatches.addLast(st);
+                bestMatches.addLast(res);
             usedSecondBestAlgorithm = true;
-            return st;
+            return res;
         }
+        
     }
 
     // need to figure out the initiation should be here??
@@ -470,7 +487,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Get the next best mapping
      */
-    public AbstractMapping getNextBestMapping(boolean openFronter) throws TKMRunningException
+    public MatchInformation getNextBestMapping(boolean openFronter) throws TKMRunningException
     {
         return getNextBestMatching(openFronter);// will create new Mapping Object
     }
@@ -478,7 +495,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Get the previous best mapping
      */
-    public AbstractMapping getPreviousBestMapping(boolean openFronter) throws TKMRunningException
+    public MatchInformation getPreviousBestMapping(boolean openFronter) throws TKMRunningException
     {
         return getPreviousBestMatching(openFronter);// will create new Mapping Object
     }
@@ -486,7 +503,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
     /**
      * Get the K-th best mapping
      */
-    public AbstractMapping getKthBestMapping(int k, boolean openFronter) throws TKMRunningException
+    public MatchInformation getKthBestMapping(int k, boolean openFronter) throws TKMRunningException
     {
         return getKthBestMatching(k, openFronter);// will create new Mapping Object
     }

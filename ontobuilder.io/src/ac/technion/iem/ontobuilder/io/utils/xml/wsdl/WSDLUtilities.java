@@ -29,6 +29,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgo
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
+import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 
 /**
@@ -170,9 +171,9 @@ public final class WSDLUtilities
             match = matcher.match(in, challenge.getInputOntology());
             try
             {
-                smw = new SchemaMatchingsWrapper(match.getMatrix());
+                smw = new SchemaMatchingsWrapper(match);
                 // 1:1 mapping
-                score = smw.getBestMatching().getTotalMatchWeight();
+                score = (new SchemaTranslator(smw.getBestMatching())).getTotalMatchWeight();
                 if (challenge.getInputDiscoverScore() < score)
                 {
                     challenge.setInputDiscoverScore(score);
@@ -192,9 +193,9 @@ public final class WSDLUtilities
             match = matcher.match(out, challenge.getOutputOntology());
             try
             {
-                smw = new SchemaMatchingsWrapper(match.getMatrix());
+                smw = new SchemaMatchingsWrapper(match);
                 // 1:1 mapping
-                score = smw.getBestMatching().getTotalMatchWeight();
+                score = (new SchemaTranslator(smw.getBestMatching())).getTotalMatchWeight();
                 if (challenge.getOutputDiscoverScore() < score)
                 {
                     challenge.setOutputDiscoverScore(score);

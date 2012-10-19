@@ -1,8 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.meta.aggregators;
 
-import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
+import ac.technion.iem.ontobuilder.matching.match.Match;
+import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 
 
 
@@ -32,21 +32,16 @@ public class ProductLocalAggregator extends AbstractLocalAggregator
 
     /**
      * Calculates the product of the mapping's pairs values according to the match matrix provided
-     * @param mapping a mapping result {@link AbstractMapping}
+     * @param mapping a mapping result {@link MatchInformation}
      * @param matrix a match matrix {@link MatchMatrix}
      * 
      * @return the product
      */
-    public double calcArgValue(AbstractMapping mapping, MatchMatrix matrix)
+    public double calcArgValue(MatchInformation mapping, MatchMatrix matrix)
     {
         double score = 0;
-        MatchedAttributePair pair;
-        for (int i = 0; i < mapping.getMatchedAttributesPairsCount(); i++)
-        {
-            pair = mapping.getMatchedAttributePair(i);
-            score *= matrix.getMatchConfidenceByAttributeNames(pair.getAttribute1(),
-                pair.getAttribute2());
-        }
+        for (Match m : mapping.getCopyOfMatches())
+            score *= m.getEffectiveness();
         return score;
     }
 
