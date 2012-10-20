@@ -5,13 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.files.XmlFileHandler;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 
 /**
@@ -32,7 +32,7 @@ public class TopK
     private boolean debugMode = false;
     private boolean directErrorsToFile = false;
 
-    SchemaTranslator stRemember;
+    MatchInformation stRemember;
 
     /**
      * Constructs a TopK
@@ -66,17 +66,17 @@ public class TopK
                     MatchingAlgorithmsNamesEnum.values()[topKpUtils.getMatchAlgorithm()]).match(
                     candidateOntology, targetOntology);
                 smw = new SchemaMatchingsWrapper(match);
-                SchemaTranslator st = null;
+                MatchInformation st = null;
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 int matchIndex = 0;
                 while (userWantNextBestMatch)
                 {
                     matchIndex++;
                     if (debugMode)
-                        stRemember = st;
-                    st = new SchemaTranslator(smw.getNextBestMatching());
+                        stRemember = st.clone();
+                    st = smw.getNextBestMatching().clone();
                     if (debugMode)
-                        printDiff(st.getMatchedPairs());
+                        printDiff(st.getCopyOfMatches());
                     st.saveMatchToXML(
                         matchIndex,
                         topKpUtils.getCandidateOntologyXMLFilePath(),
@@ -112,17 +112,17 @@ public class TopK
      * 
      * @param pairs the array of matched attribute pairs
      */
-    public void printDiff(MatchedAttributePair[] pairs)
+    public void printDiff(ArrayList<Match> pairs)
     {
         if (stRemember == null)
             return;
         else
         {
-            for (int i = 0; i < pairs.length; i++)
+            for (Match m : pairs)
             {
-                if (!stRemember.isExist(pairs[i]))
-                    System.out.println("new pair: " + pairs[i].getAttribute1() + " -> " +
-                        pairs[i].getAttribute2() + "weight:" + pairs[i].getMatchedPairWeight());
+                if (!stRemember.getCopyOfMatches().contains(m))
+                    System.out.println("new pair: " + m.getCandidateTerm() + " -> " +
+                        m.getTargetTerm() + "weight:" + m.getEffectiveness());
             }
         }
     }

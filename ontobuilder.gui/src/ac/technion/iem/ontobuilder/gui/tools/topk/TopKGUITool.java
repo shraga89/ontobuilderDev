@@ -3,6 +3,7 @@ package ac.technion.iem.ontobuilder.gui.tools.topk;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,10 +23,10 @@ import ac.technion.iem.ontobuilder.gui.tools.utils.FileChoosingUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchedAttributePair;
 import ac.technion.iem.ontobuilder.matching.utils.DoublePrecision;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 
 
@@ -370,11 +371,11 @@ public class TopKGUITool extends JFrame
             }
             mapIndex = (mapIndex == 1) ? mapIndex : --mapIndex;
             enableButtons(false);
-            SchemaTranslator st = new SchemaTranslator(smw.getKthBestMatching(mapIndex));
-            MatchedAttributePair[] pairs = st.getMatchedPairs();
-            LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
-            for (int i = 0; i < pairs.length; i++)
-                toDisplay.add(pairs[i]);
+            MatchInformation st = smw.getKthBestMatching(mapIndex);
+            ArrayList<Match> pairs = st.getCopyOfMatches();
+            LinkedList<Match> toDisplay = new LinkedList<Match>();
+            for (Match m : pairs)
+                toDisplay.add(m);
             if (!"".equals(threshold.getText()))
                 toDisplay = filterByThreshold(Double.parseDouble(threshold.getText()), toDisplay);
             setTableData(toDisplay, smw);
@@ -455,16 +456,16 @@ public class TopKGUITool extends JFrame
             }
             mapIndex++;
             enableButtons(false);
-            SchemaTranslator st = new SchemaTranslator(smw.getKthBestMatching(mapIndex));
+            MatchInformation st = smw.getKthBestMatching(mapIndex);
             // debug
-            printDiff(st.getMatchedPairs());
+            printDiff(st.getCopyOfMatches());
             stRemember = st;
             System.out.println("Total mapping weight:" + st.getTotalMatchWeight());
             // /
-            MatchedAttributePair[] pairs = st.getMatchedPairs();
-            LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
-            for (int i = 0; i < pairs.length; i++)
-                toDisplay.add(pairs[i]);
+            ArrayList<Match> pairs = st.getCopyOfMatches();
+            LinkedList<Match> toDisplay = new LinkedList<Match>();
+            for (Match m :pairs)
+                toDisplay.add(m);
             if (!"".equals(threshold.getText()))
                 toDisplay = filterByThreshold(Double.parseDouble(threshold.getText()), toDisplay);
             setTableData(toDisplay, smw);
@@ -536,15 +537,12 @@ public class TopKGUITool extends JFrame
                         smw = null;
                     }
                     smw = new SchemaMatchingsWrapper(match);
-                    SchemaTranslator st = new SchemaTranslator(smw.getBestMatching());
+                    MatchInformation st= smw.getBestMatching();
                     // debug
-                    stRemember = st;
+                    stRemember = st.clone();
                     System.out.println("Total mapping weight:" + st.getTotalMatchWeight());
                     // /
-                    MatchedAttributePair[] pairs = st.getMatchedPairs();
-                    LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
-                    for (int i = 0; i < pairs.length; i++)
-                        toDisplay.add(pairs[i]);
+                    LinkedList<Match> toDisplay = new LinkedList<Match>(st.getCopyOfMatches());
                     if (!"".equals(threshold.getText()))
                         toDisplay = filterByThreshold(Double.parseDouble(threshold.getText()),
                             toDisplay);
@@ -553,11 +551,7 @@ public class TopKGUITool extends JFrame
                 else
                 {
                     // Retrieve best mapping
-                    SchemaTranslator st = new SchemaTranslator(smw.getBestMatching());
-                    MatchedAttributePair[] pairs = st.getMatchedPairs();
-                    LinkedList<MatchedAttributePair> toDisplay = new LinkedList<MatchedAttributePair>();
-                    for (int i = 0; i < pairs.length; i++)
-                        toDisplay.add(pairs[i]);
+                    LinkedList<Match> toDisplay = new LinkedList<Match>(smw.getBestMatching().getCopyOfMatches());
                     setTableData(toDisplay, smw);
                 }
                 // processWindow.destroy();
@@ -674,17 +668,17 @@ public class TopKGUITool extends JFrame
     /**
      * Prints the different between each of the two match attributes, used for debug
      */
-    public void printDiff(MatchedAttributePair[] pairs)
+    public void printDiff(ArrayList<Match> pairs)
     {
         if (stRemember == null)
             return;
         else
         {
-            for (int i = 0; i < pairs.length; i++)
+            for (Match m :pairs)
             {
-                if (!stRemember.isExist(pairs[i]))
-                    System.out.println("new pair: " + pairs[i].getAttribute1() + " -> " +
-                        pairs[i].getAttribute2() + "weight:" + pairs[i].getMatchedPairWeight());
+                if (!stRemember.getCopyOfMatches().contains(m))
+                    System.out.println("new pair: " + m.getCandidateTerm() + " -> " +
+                        m.getTargetTerm() + "weight:" + m.getEffectiveness());
             }
         }
     }
@@ -722,15 +716,15 @@ public class TopKGUITool extends JFrame
      * @param data the data to filter
      * @return a filtered list of MatchedAttributePair
      */
-    public LinkedList<MatchedAttributePair> filterByThreshold(double tsh,
-        LinkedList<MatchedAttributePair> data)
+    public LinkedList<Match> filterByThreshold(double tsh,
+        LinkedList<Match> data)
     {
-        LinkedList<MatchedAttributePair> filtered = new LinkedList<MatchedAttributePair>();
-        Iterator<MatchedAttributePair> it = data.iterator();
+        LinkedList<Match> filtered = new LinkedList<Match>();
+        Iterator<Match> it = data.iterator();
         while (it.hasNext())
         {
-            MatchedAttributePair pair = it.next();
-            if (pair.getMatchedPairWeight() >= tsh)
+            Match pair = it.next();
+            if (pair.getEffectiveness() >= tsh)
                 filtered.add(pair);
         }
         return filtered;
@@ -759,7 +753,7 @@ public class TopKGUITool extends JFrame
      * 
      * @param allergies list of allergies
      */
-    public void setTableData(final LinkedList<MatchedAttributePair> matches,
+    public void setTableData(final LinkedList<Match> matches,
         final SchemaMatchingsWrapper smw)
     {
         Runnable op = new Runnable()
@@ -845,7 +839,7 @@ public class TopKGUITool extends JFrame
     private SMSplash sm;
     // private Process processWindow;
     // for debug
-    private SchemaTranslator stRemember;
+    private MatchInformation stRemember;
     // End of variables declaration
 
 }
