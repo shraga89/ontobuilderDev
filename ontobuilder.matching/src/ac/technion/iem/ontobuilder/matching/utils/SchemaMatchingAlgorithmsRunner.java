@@ -285,7 +285,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
         {
             Term cTerm = mm.getTermByID(bg.getVertex(e.getSourceVertexID()).getVertexNameID(), true);
             Term tTerm = mm.getTermByID(bg.getVertex(e.getTargetVertexID()).getVertexNameID(), false);
-            m.add(new Match(cTerm,tTerm,e.getEdgeWeight()));
+            m.add(new Match(tTerm,cTerm,e.getEdgeWeight()));
         }
         return m;
     }
