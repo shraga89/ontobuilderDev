@@ -36,7 +36,7 @@ public final class SchemaMatchingsWrapper
     public SchemaMatchingsWrapper(MatchInformation mi) throws SchemaMatchingsException,
         IllegalArgumentException
     {
-        if (matchMatrix == null)
+        if (mi == null)
             throw new IllegalArgumentException("Must specify match information");
         this.matchMatrix = mi.getMatrix();
         candidateTermIDs = matchMatrix.getCandidateTermIDs();
