@@ -1,7 +1,14 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
+
+import org.jbpt.petri.NetSystem;
+import org.jbpt.petri.Transition;
+import org.jbpt.petri.io.PNMLSerializer;
+
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
+import ac.technion.iem.ontobuilder.core.ontology.OntologyClass;
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 
 /**
  * <p>Title: PNML (Petri-Net Mark-up Language) Importer </p>
@@ -35,22 +42,11 @@ public class PNMLImporter implements Importer
         PNMLOntology.setFile(file);
         PNMLOntology.setLight(true);
 
-    	Object result = null;
-        //Parse PNML
-        try
-        {
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new ImportException("PNML Import failed");
-        }
+    	PNMLSerializer parser = new PNMLSerializer();
+    	NetSystem netSystem = parser.parse(file.getPath());
         
-        
-        
-		//create classes and terms from result
-        createOntology(result );
+    	//create classes and terms from result
+        createOntology(netSystem);
         
         //mine domain from instances
         if (instances!=null) 
@@ -67,7 +63,7 @@ public class PNMLImporter implements Importer
 	 * @param instances
 	 */
 	private void createDomainsFromInstances(File schema, File instances) {
-
+		//TODO: at some point we may load traces 
 	}
 
 
@@ -80,10 +76,19 @@ public class PNMLImporter implements Importer
 	 * 		2. replacing extension markers with terms from the referenced type
 	 * @param result parsed BP
 	 */
-	private void createOntology(Object result) {
-		
-		
-	}
+	private void createOntology(NetSystem netSystem) {
 
-	
+		OntologyClass actClass = new OntologyClass("activity");
+		PNMLOntology.addClass(actClass);
+
+		for (Transition t : netSystem.getTransitions()) {
+			if (t.isSilent()) 
+				continue;
+			
+			Term term = new Term(t.getName(), t.getName());
+			term.setSuperClass(actClass);
+			PNMLOntology.addTerm(term);
+			
+		}
+	}
 }

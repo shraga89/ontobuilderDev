@@ -62,18 +62,22 @@ public class PNMLPairMatchImporter implements MatchImporter {
 	 * @return
 	 */
 	private ArrayList<ProvenancePair> readMappingFile(File file) {
-		//TODO: skip 2 lines
 		BufferedReader readbuffer;
 		String strRead;
 		String splitArray[];
 		ArrayList<ProvenancePair> list = new ArrayList<ProvenancePair>();
 		try {
 			readbuffer = new BufferedReader(new FileReader(file.getPath()));
+			
+			//skip first two lines that contain the link to the model files
+			readbuffer.readLine();
+			readbuffer.readLine();
+			
 			while (readbuffer.ready()){
 				strRead=readbuffer.readLine();
 				splitArray = strRead.split(",");
-				if (splitArray.length==3)
-					list.add( new ProvenancePair(splitArray[0],splitArray[1],Double.parseDouble(splitArray[2])));
+				if (splitArray.length==2)
+					list.add( new ProvenancePair(splitArray[0],splitArray[1], 1.0));
 				}
 			readbuffer.close();
 		} catch (FileNotFoundException e1) {
