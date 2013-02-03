@@ -5,6 +5,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.core"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/wsdl4j.jar"/>
+	<classpathentry kind="lib" path="lib/jbpt-0.2.314.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.matching"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/xsom.jar" sourcepath="C:/Program Files/Java/xsom/xsom-20110101-SNAPSHOT-sources.jar">
 		<attributes>
