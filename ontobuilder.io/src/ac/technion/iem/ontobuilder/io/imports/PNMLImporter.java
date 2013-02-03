@@ -85,10 +85,24 @@ public class PNMLImporter implements Importer
 			if (t.isSilent()) 
 				continue;
 			
-			Term term = new Term(t.getName(), t.getName());
+			String cleanedName = cleanNameString(t.getName());
+			Term term = new Term(cleanedName, cleanedName);
 			term.setSuperClass(actClass);
 			PNMLOntology.addTerm(term);
 			
 		}
 	}
+	
+	/**
+	 * Some PNML files have transition names that start with '.\n' to 
+	 * force old ProM versions to display the name. Since that is not 
+	 * included in the respective match file, we delete this prefix.
+	 * 
+	 * @param name the name of a transition
+	 * @return the cleaned name of a transition
+	 */
+	private String cleanNameString(String name) {
+		return name.replace(".\\n", "");
+	}
+	
 }
