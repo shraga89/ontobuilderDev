@@ -4,8 +4,8 @@ import java.net.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
-import org.jdom.*;
-import org.jdom.input.*;
+import org.jdom2.*;
+import org.jdom2.input.*;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.AgentEntityResolver;
@@ -123,7 +123,9 @@ public class OntoBuilderAgentClient extends Thread
         catch (JDOMException e)
         {
             return "Error: " + e.getMessage();
-        }
+        } catch (IOException e) {
+            return "Error: " + e.getMessage();
+		}
     }
 
     /**

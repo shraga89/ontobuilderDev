@@ -14,9 +14,9 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.hccp.net.CookieManager;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.DOMOutputter;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.DOMOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -147,7 +147,7 @@ public class DOMUtilities
         try
         {
             SAXBuilder builder = new SAXBuilder(validation);
-            org.jdom.Document doc = builder.build(stream);
+            org.jdom2.Document doc = builder.build(stream);
 
             DOMOutputter fmt = new DOMOutputter();
             return fmt.output(doc);

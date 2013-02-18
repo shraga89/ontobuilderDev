@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Relationship;

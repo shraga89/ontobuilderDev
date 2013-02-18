@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import ac.technion.iem.ontobuilder.core.biztalk.BizTalkUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
@@ -888,13 +888,13 @@ public class Term extends OntologyClass
     public Element getXMLRepresentation()
     {
         Element termElement = new Element("term");
-        termElement.setAttribute(new org.jdom.Attribute("id", Long.toString(id)));
+        termElement.setAttribute(new org.jdom2.Attribute("id", Long.toString(id)));
         if (name != null)
-            termElement.setAttribute(new org.jdom.Attribute("name", name));
+            termElement.setAttribute(new org.jdom2.Attribute("name", name));
         if (value != null)
-            termElement.setAttribute(new org.jdom.Attribute("value", value.toString()));
+            termElement.setAttribute(new org.jdom2.Attribute("value", value.toString()));
         if (superClass != null)
-            termElement.setAttribute(new org.jdom.Attribute("class", superClass.getName()));
+            termElement.setAttribute(new org.jdom2.Attribute("class", superClass.getName()));
 
         // Domain
         termElement.addContent(domain.getXMLRepresentation());
@@ -952,7 +952,7 @@ public class Term extends OntologyClass
         if (terms.size() > 0) // treat this term as an element
         {
             e = new Element("ElementType", def);
-            e.setAttribute(new org.jdom.Attribute("name", elementName));
+            e.setAttribute(new org.jdom2.Attribute("name", elementName));
 
             // determine type of content
             String content = "empty";
@@ -966,14 +966,14 @@ public class Term extends OntologyClass
                 }
             }
 
-            e.setAttribute(new org.jdom.Attribute("content", content));
-            e.setAttribute(new org.jdom.Attribute("model", "closed"));
+            e.setAttribute(new org.jdom2.Attribute("content", content));
+            e.setAttribute(new org.jdom2.Attribute("model", "closed"));
             e.addContent(new Element("RecordInfo", b));
 
             Element element = new Element("element", def);
-            element.setAttribute(new org.jdom.Attribute("type", elementName));
-            element.setAttribute(new org.jdom.Attribute("maxOccurs", "1"));
-            element.setAttribute(new org.jdom.Attribute("minOccurs", "0"));
+            element.setAttribute(new org.jdom2.Attribute("type", elementName));
+            element.setAttribute(new org.jdom2.Attribute("maxOccurs", "1"));
+            element.setAttribute(new org.jdom2.Attribute("minOccurs", "0"));
 
             for (Iterator<Term> i = terms.iterator(); i.hasNext();)
             {
@@ -1004,9 +1004,9 @@ public class Term extends OntologyClass
                 type = "boolean";
 
             e = new Element("AttributeType", def);
-            e.setAttribute(new org.jdom.Attribute("name", elementName));
+            e.setAttribute(new org.jdom2.Attribute("name", elementName));
             if (type != null)
-                e.setAttribute(new org.jdom.Attribute("type", type, d));
+                e.setAttribute(new org.jdom2.Attribute("type", type, d));
             if (domain.getEntriesCount() > 0)
             {
                 StringBuffer enumeration = new StringBuffer();
@@ -1026,14 +1026,14 @@ public class Term extends OntologyClass
                     }
                 }
                 String enumr = enumeration.toString().trim();
-                e.setAttribute(new org.jdom.Attribute("values", enumr.length() > 0 ? enumr : "_", d));
+                e.setAttribute(new org.jdom2.Attribute("values", enumr.length() > 0 ? enumr : "_", d));
             }
             e.addContent(new Element("FieldInfo", b));
             parent.addContent(e);
 
             Element attribute = new Element("attribute", def);
-            attribute.setAttribute(new org.jdom.Attribute("type", elementName));
-            attribute.setAttribute(new org.jdom.Attribute("required", "no"));
+            attribute.setAttribute(new org.jdom2.Attribute("type", elementName));
+            attribute.setAttribute(new org.jdom2.Attribute("required", "no"));
             parent.addContent(attribute);
         }
         return e;

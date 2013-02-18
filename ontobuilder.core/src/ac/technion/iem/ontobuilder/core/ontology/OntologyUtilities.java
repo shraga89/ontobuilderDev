@@ -12,9 +12,9 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.XMLOutputter;
 
 import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.ontology.operator.StringOperator;
@@ -431,11 +431,11 @@ public class OntologyUtilities
         throws IOException
     {
         Element mapSource = new Element("mapsource");
-        mapSource.setAttribute(new org.jdom.Attribute("name", file.getName()));
-        mapSource.setAttribute(new org.jdom.Attribute("BizTalkServerMapperTool_Version", "1.0"));
-        mapSource.setAttribute(new org.jdom.Attribute("version", "1"));
-        mapSource.setAttribute(new org.jdom.Attribute("xrange", "100"));
-        mapSource.setAttribute(new org.jdom.Attribute("yrange", "420"));
+        mapSource.setAttribute(new org.jdom2.Attribute("name", file.getName()));
+        mapSource.setAttribute(new org.jdom2.Attribute("BizTalkServerMapperTool_Version", "1.0"));
+        mapSource.setAttribute(new org.jdom2.Attribute("version", "1"));
+        mapSource.setAttribute(new org.jdom2.Attribute("xrange", "100"));
+        mapSource.setAttribute(new org.jdom2.Attribute("yrange", "420"));
 
         Element sourceTree = new Element("srctree");
         sourceTree.addContent(source.getBizTalkRepresentation());
@@ -451,7 +451,7 @@ public class OntologyUtilities
         Document ontologyDocument = new Document(mapSource);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(ontologyDocument, out);
         out.close();
     }

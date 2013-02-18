@@ -2,10 +2,6 @@ package ac.technion.iem.ontobuilder.core.ontology;
 
 import org.w3c.dom.Document;
 
-import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.core.ontology.OntologyClass;
-import ac.technion.iem.ontobuilder.core.ontology.Term;
-
 /**
  * <p>Title: OntologyGenerateHelper</p>
  * <p>Description: A bean to hold all of the 'generateOngology' parameters to be used both by

@@ -1,6 +1,6 @@
 package ac.technion.iem.ontobuilder.core.ontology;
 
-import java.util.*;
+import java.util.Comparator;
 
 
 /**

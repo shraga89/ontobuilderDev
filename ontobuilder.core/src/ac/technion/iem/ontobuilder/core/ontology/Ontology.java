@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.jdom.DocType;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.DocType;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -527,11 +527,11 @@ public class Ontology extends OntologyObject
     public Element getXMLRepresentation()
     {
         Element ontologyElement = new Element("ontology");
-        ontologyElement.setAttribute(new org.jdom.Attribute("name", name));
-        ontologyElement.setAttribute(new org.jdom.Attribute("title", title));
-        ontologyElement.setAttribute(new org.jdom.Attribute("type", (isLight ? "light" : "full")));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("name", name));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("title", title));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("type", (isLight ? "light" : "full")));
         if (siteURL != null)
-            ontologyElement.setAttribute(new org.jdom.Attribute("site", siteURL.toExternalForm()));
+            ontologyElement.setAttribute(new org.jdom2.Attribute("site", siteURL.toExternalForm()));
 
         if (!isLight)
         {
@@ -557,11 +557,11 @@ public class Ontology extends OntologyObject
     public Element getLightXMLRepresentation()
     {
         Element ontologyElement = new Element("ontology");
-        ontologyElement.setAttribute(new org.jdom.Attribute("name", name));
-        ontologyElement.setAttribute(new org.jdom.Attribute("title", title));
-        ontologyElement.setAttribute(new org.jdom.Attribute("type", "light"));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("name", name));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("title", title));
+        ontologyElement.setAttribute(new org.jdom2.Attribute("type", "light"));
         if (siteURL != null)
-            ontologyElement.setAttribute(new org.jdom.Attribute("site", siteURL.toExternalForm()));
+            ontologyElement.setAttribute(new org.jdom2.Attribute("site", siteURL.toExternalForm()));
 
         Element termsElement = new Element("terms");
         for (Iterator<Term> i = terms.iterator(); i.hasNext();)
@@ -587,20 +587,20 @@ public class Ontology extends OntologyObject
         schemaElement.addNamespaceDeclaration(d);
         schemaElement.addNamespaceDeclaration(def);
 
-        schemaElement.setAttribute(new org.jdom.Attribute("name", StringUtilities
+        schemaElement.setAttribute(new org.jdom2.Attribute("name", StringUtilities
             .makeIdentifierString(name)));
-        schemaElement.setAttribute(new org.jdom.Attribute("BizTalkServerEditorTool_Version", "1.5",
+        schemaElement.setAttribute(new org.jdom2.Attribute("BizTalkServerEditorTool_Version", "1.5",
             b));
-        schemaElement.setAttribute(new org.jdom.Attribute("standard", "XML", b));
-        schemaElement.setAttribute(new org.jdom.Attribute("root_reference", StringUtilities
+        schemaElement.setAttribute(new org.jdom2.Attribute("standard", "XML", b));
+        schemaElement.setAttribute(new org.jdom2.Attribute("root_reference", StringUtilities
             .makeIdentifierString(name), b));
 
         schemaElement.addContent(new Element("SelectionFields", b));
 
         Element e = new Element("ElementType", def);
-        e.setAttribute(new org.jdom.Attribute("name", StringUtilities.makeIdentifierString(name)));
-        e.setAttribute(new org.jdom.Attribute("content", terms.size() > 0 ? "eltOnly" : "empty"));
-        e.setAttribute(new org.jdom.Attribute("model", "closed"));
+        e.setAttribute(new org.jdom2.Attribute("name", StringUtilities.makeIdentifierString(name)));
+        e.setAttribute(new org.jdom2.Attribute("content", terms.size() > 0 ? "eltOnly" : "empty"));
+        e.setAttribute(new org.jdom2.Attribute("model", "closed"));
         e.addContent(new Element("RecordInfo", b));
 
         ArrayList<Object> names = new ArrayList<Object>();
@@ -853,11 +853,11 @@ public class Ontology extends OntologyObject
      */
     public void saveToBizTalk(File file) throws IOException
     {
-        org.jdom.Element schemaElement = getBizTalkRepresentation();
-        org.jdom.Document ontologyDocument = new org.jdom.Document(schemaElement);
+        org.jdom2.Element schemaElement = getBizTalkRepresentation();
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(schemaElement);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(ontologyDocument, out);
         out.close();
     }
@@ -880,12 +880,12 @@ public class Ontology extends OntologyObject
      */
     public void saveToXML(File file) throws IOException
     {
-        org.jdom.Element ontologyElement = getXMLRepresentation();
+        org.jdom2.Element ontologyElement = getXMLRepresentation();
         DocType ontologyDocType = new DocType("ontology", "dtds/ontology.dtd");
-        org.jdom.Document ontologyDocument = new org.jdom.Document(ontologyElement, ontologyDocType);
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(ontologyElement, ontologyDocType);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(ontologyDocument, out);
         out.close();
     }
@@ -957,12 +957,12 @@ public class Ontology extends OntologyObject
      */
     public void saveToLightXML(File file) throws IOException
     {
-        org.jdom.Element ontologyElement = getLightXMLRepresentation();
+        org.jdom2.Element ontologyElement = getLightXMLRepresentation();
         DocType ontologyDocType = new DocType("ontology", "dtds/ontology.dtd");
-        org.jdom.Document ontologyDocument = new org.jdom.Document(ontologyElement, ontologyDocType);
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(ontologyElement, ontologyDocType);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(ontologyDocument, out);
         out.close();
     }
@@ -987,7 +987,7 @@ public class Ontology extends OntologyObject
             BufferedReader reader = new BufferedReader(new FileReader(file));
             SAXBuilder builder = new SAXBuilder(true);
             builder.setEntityResolver(new NetworkEntityResolver());
-            org.jdom.Document ontologyDocument = builder.build(reader);
+            org.jdom2.Document ontologyDocument = builder.build(reader);
 
             Ontology ontology = getModelFromXML(ontologyDocument.getRootElement());
             ontology.setFile(file);

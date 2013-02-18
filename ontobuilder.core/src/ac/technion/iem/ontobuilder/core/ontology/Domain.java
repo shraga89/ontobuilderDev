@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.domain.GuessedDomain;
 import ac.technion.iem.ontobuilder.core.ontology.operator.StringOperator;
@@ -333,11 +333,11 @@ public class Domain extends OntologyObject
     {
         Element domainElement = new Element("domain");
         if (name != null && name.trim().length() > 0)
-            domainElement.setAttribute(new org.jdom.Attribute("name", name));
+            domainElement.setAttribute(new org.jdom2.Attribute("name", name));
         if (type != null && type.trim().length() > 0)
-            domainElement.setAttribute(new org.jdom.Attribute("type", type));
+            domainElement.setAttribute(new org.jdom2.Attribute("type", type));
         else
-            domainElement.setAttribute(new org.jdom.Attribute("type", getType()));
+            domainElement.setAttribute(new org.jdom2.Attribute("type", getType()));
         for (Iterator<DomainEntry> i = entries.iterator(); i.hasNext();)
             domainElement.addContent(((DomainEntry) i.next()).getXMLRepresentation());
         return domainElement;

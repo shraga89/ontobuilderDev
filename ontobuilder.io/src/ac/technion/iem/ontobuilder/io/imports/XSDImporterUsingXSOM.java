@@ -97,8 +97,6 @@ public class XSDImporterUsingXSOM implements Importer
         	createDomainsFromInstances(file,instances);
         
         return xsdOntology;
-        
-
     }
 
 	/**

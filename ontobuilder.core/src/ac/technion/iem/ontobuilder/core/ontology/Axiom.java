@@ -1,6 +1,6 @@
 package ac.technion.iem.ontobuilder.core.ontology;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.operator.StringOperator;
 
@@ -137,7 +137,7 @@ public class Axiom extends OntologyObject
     public Element getXMLRepresentation()
     {
         Element axiomElement = new Element("axiom");
-        axiomElement.setAttribute(new org.jdom.Attribute("name", name));
+        axiomElement.setAttribute(new org.jdom2.Attribute("name", name));
         axiomElement.addContent(axiom);
         return axiomElement;
     }

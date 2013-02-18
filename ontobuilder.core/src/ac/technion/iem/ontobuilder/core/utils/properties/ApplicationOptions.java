@@ -15,12 +15,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.jdom.DocType;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.DocType;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
@@ -74,7 +74,9 @@ public class ApplicationOptions
             //e.printStackTrace();
             //
             throw new OptionException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new OptionException(e.getMessage());
+		}
     }
 
     /**
@@ -106,7 +108,9 @@ public class ApplicationOptions
         catch (JDOMException e)
         {
             throw new OptionException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new OptionException(e.getMessage());
+		}
     }
 
     /**
@@ -166,7 +170,7 @@ public class ApplicationOptions
                 }
             }
 
-            XMLOutputter fmt = new XMLOutputter("    ", true);
+            XMLOutputter fmt = new XMLOutputter();
             fmt.output(doc, out);
 
             out.close();

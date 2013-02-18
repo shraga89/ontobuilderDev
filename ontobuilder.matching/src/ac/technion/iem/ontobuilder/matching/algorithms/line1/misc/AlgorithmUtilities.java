@@ -4,16 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
@@ -62,7 +63,9 @@ public class AlgorithmUtilities
         catch (JDOMException e)
         {
             throw new AlgorithmException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new AlgorithmException(e.getMessage());
+		}
     }
 
     /**
@@ -90,7 +93,9 @@ public class AlgorithmUtilities
         catch (JDOMException e)
         {
             throw new AlgorithmException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new AlgorithmException(e.getMessage());
+		}
     }
 
     // added haggai 7/12/03
@@ -130,7 +135,9 @@ public class AlgorithmUtilities
         catch (JDOMException e)
         {
             throw new AlgorithmException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new AlgorithmException(e.getMessage());
+		}
     }
 
     /**

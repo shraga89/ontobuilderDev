@@ -1,6 +1,6 @@
 package ac.technion.iem.ontobuilder.core.ontology;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.operator.StringOperator;
 
@@ -220,9 +220,9 @@ public class Attribute extends OntologyObject
     public Element getXMLRepresentation()
     {
         Element attributeElement = new Element("attribute");
-        attributeElement.setAttribute(new org.jdom.Attribute("name", name));
+        attributeElement.setAttribute(new org.jdom2.Attribute("name", name));
         if (value != null)
-            attributeElement.setAttribute(new org.jdom.Attribute("value", value.toString()));
+            attributeElement.setAttribute(new org.jdom2.Attribute("value", value.toString()));
         attributeElement.addContent(domain.getXMLRepresentation());
         return attributeElement;
     }

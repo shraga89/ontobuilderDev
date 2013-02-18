@@ -10,11 +10,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Text;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Text;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
 
@@ -81,7 +81,7 @@ public class AlgorithmXMLEditor {
 		
 		//update algorithms.xml
 		BufferedWriter out = new BufferedWriter(new FileWriter(file));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(doc, out);
         out.close();
 	}

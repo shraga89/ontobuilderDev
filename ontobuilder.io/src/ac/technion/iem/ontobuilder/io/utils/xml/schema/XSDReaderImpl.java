@@ -234,7 +234,7 @@ class XSDReaderImpl extends DefaultHandler implements XSDReader
 		complexElements.push(newComplexElement);
 	}
 
-    public void endElement(String uri, String name, String qualifiedName) throws SAXException
+	public void endElement(String uri, String name, String qualifiedName) throws SAXException
     {
 
         // System.out.println("close >> currentState::"+currentState+",qualifiedName::"+qualifiedName);
@@ -260,7 +260,7 @@ class XSDReaderImpl extends DefaultHandler implements XSDReader
 //            return;
     	qualifiedName = extractQName(qualifiedName);
 		XSDComplexElement pop = null;
-		if (qualifiedName.equalsIgnoreCase("element")) {
+		if (qualifiedName.equalsIgnoreCase("element") || qualifiedName.equalsIgnoreCase("complexType")) {
 			if (!complexElements.empty()) {
 				pop = complexElements.pop();
 			}

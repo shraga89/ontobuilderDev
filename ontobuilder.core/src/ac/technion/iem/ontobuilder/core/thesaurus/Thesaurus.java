@@ -5,12 +5,13 @@ import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.io.*;
-import org.jdom.JDOMException;
-import org.jdom.Element;
-import org.jdom.Document;
-import org.jdom.DocType;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+
+import org.jdom2.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.Document;
+import org.jdom2.DocType;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 import ac.technion.iem.ontobuilder.core.thesaurus.event.ThesaurusModelAdapter;
 import ac.technion.iem.ontobuilder.core.thesaurus.event.ThesaurusModelEvent;
@@ -189,7 +190,9 @@ public class Thesaurus extends ThesaurusModelAdapter
         catch (JDOMException e)
         {
             throw new ThesaurusException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new ThesaurusException(e.getMessage());
+		}
     }
 
     /**
@@ -215,7 +218,9 @@ public class Thesaurus extends ThesaurusModelAdapter
         catch (JDOMException e)
         {
             throw new ThesaurusException(e.getMessage());
-        }
+        } catch (IOException e) {
+            throw new ThesaurusException(e.getMessage());
+		}
     }
 
     /**
@@ -287,7 +292,7 @@ public class Thesaurus extends ThesaurusModelAdapter
                     eHomonyms.addContent(new Element("homonym").setText(((ThesaurusWord) j.next())
                         .getWord()));
             }
-            XMLOutputter fmt = new XMLOutputter("    ", true);
+            XMLOutputter fmt = new XMLOutputter();
             fmt.output(doc, out);
 
             out.close();

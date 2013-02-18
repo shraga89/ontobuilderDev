@@ -31,8 +31,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jdom.DocType;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.DocType;
+import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -615,16 +615,16 @@ public class MatchInformation implements Comparable<MatchInformation>
      * @return {@link Element}
      * @deprecated
      */
-    public org.jdom.Element getXMLRepresentation()
+    public org.jdom2.Element getXMLRepresentation()
     {
         NumberFormat nf = NumberFormat.getInstance();
 
-        org.jdom.Element matchInformationElement = new org.jdom.Element("matchInformation");
+        org.jdom2.Element matchInformationElement = new org.jdom2.Element("matchInformation");
 
-        org.jdom.Element targetOntologyElement = new org.jdom.Element("targetOntology");
+        org.jdom2.Element targetOntologyElement = new org.jdom2.Element("targetOntology");
         matchInformationElement.addContent(targetOntologyElement);
         targetOntologyElement.setAttribute("name", targetOntology.getName());
-        org.jdom.Element targetTermsElement = new org.jdom.Element("terms");
+        org.jdom2.Element targetTermsElement = new org.jdom2.Element("terms");
         targetOntologyElement.addContent(targetTermsElement);
         ArrayList<?> targetTerms = OntologyUtilities.denormalizeTerms(OntologyUtilities
             .filterTermListRemovingTermsOfClass(
@@ -633,10 +633,10 @@ public class MatchInformation implements Comparable<MatchInformation>
         for (Iterator<?> i = targetTerms.iterator(); i.hasNext();)
             targetTermsElement.addContent(((Term) i.next()).getInputFullNameAsXML());
 
-        org.jdom.Element candidateOntologyElement = new org.jdom.Element("candidateOntology");
+        org.jdom2.Element candidateOntologyElement = new org.jdom2.Element("candidateOntology");
         matchInformationElement.addContent(candidateOntologyElement);
         candidateOntologyElement.setAttribute("name", candidateOntology.getName());
-        org.jdom.Element candidateTermsElement = new org.jdom.Element("terms");
+        org.jdom2.Element candidateTermsElement = new org.jdom2.Element("terms");
         candidateOntologyElement.addContent(candidateTermsElement);
         ArrayList<?> candidateTerms = OntologyUtilities.denormalizeTerms(OntologyUtilities
             .filterTermListRemovingTermsOfClass(
@@ -647,30 +647,30 @@ public class MatchInformation implements Comparable<MatchInformation>
 
         if (algorithm!=null)
         {
-        	org.jdom.Element algorithmElement = new org.jdom.Element("algorithm").setText(algorithm.getName());
+        	org.jdom2.Element algorithmElement = new org.jdom2.Element("algorithm").setText(algorithm.getName());
         	matchInformationElement.addContent(algorithmElement);
             algorithmElement.setAttribute("threshold", nf.format(algorithm.getThreshold()));
         }
         
-        org.jdom.Element statisticsElement = new org.jdom.Element("statistics").addContent(new org.jdom.Element("recall")
+        org.jdom2.Element statisticsElement = new org.jdom2.Element("statistics").addContent(new org.jdom2.Element("recall")
             .setText(nf.format((candidateTerms.size() - mismatchesCandidateOntology.size()) /
                 (double) candidateTerms.size() * 100)));
         matchInformationElement.addContent(statisticsElement);
 
-        org.jdom.Element matchesElement = new org.jdom.Element("matches");
+        org.jdom2.Element matchesElement = new org.jdom2.Element("matches");
         matchInformationElement.addContent(matchesElement);
         matchesElement.setAttribute("total", matches.size() + "");
         for (Iterator<Match> i = matches.iterator(); i.hasNext();)
         {
             Match match = (Match) i.next();
-            org.jdom.Element matchElement = new org.jdom.Element("match");
+            org.jdom2.Element matchElement = new org.jdom2.Element("match");
             matchesElement.addContent(matchElement);
 
-            org.jdom.Element targetElement = new org.jdom.Element("target");
+            org.jdom2.Element targetElement = new org.jdom2.Element("target");
             matchElement.addContent(targetElement);
             targetElement.addContent(match.getTargetTerm().getInputFullNameAsXML());
 
-            org.jdom.Element candidateElement = new org.jdom.Element("candidate");
+            org.jdom2.Element candidateElement = new org.jdom2.Element("candidate");
             matchElement.addContent(candidateElement);
             candidateElement.addContent(match.getCandidateTerm().getInputFullNameAsXML());
 
@@ -678,16 +678,16 @@ public class MatchInformation implements Comparable<MatchInformation>
                 matchElement.setAttribute("confidence", nf.format(match.getEffectiveness()));
         }
 
-        org.jdom.Element mismatchesElement = new org.jdom.Element("mismatches");
+        org.jdom2.Element mismatchesElement = new org.jdom2.Element("mismatches");
         matchInformationElement.addContent(mismatchesElement);
 
-        org.jdom.Element targetMismatchesElement = new org.jdom.Element("targetMismatches");
+        org.jdom2.Element targetMismatchesElement = new org.jdom2.Element("targetMismatches");
         mismatchesElement.addContent(targetMismatchesElement);
         for (Iterator<Mismatch> i = mismatchesTargetOntology.iterator(); i.hasNext();)
             targetMismatchesElement.addContent(((Mismatch) i.next()).getTerm()
                 .getInputFullNameAsXML());
 
-        org.jdom.Element candidateMismatchesElement = new org.jdom.Element("candidateMismatches");
+        org.jdom2.Element candidateMismatchesElement = new org.jdom2.Element("candidateMismatches");
         mismatchesElement.addContent(candidateMismatchesElement);
         for (Iterator<Mismatch> i = mismatchesCandidateOntology.iterator(); i.hasNext();)
             candidateMismatchesElement.addContent(((Mismatch) i.next()).getTerm()
@@ -702,9 +702,9 @@ public class MatchInformation implements Comparable<MatchInformation>
      */
     public String getXMLRepresentationAsString() throws IOException
     {
-        org.jdom.Element ontologyElement = getXMLRepresentation();
+        org.jdom2.Element ontologyElement = getXMLRepresentation();
         DocType ontologyDocType = new DocType("matchInformation");
-        org.jdom.Document ontologyDocument = new org.jdom.Document(ontologyElement, ontologyDocType);
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(ontologyElement, ontologyDocType);
 
         StringOutputStream xmlRepresentation = new StringOutputStream();
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(xmlRepresentation));
@@ -768,9 +768,9 @@ public class MatchInformation implements Comparable<MatchInformation>
      */
     public void saveToXML(File file) throws IOException
     {
-        org.jdom.Element ontologyElement = getXMLRepresentation();
+        org.jdom2.Element ontologyElement = getXMLRepresentation();
         DocType ontologyDocType = new DocType("matchInformation", "matchInformation.dtd");
-        org.jdom.Document ontologyDocument = new org.jdom.Document(ontologyElement, ontologyDocType);
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(ontologyElement, ontologyDocType);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         XMLOutputter fmt = new XMLOutputter();// new XMLOutputter("    ",true);

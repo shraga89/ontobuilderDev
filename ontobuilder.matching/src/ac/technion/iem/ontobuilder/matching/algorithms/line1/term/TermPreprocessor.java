@@ -1,7 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.term;
 
 import java.util.*;
-import org.jdom.*;
+import org.jdom2.*;
 
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;

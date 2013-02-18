@@ -63,8 +63,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.jdom.DocType;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.DocType;
+import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Document;
 
 import ac.technion.iem.ontobuilder.core.ontology.Attribute;
@@ -1911,13 +1911,13 @@ public class OntologyGui extends JPanel
 
     public String getXMLRepresentationAsString() throws IOException
     {
-        org.jdom.Element ontologyElement = ontologyCore.getXMLRepresentation();
+        org.jdom2.Element ontologyElement = ontologyCore.getXMLRepresentation();
         DocType ontologyDocType = new DocType("ontology");
-        org.jdom.Document ontologyDocument = new org.jdom.Document(ontologyElement, ontologyDocType);
+        org.jdom2.Document ontologyDocument = new org.jdom2.Document(ontologyElement, ontologyDocType);
 
         StringOutputStream xmlRepresentation = new StringOutputStream();
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(xmlRepresentation));
-        XMLOutputter fmt = new XMLOutputter("    ", true);
+        XMLOutputter fmt = new XMLOutputter();
         fmt.output(ontologyDocument, out);
         out.close();
         return xmlRepresentation.toString();

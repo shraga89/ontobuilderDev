@@ -2,7 +2,10 @@ package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
@@ -10,14 +13,21 @@ import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+
+import org.ow2.easywsdl.schema.api.ComplexType;
+import org.ow2.easywsdl.schema.api.Element;
+import org.ow2.easywsdl.schema.api.Schema;
+import org.ow2.easywsdl.schema.api.SimpleType;
+import org.ow2.easywsdl.schema.api.Type;
+import org.ow2.easywsdl.wsdl.api.Description;
 
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Relationship;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
+
 
 /**
  * <p>Title: WSDLImporter</p>
@@ -43,7 +53,7 @@ public class WSDLImporter implements Importer
     @SuppressWarnings("unchecked")
     public Ontology importFile(File file) throws ImportException
     {
-
+    	
         // TODO convert wsdl:types to classes or terms
         // Classes
 
@@ -80,9 +90,29 @@ public class WSDLImporter implements Importer
         Term partTerm;
         Relationship rel;
 
-        try
-        {
-            WSDLFactory factory = WSDLFactory.newInstance();
+        try {
+        	
+//        	/*
+//        	 * Trying to parse the schemas
+//        	 */
+//        	SAXBuilder builder = new SAXBuilder();
+//       		Document document = (Document) builder.build(file);
+//       		List<Element> typeList = (List<Element>) document.getRootElement().getChildren("types", Namespace.getNamespace("http://schemas.xmlsoap.org/wsdl/"));
+//       		if (!typeList.isEmpty()) {
+//       			List<Element> schemaList = (List<Element>) typeList.get(0).getChildren("schema", Namespace.getNamespace("http://www.w3.org/2001/XMLSchema"));
+//
+//	       		XSOMParser parser = new XSOMParser();
+//	        	SAXOutputter outputter = new SAXOutputter(parser.getParserHandler());
+//	        	for (Element e : schemaList) {
+//	            	outputter.output(e);
+//	        	}
+//	        	XSSchemaSet schemas = parser.getResult(); 
+//        		System.out.println(schemas);
+//	        	
+//	        	
+//       		}
+        	
+        	WSDLFactory factory = WSDLFactory.newInstance();
             WSDLReader reader = factory.newWSDLReader();
 
             reader.setFeature("javax.wsdl.verbose", true);
@@ -93,10 +123,21 @@ public class WSDLImporter implements Importer
                 .getDocumentationElement().toString());
             wsdlOntology.setLight(true);
             definitionTerm = new Term(definition.getQName().toString());
-            Collection<PortType> portTypes = definition.getPortTypes().values();
 
-            for (PortType pt : portTypes)
-            {
+        	org.ow2.easywsdl.wsdl.api.WSDLReader easyReader = org.ow2.easywsdl.wsdl.WSDLFactory.newInstance().newWSDLReader();
+        	Description desc = easyReader.read(file.toURI().toURL());
+       		
+        	Map<Type, Term> typeTerms = new HashMap<Type, Term>();
+        	for (Schema s : desc.getTypes().getSchemas()) {
+        		for (Type t : s.getTypes()) {
+    				Term typeTerm = new Term(t.getQName().getLocalPart());
+    				wsdlOntology.addTerm(typeTerm);
+    				typeTerms.put(t,typeTerm);
+        		}
+        	}
+        	
+            Collection<PortType> portTypes = definition.getPortTypes().values();
+            for (PortType pt : portTypes) {
                 // Add port type term and relationships with definition element
                 portTypeTerm = new Term(pt.getQName().toString());
                 rel = new Relationship(portTypeTerm, "is child of", definitionTerm);
@@ -133,7 +174,8 @@ public class WSDLImporter implements Importer
                         messageTerm.addTerm(partTerm);
                         rel = new Relationship(messageTerm, "has part", partTerm);
                         messageTerm.addRelationship(rel);
-                    }
+                        
+                   }
                     operationTerm.addTerm(messageTerm);
                     rel = new Relationship(operationTerm, "has input message", messageTerm);
                     operationTerm.addRelationship(rel);
@@ -175,10 +217,11 @@ public class WSDLImporter implements Importer
             wsdlOntology.addTerm(definitionTerm);
             return wsdlOntology;
         }
-        catch (WSDLException e)
+        catch (Exception e)
         {
+			e.printStackTrace();
             throw new ImportException("WSDL File Import Failed");
-        }
+		}
     }
 
 	@Override

@@ -3,7 +3,7 @@ package ac.technion.iem.ontobuilder.core.ontology;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.operator.StringOperator;
 
