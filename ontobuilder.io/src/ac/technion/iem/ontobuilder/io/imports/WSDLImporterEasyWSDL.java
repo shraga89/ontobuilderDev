@@ -3,8 +3,10 @@ package ac.technion.iem.ontobuilder.io.imports;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ow2.easywsdl.schema.api.ComplexType;
 import org.ow2.easywsdl.schema.api.Element;
@@ -38,11 +40,27 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 public class WSDLImporterEasyWSDL implements Importer
 {
 
+	
+	private static Set<String> typesToIgnore = new HashSet<String>();
+	
+	static {
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}string");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}anyURI");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}token");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}dateTime");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}normalizedString");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}base64Binary");
+		typesToIgnore.add("{http://www.w3.org/2001/XMLSchema}decimal");
+	}
 
 	private void createTermsRec(Type root, Map<Type, Term> typeTerms) {
 		if (typeTerms.containsKey(root))
 			return;
 		
+		if (root.getQName() != null)
+			if (typesToIgnore.contains(root.getQName().toString()))
+				return;
+			
 		Term typeTerm = (root.getQName() != null)? new Term(root.getQName().toString()) : new Term ("");
 		typeTerms.put(root,typeTerm);
 		
@@ -65,8 +83,18 @@ public class WSDLImporterEasyWSDL implements Importer
 	}
 
 	private void linkTerms(Type from, Type to, Map<Type, Term> typeTerms) {
+		
+		if (to.getQName() != null)
+			if (typesToIgnore.contains(to.getQName().toString()))
+				return;
+		
 		Term cTerm = typeTerms.get(from);
 		Term eTerm = typeTerms.get(to);
+		
+		if (cTerm == null)
+			System.err.println(from);
+		if (eTerm == null)
+			System.err.println(to);
 		
 		Relationship rel = new Relationship(eTerm, "is type of", cTerm);
         eTerm.addRelationship(rel);
@@ -128,6 +156,8 @@ public class WSDLImporterEasyWSDL implements Importer
         	org.ow2.easywsdl.wsdl.api.WSDLReader easyReader = org.ow2.easywsdl.wsdl.WSDLFactory.newInstance().newWSDLReader();
         	Description desc = easyReader.read(file.toURI().toURL());
 
+        	System.out.println("parse: " + file.getPath());
+
             Ontology wsdlOntology = new Ontology(desc.getQName().toString(), desc
                 .getDocumentation().toString());
             wsdlOntology.setLight(true);
@@ -156,8 +186,8 @@ public class WSDLImporterEasyWSDL implements Importer
         			}
         			
         			if ( ct.getSimpleContent() != null) {
-        				if (ct.getSimpleContent().getExtension().getBase() != null)
-	        				linkTerms(ct,ct.getSimpleContent().getExtension().getBase(),typeTerms);
+        				if (ct.getSimpleContent().getExtension().getBase() != null) 
+    						linkTerms(ct,ct.getSimpleContent().getExtension().getBase(),typeTerms);
 
         				if (ct.getSimpleContent().getExtension().getSequence() != null)
 		        			// Sequence in Simple Content
@@ -178,45 +208,6 @@ public class WSDLImporterEasyWSDL implements Importer
         		}
         	}
 
-        	
-        	/*
-        	 * Link the terms for the types
-        	 */
-        	for (Schema s : desc.getTypes().getSchemas()) {
-        		for (Type t : s.getTypes()) {
-        			if (!(t instanceof ComplexType))
-        				continue;
-        			ComplexType ct = (ComplexType)t;
-        			
-        			if (ct.getSequence() != null) {
-	        			// Sequence 
-	        			for (Element e : ct.getSequence().getElements())
-	        				linkTerms(ct,e.getType(),typeTerms);
-        			}
-        			
-        			if ( ct.getSimpleContent() != null) {
-        				if (ct.getSimpleContent().getExtension().getBase() != null)
-	        				linkTerms(ct,ct.getSimpleContent().getExtension().getBase(),typeTerms);
-
-        				if (ct.getSimpleContent().getExtension().getSequence() != null)
-		        			// Sequence in Simple Content
-		        			for (Element e : ct.getSimpleContent().getExtension().getSequence().getElements()) 
-		        				linkTerms(ct,e.getType(),typeTerms);
-        			}
-        			
-        			if ( ct.getComplexContent() != null) {
-        				if (ct.getComplexContent().getExtension().getBase() != null)
-	        				linkTerms(ct,ct.getComplexContent().getExtension().getBase(),typeTerms);
-        				
-        				if (ct.getComplexContent().getExtension().getSequence() != null)
-    	        			// Sequence in Complex Content
-		        			for (Element e : ct.getComplexContent().getExtension().getSequence().getElements()) 
-		        				linkTerms(ct,e.getType(),typeTerms);
-        			}
-        		}
-        	}
-        	
-        	
         	
             for (InterfaceType pt : desc.getInterfaces()) {
                 // Add port type term and relationships with definition element
