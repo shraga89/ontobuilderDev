@@ -78,7 +78,7 @@ public final class OntoBuilderWrapper extends OntoBuilder
         return (AbstractAlgorithm) AlgorithmUtilities.getAlgorithmsInstance(
         	getAlgorithmsFile(), algorithmToUse.getName());
     }
-
+   
     /**
      * Set the URL of the candidate schema and marks internally if it's a new candidate schema or
      * has been used last

@@ -23,7 +23,8 @@ public enum MatchingAlgorithmsNamesEnum
     COMPOSITION("Graph Match"),
     NEW_PRECEDENCE("New Precedence Match"),
     SIMILARITY_FLOODING("SimilarityFlooding Match"),
-    DOMAIN("Domain Match");
+    DOMAIN("Domain Match"),
+    WordNet("WordNet Match");
 
     private String _name;
 
@@ -43,7 +44,8 @@ public enum MatchingAlgorithmsNamesEnum
         {
             TERM.getName(), VALUE.getName(), TERM_VALUE_COMBINED.getName(),
             TERM_VALUE_PRECEDENCE_COMPOSITION_COMBINED.getName(), PRECEDENCE.getName(),
-            COMPOSITION.getName(), SIMILARITY_FLOODING.getName(),DOMAIN.getName()
+            COMPOSITION.getName(), SIMILARITY_FLOODING.getName(),DOMAIN.getName(),WordNet.getName()
+            
         };
         return allNames;
     };
