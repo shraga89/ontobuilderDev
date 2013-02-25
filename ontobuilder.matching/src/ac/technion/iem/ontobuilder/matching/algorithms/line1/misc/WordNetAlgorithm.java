@@ -3,7 +3,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
