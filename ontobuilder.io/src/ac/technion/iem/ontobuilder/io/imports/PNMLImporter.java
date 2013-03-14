@@ -96,13 +96,14 @@ public class PNMLImporter implements Importer
 	/**
 	 * Some PNML files have transition names that start with '.\n' to 
 	 * force old ProM versions to display the name. Since that is not 
-	 * included in the respective match file, we delete this prefix.
+	 * included in the respective match file, we delete this prefix. 
+	 * Also, we replace '.' with ' ' to avoid provenance problems.
 	 * 
 	 * @param name the name of a transition
 	 * @return the cleaned name of a transition
 	 */
 	private String cleanNameString(String name) {
-		return name.replace(".\\n", "");
+		return name.replace(".\\n", "").replace('.', ' ');
 	}
 	
 }

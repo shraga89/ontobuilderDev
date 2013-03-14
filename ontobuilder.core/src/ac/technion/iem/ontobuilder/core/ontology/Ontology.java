@@ -1263,7 +1263,7 @@ public class Ontology extends OntologyObject
     	Term t = this.findTerm(prov.get(rootNo));
     	for (int i=rootNo+1;i<prov.size();i++)
     	{
-    		assert(t!=null);
+    		assert(t!=null): "Term not found for provenance " + provenance ;
     		t = t.getTerm(prov.get(i));
     	}
     	return t;
