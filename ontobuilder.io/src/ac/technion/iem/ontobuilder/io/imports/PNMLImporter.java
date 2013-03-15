@@ -103,7 +103,7 @@ public class PNMLImporter implements Importer
 	 * @return the cleaned name of a transition
 	 */
 	private String cleanNameString(String name) {
-		return name.replace(".\\n", "").replace('.', ' ');
+		return name.replace(".\\n", "").replace('.', ' ').trim();
 	}
 	
 }

@@ -83,7 +83,7 @@ public class PNMLPairMatchImporter implements MatchImporter {
 				strRead=readbuffer.readLine();
 				splitArray = strRead.split(",");
 				if (splitArray.length==2)
-					list.add( new ProvenancePair(splitArray[0].replace('.', ' '),splitArray[1].replace('.', ' '), 1.0));
+					list.add( new ProvenancePair(splitArray[0].replace('.', ' ').trim(),splitArray[1].replace('.', ' ').trim(), 1.0));
 				}
 			readbuffer.close();
 		} catch (FileNotFoundException e1) {
