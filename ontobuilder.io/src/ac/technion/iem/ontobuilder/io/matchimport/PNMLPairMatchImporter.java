@@ -5,9 +5,11 @@ package ac.technion.iem.ontobuilder.io.matchimport;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
@@ -67,7 +69,11 @@ public class PNMLPairMatchImporter implements MatchImporter {
 		String splitArray[];
 		ArrayList<ProvenancePair> list = new ArrayList<ProvenancePair>();
 		try {
-			readbuffer = new BufferedReader(new FileReader(file.getPath()));
+			
+			FileInputStream fis = new FileInputStream(file);
+			String encoding = determineEncoding(fis);
+			InputStreamReader in = new InputStreamReader(fis, encoding);
+			readbuffer = new BufferedReader(in);
 			
 			//skip first two lines that contain the link to the model files
 			readbuffer.readLine();
@@ -77,7 +83,7 @@ public class PNMLPairMatchImporter implements MatchImporter {
 				strRead=readbuffer.readLine();
 				splitArray = strRead.split(",");
 				if (splitArray.length==2)
-					list.add( new ProvenancePair(splitArray[0],splitArray[1], 1.0));
+					list.add( new ProvenancePair(splitArray[0].replace('.', ' ').trim(),splitArray[1].replace('.', ' ').trim(), 1.0));
 				}
 			readbuffer.close();
 		} catch (FileNotFoundException e1) {
@@ -88,4 +94,48 @@ public class PNMLPairMatchImporter implements MatchImporter {
 		return list ;
 	}
 
+	
+	private String determineEncoding(FileInputStream in) throws IOException {
+		// check for BOM
+		PushbackInputStream pb = new PushbackInputStream(in);
+		
+		final byte  bom[] = new byte[4];
+	    final int   read  = pb.read(bom);
+
+	    switch(read) {
+	      case 4:
+	        if ((bom[0] == (byte)0xFF) &&
+	            (bom[1] == (byte)0xFE) &&
+	            (bom[2] == (byte)0x00) &&
+	            (bom[3] == (byte)0x00)) {
+	          return "UTF-32LE";
+	        }
+	        else
+	        if ((bom[0] == (byte)0x00) &&
+	            (bom[1] == (byte)0x00) &&
+	            (bom[2] == (byte)0xFE) &&
+	            (bom[3] == (byte)0xFF)) {
+	          return "UTF-32BE";
+	        }
+
+	      case 3:
+	        if ((bom[0] == (byte)0xEF) &&
+	            (bom[1] == (byte)0xBB) &&
+	            (bom[2] == (byte)0xBF)) {
+	          return "UTF-8";
+	        }
+
+	      case 2:
+	        if ((bom[0] == (byte)0xFF) &&
+	            (bom[1] == (byte)0xFE)) {
+		      return "UTF-16LE";
+	        }
+	        else
+	        if ((bom[0] == (byte)0xFE) &&
+	            (bom[1] == (byte)0xFF)) {
+	        	return "UTF-16BE";
+	        }
+	    }
+  	  return "ISO-8859-1";
+	}
 }
