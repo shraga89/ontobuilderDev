@@ -25,7 +25,6 @@ import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
  */
 public class AlgorithmXMLEditor {
 
-	@SuppressWarnings("unchecked")
 	public static void updateAlgorithmParams(String algorithmName,
 			HashMap<String, Double> parameterValues) throws Exception {
 		File file = new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);

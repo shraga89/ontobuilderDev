@@ -126,7 +126,7 @@ public class StringUtilities
 
     public static ArrayList<String> breakTextIntoWords(String text)
     {
-        return breakTextIntoWords(text, " \t\n\r\f\\/");
+        return breakTextIntoWords(text, " \t\n\r\f\\/.");
     }
 
     public static ArrayList<String> breakTextIntoWords(String text, String separators)

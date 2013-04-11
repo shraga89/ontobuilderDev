@@ -16,10 +16,7 @@ import javax.wsdl.PortType;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
-import org.ow2.easywsdl.schema.api.ComplexType;
-import org.ow2.easywsdl.schema.api.Element;
 import org.ow2.easywsdl.schema.api.Schema;
-import org.ow2.easywsdl.schema.api.SimpleType;
 import org.ow2.easywsdl.schema.api.Type;
 import org.ow2.easywsdl.wsdl.api.Description;
 

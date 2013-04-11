@@ -146,7 +146,6 @@ public class AlgorithmUtilities
      * @param doc the {@link Document} to read from
      * @return a vector of {@link AbstractAlgorithm}
      */
-    @SuppressWarnings("unchecked")
     protected static Vector<AbstractAlgorithm> loadFromDocument(Document doc)
     {
         algorithms = new Vector<AbstractAlgorithm>();
