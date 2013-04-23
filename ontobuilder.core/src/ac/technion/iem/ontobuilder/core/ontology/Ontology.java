@@ -751,10 +751,10 @@ public class Ontology extends OntologyObject
 
     /**
      * Search for a term according to its string representation
-     * 
+     * Removed by Tomer Sagi 23/04. doesn't seem to be used anywhere. 
      * @param str the string
      * @return a {@link Term}
-     */
+     *//*
     public Term searchTerm(String str)
     {
 
@@ -777,7 +777,7 @@ public class Ontology extends OntologyObject
         }
         return null;
     }
-
+*/
     /**
      * Get a list of all the {@link Term}
      */
@@ -1263,7 +1263,11 @@ public class Ontology extends OntologyObject
     	Term t = this.findTerm(prov.get(rootNo));
     	for (int i=rootNo+1;i<prov.size();i++)
     	{
-    		assert(t!=null): "Term not found for provenance " + provenance ;
+    		if (t==null)
+    		{
+    			System.err.println("Term not found for provenance " + provenance) ;
+    			return t;
+    		}
     		t = t.getTerm(prov.get(i));
     	}
     	return t;

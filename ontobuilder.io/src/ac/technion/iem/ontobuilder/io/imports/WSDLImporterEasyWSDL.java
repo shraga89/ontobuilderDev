@@ -1,15 +1,11 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.ow2.easywsdl.schema.api.ComplexType;
 import org.ow2.easywsdl.schema.api.Element;
-import org.ow2.easywsdl.schema.api.Schema;
 import org.ow2.easywsdl.schema.api.Type;
 import org.ow2.easywsdl.wsdl.api.Description;
 import org.ow2.easywsdl.wsdl.api.InterfaceType;
@@ -17,8 +13,6 @@ import org.ow2.easywsdl.wsdl.api.Operation;
 import org.ow2.easywsdl.wsdl.api.Output;
 import org.ow2.easywsdl.wsdl.api.Part;
 
-import ac.technion.iem.ontobuilder.core.ontology.Attribute;
-import ac.technion.iem.ontobuilder.core.ontology.Axiom;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Relationship;
 import ac.technion.iem.ontobuilder.core.ontology.Term;

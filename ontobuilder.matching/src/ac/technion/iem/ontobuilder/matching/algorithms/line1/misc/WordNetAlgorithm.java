@@ -19,6 +19,7 @@ import edu.cmu.lti.ws4j.WS4J;
 public class WordNetAlgorithm extends AbstractAlgorithm {
 
 	private HashMap<String,String> unknownwords = new HashMap<String,String>();
+	private HashMap<String,String> knownWords = new HashMap<String,String>();
 
 	public WordNetAlgorithm(){
 		
@@ -108,16 +109,18 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 */
 	 private String cleanWord(String word)
 	 {
+		 if (knownWords.containsKey(word)) return knownWords.get(word);
 		 StringBuffer sb = new StringBuffer();
 		 for (char c : word.toCharArray())
 			 if (Character.isLetter(c))
 				 sb.append(c);
 		 String cWord = sb.toString().toLowerCase();
-		 if (!checkWord(word,"",false) && cWord.endsWith("s")) {
+		 if (!checkWord(word,cWord,false) && cWord.endsWith("s")) {
 			 	String singularWord = cWord.substring(0, cWord.length()-1);
-			 	if (checkWord(singularWord,"",false))
+			 	if (checkWord(word,singularWord,false))
 			 		cWord = singularWord;
 		}
+		 knownWords.put(word, cWord);
 		 return cWord;
 	 }
 	/**
@@ -130,10 +133,12 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		defs.addAll(WS4J.findDefinitions(cleanWord, POS.v));
 		defs.addAll(WS4J.findDefinitions(cleanWord, POS.a));
 		defs.addAll(WS4J.findDefinitions(cleanWord, POS.r));
-		if (defs.isEmpty() && recordUnkowns) {
-			unknownwords.put(origWord,cleanWord);
-			return false;
-		}
+		if (defs.isEmpty())
+			{
+				if(recordUnkowns) 
+					unknownwords.put(origWord,cleanWord);
+				return false;
+			}
 		return true;
 	}
 
