@@ -110,15 +110,27 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 private String cleanWord(String word)
 	 {
 		 if (knownWords.containsKey(word)) return knownWords.get(word);
+		 //Remove non alphabetical characters
 		 StringBuffer sb = new StringBuffer();
 		 for (char c : word.toCharArray())
 			 if (Character.isLetter(c))
 				 sb.append(c);
+		 //Lower case
 		 String cWord = sb.toString().toLowerCase();
+		 
+		 //Handle english plural
 		 if (!checkWord(word,cWord,false) && cWord.endsWith("s")) {
-			 	String singularWord = cWord.substring(0, cWord.length()-1);
+			 if (cWord.endsWith("ies"))
+			 {
+				 String singularWord = cWord.substring(0, cWord.length()-3) + "y";
+				 	if (checkWord(word,singularWord,false))
+				 		cWord = singularWord;
+			 }
+			 else
+			 {	String singularWord = cWord.substring(0, cWord.length()-1);
 			 	if (checkWord(word,singularWord,false))
 			 		cWord = singularWord;
+			 }
 		}
 		 knownWords.put(word, cWord);
 		 return cWord;
