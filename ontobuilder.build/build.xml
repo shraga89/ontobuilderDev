@@ -337,7 +337,7 @@
     	</dirset>
     	<pathconvert property="targetDirPath" refid="targetDir" pathsep=";" />
     	
-    	<property name="main.class" value="ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder"/>
+    	<property name="Main-Class" value="ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder"/>
 	
     	<echo file="${batch.file.gui}" append="false" 
     		message="@echo off ${line.separator}" />

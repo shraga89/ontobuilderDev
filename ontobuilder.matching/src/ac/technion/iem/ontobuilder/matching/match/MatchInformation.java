@@ -168,6 +168,20 @@ public class MatchInformation implements Comparable<MatchInformation>
     			mismatchesTargetOntology.remove(c);
         }
     }
+    
+    /**
+     * Clears all matches
+     */
+    public void clearMatches()
+    {
+    	match_Matrix.copyWithEmptyMatrix(match_Matrix);
+    	matches.clear();
+    	mismatchesCandidateOntology.clear();
+    	mismatchesTargetOntology.clear();
+    	matchedCandidateTerms.clear();
+    	matchedTargetTerms.clear();
+    }
+    
 
 	/**
 	 * Updates the internal match lists

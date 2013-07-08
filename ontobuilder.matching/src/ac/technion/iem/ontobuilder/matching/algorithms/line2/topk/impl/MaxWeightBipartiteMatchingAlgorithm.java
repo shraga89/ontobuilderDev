@@ -1,7 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -94,32 +93,24 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         {
         case NAIVE_HEURISTIC:
             Double C = new Double(0);
-            Iterator<Edge> edgesIterator = g.getEdgesIterator();
-            while (edgesIterator.hasNext())
+            for (Edge e : g.getEdgesSet())
             {
-                Edge e = edgesIterator.next();
+
                 Double edgeC = (Double) c.getEdgeProperty(e);
                 if (edgeC.compareTo(C) == 1)// bigger than...
                     C = edgeC;
             }
-            Iterator<Vertex> leftVertexesIterator = g.getLeftVertexSetIterator();
-            while (leftVertexesIterator.hasNext())
-            {
-                pot.setVertexProperty(leftVertexesIterator.next(), C);
-            }
+            for (Vertex l : g.getLeftVertexesSet())
+                pot.setVertexProperty(l, C);
             break;
+            
         case SIMPLE_HEURISTIC:
-            Iterator<Vertex> leftVertexesIterator1 = g.getLeftVertexSetIterator();
-            while (leftVertexesIterator1.hasNext())
+            for (Vertex a : g.getLeftVertexesSet())
             {
-                Vertex a = leftVertexesIterator1.next();
                 Edge eMax = null;
                 double C_max = 0;
-                Iterator<Edge> vertexAdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a)
-                    .iterator();
-                while (vertexAdjEdgesIterator.hasNext())
+                for (Edge e : GraphUtilities.getVertexAdjEdges(g, a))
                 {
-                    Edge e = vertexAdjEdgesIterator.next();
                     if (((Double) c.getEdgeProperty(e)).doubleValue() > C_max)
                     {
                         eMax = e;
@@ -143,23 +134,12 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             mwbmHeuristic(g, c, pot, free);
             break;
         }
-        Iterator<Vertex> leftVertexesIterator = g.getLeftVertexSetIterator();
-        while (leftVertexesIterator.hasNext())
-        {
-            Vertex a = leftVertexesIterator.next();
+        
+        for (Vertex a : g.getLeftVertexesSet())
             if (((Boolean) free.getVertexProperty(a)).booleanValue())
                 augment(g, a, c, pot, free, pred, dist, PQ);
-        }
-        Iterator<Vertex> rightVertexesIterator = g.getRightVertexSetIterator();
-        while (rightVertexesIterator.hasNext())
-        {
-            Vertex b = rightVertexesIterator.next();
-            Iterator<Edge> outEdgesIterator = GraphUtilities.getVertexOutEdges(g, b).iterator();
-            while (outEdgesIterator.hasNext())
-            {
-                result.add(outEdgesIterator.next());
-            }
-        }
+        for (Vertex b : g.getRightVertexesSet())
+        	result.addAll(GraphUtilities.getVertexOutEdges(g, b));
         EdgeUtil.turnOverEdges(false,result);
         return result;
     }
@@ -187,12 +167,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         Stack<Vertex> RA = new Stack<Vertex>(), RB = new Stack<Vertex>();
         RA.push(a);
         Vertex a1 = a;
-        Edge e;
         // relax all edges out of a1
-        Iterator<Edge> a1AdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a1).iterator();
-        while (a1AdjEdgesIterator.hasNext())
+        for (Edge e: GraphUtilities.getVertexAdjEdges(g, a1))
         {
-            e = a1AdjEdgesIterator.next();
             Vertex b = GraphUtilities.getEdgeTargetVertex(g, e);
             double db = ((Double) dist.getVertexProperty(a1)).doubleValue() +
                 (((Double) pot.getVertexProperty(a1)).doubleValue() +
@@ -246,7 +223,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             else
             {
                 // continue shortest-path computation
-                e = GraphUtilities.getVertexFirstAdjEdge(g, b);
+                Edge e = GraphUtilities.getVertexFirstAdjEdge(g, b);
                 Vertex a11 = GraphUtilities.getEdgeTargetVertex(g, e);
                 pred.setVertexProperty(a11, e);
                 RA.push(a11);
@@ -257,11 +234,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                     minA = db + ((Double) pot.getVertexProperty(a11)).doubleValue();
                 }
                 // relax all edges out of a11
-                Iterator<Edge> a11AdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a11)
-                    .iterator();
-                while (a11AdjEdgesIterator.hasNext())
+                for (Edge e1: GraphUtilities.getVertexAdjEdges(g, a11))
                 {
-                    e = (Edge) a11AdjEdgesIterator.next();
+                    e = e1;
                     Vertex b1 = GraphUtilities.getEdgeTargetVertex(g, e);
                     double db1 = ((Double) dist.getVertexProperty(a11)).doubleValue() +
                         (((Double) pot.getVertexProperty(a11)).doubleValue() +
@@ -335,21 +310,17 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      */
     private void mwbmHeuristic(BipartiteGraph g, EdgeArray c, VertexArray pot, VertexArray free)
     {
-        Vertex a, b;
-        Edge e, e2, eb;
+    	Vertex b;
+        Edge e2, eb;
         VertexArray secEdge = new VertexArray(g, null);
-        Iterator<Vertex> leftVertexSetIterator = g.getLeftVertexSetIterator();
-        while (leftVertexSetIterator.hasNext())
+        for(Vertex a : g.getLeftVertexesSet())
         {
-            a = (Vertex) leftVertexSetIterator.next();
             double max2 = 0, max = 0;
             eb = null;
             e2 = null;
             // compute edges with largest and second largest slack
-            Iterator<Edge> aAdjEdgesIterator = GraphUtilities.getVertexAdjEdges(g, a).iterator();
-            while (aAdjEdgesIterator.hasNext())
+            for(Edge e : GraphUtilities.getVertexAdjEdges(g, a))
             {
-                e = (Edge) aAdjEdgesIterator.next();
                 double we = ((Double) c.getEdgeProperty(e)).doubleValue() -
                     ((Double) pot.getVertexProperty(GraphUtilities.getEdgeTargetVertex(g, e)))
                         .doubleValue();
@@ -388,7 +359,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                     // path of length 3 given by sec_edge[]
                     pot.setVertexProperty(a, new Double(max));
                     e2 = GraphUtilities.getVertexFirstAdjEdge(g, b);
-                    e = (Edge) secEdge.getVertexProperty(GraphUtilities.getEdgeTargetVertex(g, e2));
+                    Edge e = (Edge) secEdge.getVertexProperty(GraphUtilities.getEdgeTargetVertex(g, e2));
                     if (e != null &&
                         GraphUtilities.getVertexOutDeg(g, GraphUtilities.getEdgeTargetVertex(g, e)) == 0)
                     {
@@ -419,20 +390,15 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      */
     private boolean scaleWeights(final BipartiteGraph g, final EdgeArray c2, EdgeArray c1, double f)
     {
-        Edge e;
         double C = 0;
-        Iterator<Edge> edgesIterator = g.getEdgesIterator();
-        while (edgesIterator.hasNext())
+        for (Edge e : g.getEdgesSet())
         {
-            e = (Edge) edgesIterator.next();
             C = Math.max(C, fabs((((Double) c2.getEdgeProperty(e)).doubleValue())));
         }
         double S = computeS(f, C);
         boolean noScaling = true;
-        edgesIterator = g.getEdgesIterator();
-        while (edgesIterator.hasNext())
+        for (Edge e : g.getEdgesSet())
         {
-            e = (Edge) edgesIterator.next();
             c1.setEdgeProperty(e,
                 new Double(scaleWeight(((Double) c2.getEdgeProperty(e)).doubleValue(), S)));
             if (((Double) c2.getEdgeProperty(e)).doubleValue() != ((Double) c1.getEdgeProperty(e))
