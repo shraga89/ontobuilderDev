@@ -67,16 +67,16 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	            	String cName = cands.get(j).getName();
 	            	String tName = targs.get(i).getName();
 	            	//Extract words
-	            	ArrayList<String> cWordList = getWords(cName);
-	            	ArrayList<String> tWordList = getWords(tName);
+	            	ArrayList<String> canidatesWordList = tokenizedWordsSimple(cName);
+	            	ArrayList<String> targetWordList = tokenizedWordsSimple(tName);
 	            	double avgSim = 0.0;
-	            	for (String cWord : cWordList)
+	            	for (String cWord : canidatesWordList)
 	            	{
 	            		double maxSim = 0.0;
 	            		String cleanCandWord = cleanWord(cWord);
 	            		if (checkWord(cWord,cleanCandWord,true))
 	            		{
-	            			for (String tWord : tWordList)
+	            			for (String tWord : targetWordList)
 		            		{
 	            				String cleanTargWord = cleanWord(tWord);
 		            			if (checkWord(tWord,cleanTargWord,true))
@@ -88,7 +88,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	            		}
 	            		avgSim+=maxSim;
 	            	}
-	            	if (!cWordList.isEmpty()) avgSim /= cWordList.size();
+	            	if (!canidatesWordList.isEmpty()) avgSim /= canidatesWordList.size();
 	            	mi.updateMatch(targs.get(i), cands.get(j), avgSim);
 	            }
 	        }
@@ -173,16 +173,18 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	  
 	  /**
 	   * Breaks up a given string to words by Capitalized letters
-	   *  and seperators (tab, space, hyphen, underscore)
-	   * @param cName
+	   *  and separators (tab, space, hyphen, underscore)
+	   * @param canidateName
 	   * @return Arraylist of strings representing distinct words found
 	   */
-	 private ArrayList<String> getWords(String cName)
+	 private ArrayList<String> tokenizedWordsSimple(String canidateName)
 	  {
-		  String cCamel = StringUtilities.separateCapitalizedWords(cName);
-      	ArrayList<String> cWordList = StringUtilities.breakTextIntoWords(cCamel);
-      	if (cWordList.isEmpty()) System.err.println("No words were found in " + cName);
-      	return cWordList;
+		 String canidateCamelCase = StringUtilities.separateCapitalizedWords(canidateName);
+		 ArrayList<String> canidateWordList = StringUtilities.breakTextIntoWords(canidateCamelCase);
+		 if (canidateWordList.isEmpty()) {
+			 System.err.println("No words were found in " + canidateName);
+		 }
+		 return canidateWordList;
 	  }
 }
 
