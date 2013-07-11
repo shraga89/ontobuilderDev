@@ -64,17 +64,17 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	            for (int j = 0; j < cands.size(); j++)
 	            {
 	            	
-	            	String cName = cands.get(j).getName();
-	            	String tName = targs.get(i).getName();
+	            	String candidateName = cands.get(j).getName();
+	            	String targetName = targs.get(i).getName();
 	            	//Extract words
-	            	ArrayList<String> canidatesWordList = tokenizedWordsSimple(cName);
-	            	ArrayList<String> targetWordList = tokenizedWordsSimple(tName);
+	            	ArrayList<String> candidatesWordList = tokenizedWordsSimple(candidateName);
+	            	ArrayList<String> targetWordList = tokenizedWordsSimple(targetName);
 	            	double avgSim = 0.0;
-	            	for (String cWord : canidatesWordList)
+	            	for (String candidateWord : candidatesWordList)
 	            	{
 	            		double maxSim = 0.0;
-	            		String cleanCandWord = cleanWord(cWord);
-	            		if (checkWord(cWord,cleanCandWord,true))
+	            		String cleanCandWord = cleanWord(candidateWord);
+	            		if (checkWord(candidateWord,cleanCandWord,true))
 	            		{
 	            			for (String tWord : targetWordList)
 		            		{
@@ -88,7 +88,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	            		}
 	            		avgSim+=maxSim;
 	            	}
-	            	if (!canidatesWordList.isEmpty()) avgSim /= canidatesWordList.size();
+	            	if (!candidatesWordList.isEmpty()) avgSim /= candidatesWordList.size();
 	            	mi.updateMatch(targs.get(i), cands.get(j), avgSim);
 	            }
 	        }
