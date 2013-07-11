@@ -38,10 +38,10 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	public MatchInformation match(Ontology target,
 			Ontology candidate) {
 		
-	      MatchInformation matchInformation = new MatchInformation(candidate,target);
-	      match(matchInformation);
-	      matchInformation.setAlgorithm(this);
-	      return matchInformation ;
+		MatchInformation matchInformation = new MatchInformation(candidate,target);
+		this.match(matchInformation);
+		matchInformation.setAlgorithm(this);
+		return matchInformation ;
 	}
 
 	@Override
