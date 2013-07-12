@@ -5,6 +5,10 @@ import java.util.List;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 
+/**
+ * @author Sapir Golan
+ *
+ */
 public class TokenizedWordsSimpleAlgorithem implements TokenizedWordAlgorithem {
 
 	/**
@@ -33,6 +37,11 @@ public class TokenizedWordsSimpleAlgorithem implements TokenizedWordAlgorithem {
 			System.err.println("No words were found in " + word);
 		}
 		return listOfWords;
+	}
+
+	@Override
+	public TokenizedAlgorithmType getAlgorithmType() {
+		return TokenizedAlgorithmType.simple;
 	}
 
 }

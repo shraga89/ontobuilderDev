@@ -9,7 +9,7 @@ import java.util.List;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 
 /**
- * @author XPS_Sapir
+ * @author Sapir Golan
  *
  */
 public class TokenizedWordGreedyAlgorithem implements TokenizedWordAlgorithem {
@@ -81,6 +81,11 @@ public class TokenizedWordGreedyAlgorithem implements TokenizedWordAlgorithem {
 			result.add(prefix);
 		}
 		return result;
+	}
+
+	@Override
+	public TokenizedAlgorithmType getAlgorithmType() {
+		return TokenizedAlgorithmType.greedy;
 	}
 
 }
