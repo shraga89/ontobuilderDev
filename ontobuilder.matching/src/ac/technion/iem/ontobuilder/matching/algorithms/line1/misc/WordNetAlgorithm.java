@@ -212,14 +212,13 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	}
 	/**
 	 * Check if word exists in dictionary
-	 * @param origWord original word
-	 * @param cleanWord clean version of word
+	 * @param word to be checked
 	 */
-	private boolean isWordInDiction(String cleanWord) {
-		Set<String> defs =  WS4J.findDefinitions(cleanWord, POS.n);
-		defs.addAll(WS4J.findDefinitions(cleanWord, POS.v));
-		defs.addAll(WS4J.findDefinitions(cleanWord, POS.a));
-		defs.addAll(WS4J.findDefinitions(cleanWord, POS.r));
+	private boolean isWordInDiction(String word) {
+		Set<String> defs =  WS4J.findDefinitions(word, POS.n);
+		defs.addAll(WS4J.findDefinitions(word, POS.v));
+		defs.addAll(WS4J.findDefinitions(word, POS.a));
+		defs.addAll(WS4J.findDefinitions(word, POS.r));
 		if ( defs.isEmpty() ) {
 			return false;
 		}
