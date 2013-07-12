@@ -1,7 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -62,8 +61,10 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
 
-		HashMap<Term, List<String>> candsTokenizedSimple = tokenizedWordsSimpleAlgorithem(cands);
-		HashMap<Term, List<String>> candsTokenizedGreedy = tokenizedWordsGreedyAlgorithem(cands);
+		TokenizedWordsSimpleAlgorithem simpleAlgorithem = new TokenizedWordsSimpleAlgorithem();
+		TokenizedWordGreedyAlgorithem greedyAlgorithem = new TokenizedWordGreedyAlgorithem();
+
+		
 		for (int i = 0; i < targs.size(); i++)
 		{
 			for (int j = 0; j < cands.size(); j++)
@@ -107,54 +108,6 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		}
 	}
 
-	/**
-	 * This algorithm handle <b>multi-words</b> names<br>
-	 * The method tokenized is Term by a using a <i>greedy</i> algorithm<br>
-	 * looks for the biggest prefixing and suffixing dictionary words.<br>
-	 * @param cands
-	 * @return
-	 */
-	private HashMap<Term, List<String>> tokenizedWordsGreedyAlgorithem(List<Term> cands) {
-		
-		HashMap<Term, List<String>> result = new HashMap<Term, List<String>>();
-		for (Term term : cands) {
-			String termName = term.getName();
-			//term's name is empty
-			if (termName == null || termName == "") {
-				result.put(term, Arrays.asList(""));
-			} else {
-				//removing all non alphabetic characters from a String
-				termName = termName.replaceAll("[^a-zA-Z]", "");
-				int termLength = termName.length();
-				String biggestPrefix = null;
-				String biggestSuffix = null;
-				for (int i = 1; i <= termLength; i++) {
-					//if current prefix\suffix is a word in the English dictionary set it has the biggest prefix\suffix
-					String currentPrefix = termName.substring(0, i);
-					String currentSuffix = termName.substring(termLength-i,termLength);
-					biggestPrefix = isWordInDiction(currentPrefix) ? currentPrefix : biggestPrefix;
-					biggestSuffix = isWordInDiction(currentSuffix) ? currentSuffix : biggestSuffix;
-				}
-				//case not Suffix and Prefix were found
-				if (biggestPrefix == null && biggestSuffix == null) {
-					result.put(term, Arrays.asList(""));
-				}
-				//case found only Suffix
-				else if (biggestPrefix == null && biggestSuffix != null) {
-					result.put(term, Arrays.asList(biggestSuffix));
-				}
-				//case found only Prefix
-				else if (biggestPrefix != null && biggestSuffix == null) {
-					result.put(term, Arrays.asList(biggestPrefix));
-				}
-				//case prefix equals suffix (none of them can be null)
-				else if ( biggestSuffix.equals(biggestPrefix) ) {
-					result.put(term, Arrays.asList(biggestSuffix));
-				}
-			}
-		}
-		return result;
-	}
 	/**
 	 * The method tokenized is Term by a using a <i>simple</i> algorithm<br>
 	 *  Each Term is tokenized into words based on camelCase and punctuation
@@ -214,7 +167,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * Check if word exists in dictionary
 	 * @param word to be checked
 	 */
-	private boolean isWordInDiction(String word) {
+	public static boolean isWordInDiction(String word) {
 		Set<String> defs =  WS4J.findDefinitions(word, POS.n);
 		defs.addAll(WS4J.findDefinitions(word, POS.v));
 		defs.addAll(WS4J.findDefinitions(word, POS.a));
