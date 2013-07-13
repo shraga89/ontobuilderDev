@@ -52,6 +52,22 @@ public class TermTokenized {
 		}
 	}
 	
+	/**
+	 * Returns all the words that were tokenized from a Term using an algorithm
+	 * @param algorithmType - the {@link TokenizedAlgorithmType} that was used to tokenize a Term
+	 * @return List<<code>String</code>>
+	 */
+	public List<String> getTokenizedWordsByAlgorithmAndToken(TokenizedAlgorithmType algorithmType) {
+		ArrayList<String> result = new ArrayList<String>();
+		if (algorithmType != null) {
+			List<String> list = tokenizedWords.get(algorithmType);
+			if (list != null) {
+				result.addAll(list);
+			}
+		}
+		return result;
+	}
+	
 	private void addExecutedAlgorithm (TokenizedAlgorithmType algorithmType) {
 		if ( algorithmType!=null ) {
 			if (!executedAlgorithms.contains(algorithmType)) {
