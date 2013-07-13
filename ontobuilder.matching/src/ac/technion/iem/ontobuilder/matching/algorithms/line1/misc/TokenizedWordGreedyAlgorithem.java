@@ -12,7 +12,7 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
  * @author Sapir Golan
  *
  */
-public class TokenizedWordGreedyAlgorithem implements TokenizedWordAlgorithem {
+public class TokenizedWordGreedyAlgorithem implements TokenizedWordAlgorithm {
 
 	/**
 	 * This algorithm handle <b>multi-words</b> names<br>

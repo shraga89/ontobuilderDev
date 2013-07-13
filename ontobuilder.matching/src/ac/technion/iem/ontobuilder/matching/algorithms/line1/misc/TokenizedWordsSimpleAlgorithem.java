@@ -9,7 +9,7 @@ import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
  * @author Sapir Golan
  *
  */
-public class TokenizedWordsSimpleAlgorithem implements TokenizedWordAlgorithem {
+public class TokenizedWordsSimpleAlgorithem implements TokenizedWordAlgorithm {
 
 	/**
 	 * The method tokenized a {@link Term} by a using a <i>simple</i> algorithm<br>
