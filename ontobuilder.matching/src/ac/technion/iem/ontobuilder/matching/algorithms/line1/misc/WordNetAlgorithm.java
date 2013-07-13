@@ -2,7 +2,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -13,6 +13,8 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithemFactory;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import edu.cmu.lti.jawjaw.pobj.POS;
 import edu.cmu.lti.ws4j.WS4J;
@@ -49,6 +51,12 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	public void configure(Element element) {
 
 	}
+	
+	@Override
+	public Algorithm makeCopy() {
+		WordNetAlgorithm algo = new WordNetAlgorithm();
+		return algo ;
+	}
 
 	/**
 	 * Converts term names to words, looks words up in wordnet and calculates similarity
@@ -58,26 +66,34 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 */
 	private void match(MatchInformation mi)
 	{
+		HashMap<Term, TermTokenized> candidateTermsTokenized = new HashMap<Term, TermTokenized>();
+		HashMap<Term, TermTokenized> targetTermsTokenized = new HashMap<Term, TermTokenized>();
+		
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
-
-		TokenizedWordsSimpleAlgorithem simpleAlgorithem = new TokenizedWordsSimpleAlgorithem();
-		TokenizedWordGreedyAlgorithem greedyAlgorithem = new TokenizedWordGreedyAlgorithem();
-
 		
-		for (int i = 0; i < targs.size(); i++)
-		{
-			for (int j = 0; j < cands.size(); j++)
-			{
+		TokenizedWordAlgorithemFactory factory = new TokenizedWordAlgorithemFactory();
+		ArrayList<TokenizedWordAlgorithm> tokenizedWordAlgorithms = factory.build();
+		
+		for (int i = 0; i < targs.size(); i++) {
+			for (int j = 0; j < cands.size(); j++) {
 
 				String candidateName = cands.get(j).getName();
 				String targetName = targs.get(i).getName();
-				//Extract words
+				
+				Term currentCandidate = cands.get(j);
+				Term currentTarget = targs.get(i);
+				//Extract words by all algorithms
+				for (TokenizedWordAlgorithm tokenizedAlgorithem : tokenizedWordAlgorithms) {
+					this.tokenizeTermByAlgorithm( candidateTermsTokenized, currentCandidate, tokenizedAlgorithem );
+					this.tokenizeTermByAlgorithm( targetTermsTokenized, currentTarget, tokenizedAlgorithem );
+				}
+				
+				
 				ArrayList<String> candidatesWordList = tokenizedWordsSimple(candidateName);
 				ArrayList<String> targetWordList = tokenizedWordsSimple(targetName);
 				double avgSim = 0.0;
-				for (String candidateWord : candidatesWordList)
-				{
+				for (String candidateWord : candidatesWordList) {
 					double maxSim = 0.0;
 					String cleanCandWord = cleanWord(candidateWord);
 					if ( isWordInDiction(cleanCandWord) ) {
@@ -97,7 +113,9 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 					}
 					avgSim+=maxSim;
 				}
-				if (!candidatesWordList.isEmpty()) avgSim /= candidatesWordList.size();
+				if (!candidatesWordList.isEmpty()) {
+					avgSim /= candidatesWordList.size();
+				}
 				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
 			}
 		}
@@ -107,22 +125,86 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			System.err.println("No definitions were found for " + word + " which was cleaned to " + cWord);
 		}
 	}
-
+	
 	/**
-	 * The method tokenized is Term by a using a <i>simple</i> algorithm<br>
-	 *  Each Term is tokenized into words based on camelCase and punctuation
-	 * @param cands - an ArrayList of terms
-	 * @return HashMap<Term, ArrayList<String>>, for each {@link Term} an ArrayList of all the string it contains
+	 * The method add words that were tokenized from some {@link Term} by some {@link TokenizedWordAlgorithm} 
+	 * to a map to of terms Tokenized
+	 * @param termsTokenized, Map<{@link Term}, {@link TermTokenized}> that for each term contains its TermTokenized
+	 * @param currentTerm, {@link Term} to be tokenized
+	 * @param tokenizedAlgorithem, {@link TokenizedWordAlgorithm} to tokenize the term
 	 */
-	private HashMap<Term, List<String>> tokenizedWordsSimpleAlgorithem( List<Term> cands) {
-
-		HashMap<Term, List<String>> result = new HashMap<Term, List<String>>();
-		for (Term term : cands) {
-			ArrayList<String> tokenizedWords = tokenizedWordsSimple(term.getName());
-			result.put(term, tokenizedWords);
+	private void tokenizeTermByAlgorithm( Map<Term, TermTokenized> termsTokenized,
+			Term currentTerm, TokenizedWordAlgorithm tokenizedAlgorithem) {
+		//currentTerm already exists in map
+		//get his TermTokenized and update it 
+		if ( termsTokenized.containsKey(currentTerm) ) {
+			TermTokenized termTokenized = termsTokenized.get(currentTerm);
+			boolean wasAlgorithmExecuted = termTokenized.getDoneAlgorithms().contains(tokenizedAlgorithem.getAlgorithmType());
+			if (!wasAlgorithmExecuted) {
+				termTokenized.addTokenizedWords( tokenizedAlgorithem.getAlgorithmType(), tokenizedAlgorithem.tokenizeTerms(currentTerm) );
+			}
+		} //currentTerm is new
+		//create a new TermTokenized for it
+		else {
+			TermTokenized termTokenized = new TermTokenized();
+			termTokenized.addTokenizedWords( tokenizedAlgorithem.getAlgorithmType(), tokenizedAlgorithem.tokenizeTerms(currentTerm) );
+			termsTokenized.put(currentTerm, termTokenized);
 		}
-		return result;
 	}
+	
+	//This is the original method
+	//
+	//
+	/*private void match(MatchInformation mi)
+	{
+		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
+		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
+
+		TokenizedWordsSimpleAlgorithem simpleAlgorithem = new TokenizedWordsSimpleAlgorithem();
+		TokenizedWordGreedyAlgorithem greedyAlgorithem = new TokenizedWordGreedyAlgorithem();
+
+		for (int i = 0; i < targs.size(); i++) {
+			for (int j = 0; j < cands.size(); j++) {
+
+				String candidateName = cands.get(j).getName();
+				String targetName = targs.get(i).getName();
+				//Extract words
+				ArrayList<String> candidatesWordList = tokenizedWordsSimple(candidateName);
+				ArrayList<String> targetWordList = tokenizedWordsSimple(targetName);
+				double avgSim = 0.0;
+				for (String candidateWord : candidatesWordList) {
+					double maxSim = 0.0;
+					String cleanCandWord = cleanWord(candidateWord);
+					if ( isWordInDiction(cleanCandWord) ) {
+						for (String tWord : targetWordList) {
+							String cleanTargWord = cleanWord(tWord);
+							if ( isWordInDiction(cleanTargWord) ) {
+								maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(cleanCandWord,tWord));
+								maxSim = Math.min(maxSim, 1.0);
+							}
+							else {
+								addToUnknownwords(tWord, cleanTargWord);
+							}
+						}
+					}
+					else {
+						addToUnknownwords(candidateWord, cleanCandWord);
+					}
+					avgSim+=maxSim;
+				}
+				if (!candidatesWordList.isEmpty()) {
+					avgSim /= candidatesWordList.size();
+				}
+				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
+			}
+		}
+		for (String word : unknownwords.keySet())
+		{
+			String cWord = unknownwords.get(word);
+			System.err.println("No definitions were found for " + word + " which was cleaned to " + cWord);
+		}
+	}*/
+
 
 	/**
 	 * Cleans non-alphabetical symbols (street1->street, from: -> from)
@@ -182,12 +264,6 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		unknownwords.put(origWord,cleanWord);
 	}
 
-	@Override
-	public Algorithm makeCopy() {
-		WordNetAlgorithm algo = new WordNetAlgorithm();
-		return algo ;
-	}
-
 	private ArrayList<Term> getTerms(Ontology o)
 	{
 		Vector<Term> terms = o.getTerms(true);
@@ -215,5 +291,3 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		return canidateWordList;
 	}
 }
-
-
