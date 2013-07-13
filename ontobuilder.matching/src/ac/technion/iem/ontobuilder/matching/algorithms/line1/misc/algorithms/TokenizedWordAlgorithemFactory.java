@@ -1,6 +1,7 @@
-package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
+package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms;
 
 import java.util.ArrayList;
+
 
 /**
  * This class is a factory for all the algorithms that implement TokenizedWordAlgorithem.<br>
