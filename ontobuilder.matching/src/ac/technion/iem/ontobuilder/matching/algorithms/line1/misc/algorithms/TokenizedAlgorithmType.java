@@ -15,7 +15,8 @@ import java.util.List;
  *
  */
 public enum TokenizedAlgorithmType {
-	simple(TokenizedWordsSimpleAlgorithem.class), greedy(TokenizedWordGreedyAlgorithem.class);
+	simple(TokenizedWordsSimpleAlgorithm.class), greedy(TokenizedWordGreedyAlgorithm.class), 
+	greedystar(TokenizedWordGreedyStarAlgorithm.class);
 	
 	private Class<?> algorithmType;
 	
@@ -31,7 +32,7 @@ public enum TokenizedAlgorithmType {
 	 * This method will return an instance the implements {@link TokenizedWordAlgorithm} according to its {@link #algorithmType} value
 	 * @return {@link TokenizedWordAlgorithm}
 	 */
-	public TokenizedWordAlgorithm getImplimentedAlgorithem () {
+	public TokenizedWordAlgorithm getImplementedAlgorithm () {
 		TokenizedWordAlgorithm instance = null;
 		Constructor[] declaredConstructors = this.algorithmType.getDeclaredConstructors();
 		List<Constructor> list = Arrays.asList(declaredConstructors);
