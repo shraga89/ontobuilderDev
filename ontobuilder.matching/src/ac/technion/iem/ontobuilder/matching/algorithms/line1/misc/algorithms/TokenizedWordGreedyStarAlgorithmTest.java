@@ -28,7 +28,7 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 	TokenizedWordGreedyStarAlgorithm alg = new TokenizedWordGreedyStarAlgorithm();
 	
 	Term t = new Term();
-	t.setName("PurchaseCarOrder");
+	t.setName("PurchaseCarBikeShipOrder");
 	List<String> result;// = new ArrayList<String>();
 	result = alg.tokenizeTerms(t);
 
