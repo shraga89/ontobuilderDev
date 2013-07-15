@@ -13,7 +13,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.WordNetAlgorit
  * @author Sapir Golan
  *
  */
-public class TokenizedWordGreedyAlgorithem implements TokenizedWordAlgorithm {
+public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 
 	/**
 	 * This algorithm handle <b>multi-words</b> names<br>

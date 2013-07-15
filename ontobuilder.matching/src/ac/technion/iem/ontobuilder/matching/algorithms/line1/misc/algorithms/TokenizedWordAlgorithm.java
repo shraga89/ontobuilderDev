@@ -19,5 +19,6 @@ public interface TokenizedWordAlgorithm {
 	/**
 	 * @return the algorithm type based on {@link TokenizedAlgorithmType}
 	 */
+		
 	public TokenizedAlgorithmType getAlgorithmType();
 }

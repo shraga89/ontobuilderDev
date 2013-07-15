@@ -74,8 +74,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
-		
 		TokenizedWordAlgorithemFactory factory = new TokenizedWordAlgorithemFactory();
+		
 		ArrayList<TokenizedWordAlgorithm> tokenizedWordAlgorithms = factory.build();
 		
 		for (int i = 0; i < targs.size(); i++) {
@@ -84,7 +84,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				Term currentCandidate = cands.get(j);
 				Term currentTarget = targs.get(i);
 				//Extract words by all algorithms
-				for (TokenizedWordAlgorithm tokenizedAlgorithem : tokenizedWordAlgorithms) {
+				for (TokenizedWordAlgorithm tokenizedAlgorithm : tokenizedWordAlgorithms) {
 					this.tokenizeTermByAlgorithm( candidateTermsTokenizedMap, currentCandidate, tokenizedAlgorithem );
 					this.tokenizeTermByAlgorithm( targetTermsTokenizedMap, currentTarget, tokenizedAlgorithem );
 				}
@@ -142,23 +142,23 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * to a map to of terms Tokenized
 	 * @param termsTokenized, Map<{@link Term}, {@link TermTokenized}> that for each term contains its TermTokenized
 	 * @param currentTerm, {@link Term} to be tokenized
-	 * @param tokenizedAlgorithem, {@link TokenizedWordAlgorithm} to tokenize the term
+	 * @param tokenizedAlgorithm, {@link TokenizedWordAlgorithm} to tokenize the term
 	 */
 	private void tokenizeTermByAlgorithm( Map<Term, TermTokenized> termsTokenized,
-			Term currentTerm, TokenizedWordAlgorithm tokenizedAlgorithem) {
+			Term currentTerm, TokenizedWordAlgorithm tokenizedAlgorithm) {
 		//currentTerm already exists in map
 		//get his TermTokenized and update it 
 		if ( termsTokenized.containsKey(currentTerm) ) {
 			TermTokenized termTokenized = termsTokenized.get(currentTerm);
-			boolean wasAlgorithmExecuted = termTokenized.getDoneAlgorithms().contains(tokenizedAlgorithem.getAlgorithmType());
+			boolean wasAlgorithmExecuted = termTokenized.getDoneAlgorithms().contains(tokenizedAlgorithm.getAlgorithmType());
 			if (!wasAlgorithmExecuted) {
-				termTokenized.addTokenizedWords( tokenizedAlgorithem.getAlgorithmType(), tokenizedAlgorithem.tokenizeTerms(currentTerm) );
+				termTokenized.addTokenizedWords( tokenizedAlgorithm.getAlgorithmType(), tokenizedAlgorithm.tokenizeTerms(currentTerm) );
 			}
 		} //currentTerm is new
 		//create a new TermTokenized for it
 		else {
 			TermTokenized termTokenized = new TermTokenized();
-			termTokenized.addTokenizedWords( tokenizedAlgorithem.getAlgorithmType(), tokenizedAlgorithem.tokenizeTerms(currentTerm) );
+			termTokenized.addTokenizedWords( tokenizedAlgorithm.getAlgorithmType(), tokenizedAlgorithm.tokenizeTerms(currentTerm) );
 			termsTokenized.put(currentTerm, termTokenized);
 		}
 	}
@@ -171,8 +171,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
 
-		TokenizedWordsSimpleAlgorithem simpleAlgorithem = new TokenizedWordsSimpleAlgorithem();
-		TokenizedWordGreedyAlgorithem greedyAlgorithem = new TokenizedWordGreedyAlgorithem();
+		TokenizedWordsSimpleAlgorithm simpleAlgorithm = new TokenizedWordsSimpleAlgorithm();
+		TokenizedWordGreedyAlgorithm greedyAlgorithm = new TokenizedWordGreedyAlgorithm();
 
 		for (int i = 0; i < targs.size(); i++) {
 			for (int j = 0; j < cands.size(); j++) {
