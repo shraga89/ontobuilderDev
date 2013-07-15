@@ -100,7 +100,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 						for (String tWord : targetWordList) {
 							String cleanTargWord = cleanWord(tWord);
 							if ( isWordInDiction(cleanTargWord) ) {
-								maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(cleanCandWord,tWord));
+								maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(cleanCandWord,cleanTargWord));
 								maxSim = Math.min(maxSim, 1.0);
 							}
 							else {
