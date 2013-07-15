@@ -2,6 +2,8 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -13,6 +15,7 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedAlgorithmType;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithemFactory;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -64,10 +67,10 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @param targs
 	 * @return
 	 */
-	private void match(MatchInformation mi)
-	{
-		HashMap<Term, TermTokenized> candidateTermsTokenized = new HashMap<Term, TermTokenized>();
-		HashMap<Term, TermTokenized> targetTermsTokenized = new HashMap<Term, TermTokenized>();
+	private void match(MatchInformation mi) {
+		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<Term, TermTokenized>();
+		HashMap<Term, TermTokenized> targetTermsTokenizedMap = new HashMap<Term, TermTokenized>();
+		HashMap<Term, TermSimilarity> termsSimilarityMap = new HashMap<Term, TermSimilarity>();
 		
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
@@ -78,54 +81,62 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		for (int i = 0; i < targs.size(); i++) {
 			for (int j = 0; j < cands.size(); j++) {
 
-				String candidateName = cands.get(j).getName();
-				String targetName = targs.get(i).getName();
-				
 				Term currentCandidate = cands.get(j);
 				Term currentTarget = targs.get(i);
 				//Extract words by all algorithms
 				for (TokenizedWordAlgorithm tokenizedAlgorithem : tokenizedWordAlgorithms) {
-					this.tokenizeTermByAlgorithm( candidateTermsTokenized, currentCandidate, tokenizedAlgorithem );
-					this.tokenizeTermByAlgorithm( targetTermsTokenized, currentTarget, tokenizedAlgorithem );
+					this.tokenizeTermByAlgorithm( candidateTermsTokenizedMap, currentCandidate, tokenizedAlgorithem );
+					this.tokenizeTermByAlgorithm( targetTermsTokenizedMap, currentTarget, tokenizedAlgorithem );
 				}
+				TermTokenized candidateTokenized = candidateTermsTokenizedMap.get(currentCandidate);
+				TermTokenized targetTokenized = targetTermsTokenizedMap.get(currentTarget);
 				
-				
-				ArrayList<String> candidatesWordList = tokenizedWordsSimple(candidateName);
-				ArrayList<String> targetWordList = tokenizedWordsSimple(targetName);
-				double avgSim = 0.0;
-				for (String candidateWord : candidatesWordList) {
-					double maxSim = 0.0;
-					String cleanCandWord = cleanWord(candidateWord);
-					if ( isWordInDiction(cleanCandWord) ) {
-						for (String tWord : targetWordList) {
-							String cleanTargWord = cleanWord(tWord);
-							if ( isWordInDiction(cleanTargWord) ) {
-								maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(cleanCandWord,tWord));
-								maxSim = Math.min(maxSim, 1.0);
-							}
-							else {
-								addToUnknownwords(tWord, cleanTargWord);
-							}
-						}
+				List<TokenizedAlgorithmType> algorithms = candidateTokenized.getDoneAlgorithms();
+				for (TokenizedAlgorithmType algorithmType : algorithms) {
+					List<String> candidateTokens = candidateTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
+					List<String> targetTokens = targetTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
+					Double similarity = calcSimilarity(candidateTokens, targetTokens);
+					//current candidate term already has an entry in termsSimilarityMap
+					if (termsSimilarityMap.containsKey(currentCandidate)) {
+						termsSimilarityMap.get(currentCandidate).addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
 					}
 					else {
-						addToUnknownwords(candidateWord, cleanCandWord);
+						TermSimilarity termSimilarity = new TermSimilarity();
+						termSimilarity.addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
+						termsSimilarityMap.put(currentCandidate, termSimilarity);
 					}
-					avgSim+=maxSim;
+					
 				}
-				if (!candidatesWordList.isEmpty()) {
-					avgSim /= candidatesWordList.size();
-				}
-				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
+				
+//				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
 			}
-		}
-		for (String word : unknownwords.keySet())
-		{
-			String cWord = unknownwords.get(word);
-			System.err.println("No definitions were found for " + word + " which was cleaned to " + cWord);
 		}
 	}
 	
+	private Double calcSimilarity(List<String> candidateWords, List<String> targetWords) {
+		double avgSim = 0.0;
+		int validCandidateWords = 0;
+		for (String candidateWord : candidateWords) {
+			if ( isWordInDiction(candidateWord) ) {
+				validCandidateWords++;
+				double maxSim = 0.0;
+				//for each word in the candidate list of words check similarity
+				//against all works in target.
+				//choose the biggest similarity
+				for (String targetWord : targetWords) {
+					if ( isWordInDiction(targetWord) ) {
+						maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(candidateWord,targetWord));
+						maxSim = Math.min(maxSim, 1.0);
+					}
+				}
+			avgSim += maxSim;
+			}
+		}
+		if (validCandidateWords != 0) {
+			avgSim /= validCandidateWords;
+		}
+		return avgSim;
+	}
 	/**
 	 * The method add words that were tokenized from some {@link Term} by some {@link TokenizedWordAlgorithm} 
 	 * to a map to of terms Tokenized
@@ -214,8 +225,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @param word to clean
 	 * @return clean word
 	 */
-	private String cleanWord(String word)
-	{
+	private String cleanWord(String word) {
 		if (knownWords.containsKey(word)) {
 			return knownWords.get(word);
 		}
@@ -250,10 +260,12 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @param word to be checked
 	 */
 	public static boolean isWordInDiction(String word) {
-		Set<String> defs =  WS4J.findDefinitions(word, POS.n);
-		defs.addAll(WS4J.findDefinitions(word, POS.v));
-		defs.addAll(WS4J.findDefinitions(word, POS.a));
-		defs.addAll(WS4J.findDefinitions(word, POS.r));
+		Set<String> defs = new HashSet<String>();
+		POS[] partsOfSpeech = POS.values();
+		for (int i = 0; i < partsOfSpeech.length; i++) {
+			POS pos = partsOfSpeech[i];
+			defs.addAll(WS4J.findDefinitions(word, pos));
+		}
 		if ( defs.isEmpty() ) {
 			return false;
 		}
@@ -264,8 +276,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		unknownwords.put(origWord,cleanWord);
 	}
 
-	private ArrayList<Term> getTerms(Ontology o)
-	{
+	private ArrayList<Term> getTerms(Ontology o) {
 		Vector<Term> terms = o.getTerms(true);
 		ArrayList<Term> result = new ArrayList<Term>();
 		for (int i = 0; i < terms.size(); i++)
