@@ -27,7 +27,7 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 		List<String> result = new ArrayList<String>();
 		String termName = term.getName();
 		//term's name is empty
-		if (termName == null || termName == "") {
+		if (termName == null || termName.equals("") ) {
 			result.add("");
 		} else {
 			//removing all non alphabetic characters from a String

@@ -16,8 +16,8 @@ import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedAlgorithmType;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithemFactory;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithmFactory;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import edu.cmu.lti.jawjaw.pobj.POS;
 import edu.cmu.lti.ws4j.WS4J;
@@ -74,7 +74,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
-		TokenizedWordAlgorithemFactory factory = new TokenizedWordAlgorithemFactory();
+		TokenizedWordAlgorithmFactory factory = new TokenizedWordAlgorithmFactory();
 		
 		ArrayList<TokenizedWordAlgorithm> tokenizedWordAlgorithms = factory.build();
 		
@@ -85,8 +85,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				Term currentTarget = targs.get(i);
 				//Extract words by all algorithms
 				for (TokenizedWordAlgorithm tokenizedAlgorithm : tokenizedWordAlgorithms) {
-					this.tokenizeTermByAlgorithm( candidateTermsTokenizedMap, currentCandidate, tokenizedAlgorithem );
-					this.tokenizeTermByAlgorithm( targetTermsTokenizedMap, currentTarget, tokenizedAlgorithem );
+					this.tokenizeTermByAlgorithm( candidateTermsTokenizedMap, currentCandidate, tokenizedAlgorithm );
+					this.tokenizeTermByAlgorithm( targetTermsTokenizedMap, currentTarget, tokenizedAlgorithm );
 				}
 				TermTokenized candidateTokenized = candidateTermsTokenizedMap.get(currentCandidate);
 				TermTokenized targetTokenized = targetTermsTokenizedMap.get(currentTarget);
