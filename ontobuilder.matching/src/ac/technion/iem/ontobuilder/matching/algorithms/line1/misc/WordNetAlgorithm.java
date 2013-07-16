@@ -1,8 +1,10 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,9 +109,46 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 					}
 					
 				}
-				
-//				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
+				this.updateMatchSimilarity( termsSimilarityMap, currentCandidate, currentTarget, WordNetStrategy.BEST, mi);
 			}
+		}
+	}
+	
+	/**
+	 * Update the match similarity based on a specific algorithm matching {@link WordNetStrategy} or by
+	 * finding the biggest similarity 
+	 * 
+	 * @param termsSimilarityMap
+	 * @param candidate
+	 * @param target
+	 * @param strategy
+	 * @param mi
+	 */
+	private void updateMatchSimilarity( HashMap<Term, TermSimilarity> termsSimilarityMap,
+			Term candidate, Term target, WordNetStrategy strategy, MatchInformation mi) {
+		//choose similarity that was achieved by a specific Algorithm
+		TokenizedAlgorithmType algorithmType = strategy.getAlgorithmType();
+		if (algorithmType instanceof TokenizedAlgorithmType) {
+			TermSimilarity termSimilarity = termsSimilarityMap.get(candidate);
+			Double similarity = termSimilarity.getSimilarity(target, algorithmType);
+			mi.updateMatch(target, candidate, similarity);
+		}
+		//choose maximum similarrity
+		else {
+			final Collection<Double> similarities = termsSimilarityMap.get(candidate).getAllSimilarities(target);
+			Double similarity = (double) 0;
+			Iterator<Double> iteratorOneTime = similarities.iterator();
+			//set maximum to be the value of the first value in similarities Collection
+			if (iteratorOneTime.hasNext()) {
+				similarity = (Double)iteratorOneTime.next();
+			}
+			//find the maximum value
+			for (Iterator<Double> iterator = similarities.iterator(); iterator
+					.hasNext();) {
+				Double someSimilarity = (Double) iterator.next();
+				similarity = Math.max(similarity, someSimilarity);
+			}
+			mi.updateMatch(target, candidate, similarity);
 		}
 	}
 	

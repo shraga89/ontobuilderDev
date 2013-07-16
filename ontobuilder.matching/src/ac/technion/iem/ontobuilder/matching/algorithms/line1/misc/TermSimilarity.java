@@ -1,5 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +42,39 @@ public class TermSimilarity {
 				similarityMap.put(targetTerm, map);
 			}
 		}
+	}
+	
+	/**
+	 * Return a similarity value based on {@link Term} it was calculated against and
+	 * by the {@link TokenizedAlgorithmType} used
+	 * 
+	 * @param target
+	 * @param algorithmType
+	 * @return
+	 */
+	public Double getSimilarity(Term target,TokenizedAlgorithmType algorithmType){
+		Double result = null;
+		Map<TokenizedAlgorithmType, Double> map = similarityMap.get(target);
+		if (map != null) {
+			result = map.get(algorithmType);
+		}
+		return result;
+	}
+	
+	/**
+	 * Return all Similarities values based on {@link Term} they were calculated against.
+	 * The returning value is <b>final</b> 
+	 * 
+	 * @param target
+	 * @return
+	 */
+	public final Collection<Double> getAllSimilarities(Term target) {
+		Collection<Double> result = null;
+		Map<TokenizedAlgorithmType, Double> map = similarityMap.get(target);
+		if (map != null) {
+			result = map.values();
+		}
+		return result;
 	}
 	
 }
