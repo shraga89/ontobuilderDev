@@ -24,6 +24,7 @@ public class TokenizedWordAlgorithemFactoryTest {
 	public void tearDown() throws Exception {
 	}
 
+	//test that all algorithms in TokenizedAlgorithmType are created using TokenizedWordAlgorithmFactory class
 	@Test
 	public void testBuild() {
 		ArrayList<TokenizedWordAlgorithm> list = classUnderTest.build();

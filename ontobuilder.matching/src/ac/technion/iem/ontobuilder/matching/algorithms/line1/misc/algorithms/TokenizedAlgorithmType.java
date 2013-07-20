@@ -29,7 +29,8 @@ public enum TokenizedAlgorithmType {
 	}
 	
 	/**
-	 * This method will return an instance the implements {@link TokenizedWordAlgorithm} according to its {@link #algorithmType} value
+	 * This method will return an instance the implements {@link TokenizedWordAlgorithm} according to its {@link #algorithmType} value.<br>
+	 * Once an instance is created (by any contractor) it's returned. 
 	 * @return {@link TokenizedWordAlgorithm}
 	 */
 	public TokenizedWordAlgorithm getImplementedAlgorithm () {
@@ -40,6 +41,7 @@ public enum TokenizedAlgorithmType {
 			if (Modifier.PUBLIC == constructor.getModifiers()) {
 				try {
 					instance = (TokenizedWordAlgorithm) constructor.newInstance(new Object[]{});
+					break;
 				} catch (InstantiationException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {

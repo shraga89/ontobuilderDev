@@ -11,6 +11,8 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.Tok
 
 public class TokenizedAlgorithmTypeTest {
 
+	private TokenizedAlgorithmType classUnderTest;
+	
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -19,13 +21,15 @@ public class TokenizedAlgorithmTypeTest {
 	public void tearDown() throws Exception {
 	}
 
+	//Test GetImplementedAlgorithm
+	//Trying to create an instance of each algorithm, by using all of its contractors
 	@Test
-	public void testGetTokenizedWordsAlgorithem() {
+	public void testGetImplementedAlgorithm() {
 		TokenizedAlgorithmType[] tokenizedAlgorithmTypes = TokenizedAlgorithmType.values();
 		for (int i = 0; i < tokenizedAlgorithmTypes.length; i++) {
-			TokenizedAlgorithmType tokenizedAlgorithmType = tokenizedAlgorithmTypes[i];
-			TokenizedWordAlgorithm algorithem = tokenizedAlgorithmType.getImplementedAlgorithm();
-			assertNotNull("Couldn't create constractor for" + tokenizedAlgorithmType, algorithem);
+			classUnderTest = tokenizedAlgorithmTypes[i];
+			TokenizedWordAlgorithm algorithem = classUnderTest.getImplementedAlgorithm();
+			assertNotNull("Couldn't create constractor for" + classUnderTest, algorithem);
 		}
 	}
 

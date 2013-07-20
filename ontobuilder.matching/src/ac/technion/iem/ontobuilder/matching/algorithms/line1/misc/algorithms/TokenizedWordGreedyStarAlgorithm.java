@@ -15,8 +15,9 @@ public class TokenizedWordGreedyStarAlgorithm implements TokenizedWordAlgorithm 
 	public List<String> tokenizeTerms(Term term) {
 		
 		List<String> result = new ArrayList<String>();
-		tokenizeTermsRecursive(term, result);
-		
+		if (term != null) {
+			tokenizeTermsRecursive(term, result);
+		}
 		return result;
 	}
 	

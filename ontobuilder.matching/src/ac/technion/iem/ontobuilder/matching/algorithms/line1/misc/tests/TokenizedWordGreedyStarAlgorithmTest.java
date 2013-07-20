@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,17 +28,35 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 	}
 
 	@Test
+	public void tokenizeTermsCompundValueTest() {
 
-	public void GreedyStarTest() {
-
-		Term t = new Term();
-		t.setName("PurchaseCarBikeShipOrder");
-		List<String> result = classUndetTest.tokenizeTerms(t); 
+		Term term = new Term();
+		term.setName("PurchaseCarBikeShipOrder");
+		List<String> result = classUndetTest.tokenizeTerms(term); 
 		assertEquals("Algorithm didn't find all words", 5, result.size());
 		assertTrue("Result of algorithm doesn't contain 'Purchase'", result.contains("Purchase"));
 		assertTrue("Result of algorithm doesn't contain 'Car'", result.contains("Car"));
 		assertTrue("Result of algorithm doesn't contain 'Bike'", result.contains("Bike"));
 		assertTrue("Result of algorithm doesn't contain 'Ship'", result.contains("Ship"));
 		assertTrue("Result of algorithm doesn't contain 'Order'", result.contains("Order"));
+	}
+	
+	@Test
+	public void tokenizeTermsNullAndEmptyTest() {
+		List<String> tokenizeTerms = classUndetTest.tokenizeTerms(null);
+		Assert.assertNotNull(tokenizeTerms);
+		assertTrue(tokenizeTerms.size() == 0);
+		Term term = new Term();
+		tokenizeTerms = classUndetTest.tokenizeTerms(term);
+		assertTrue(tokenizeTerms.size() == 0);
+	}
+	
+	@Test
+	public void tokenizeTermsPluralTest() {
+		Term term = new Term();
+		term.setName("Orders");
+		List<String> result = classUndetTest.tokenizeTerms(term); 
+		assertEquals("Algorithm didn't find all words", 1, result.size());
+		assertTrue("Result of algorithm doesn't contain 'Orders'", result.contains("Orders"));
 	}
 }
