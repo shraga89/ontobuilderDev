@@ -769,4 +769,21 @@ public class StringUtilities
         char c = args[0].charAt(0);
         System.out.println("Char '" + c + "' is " + (int) c);
     }
+    
+	/**
+	 * The method check if a given string is Plural from of some word.
+	 * @param word the word that is to be pluralized.
+	 * @return <code>true</code> if word is pluralized form of, or false otherwise
+	 * 
+	 */
+	public static boolean isPlural(String word) {
+		if (word == null || word.equals("")) {
+			return false;
+		}
+		String singularize = Inflector.getInstance().singularize(word);
+		if (singularize.toLowerCase().equalsIgnoreCase(word)) {
+			return false;
+		}
+		return true;
+	}
 }

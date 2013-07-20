@@ -1,7 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -49,8 +48,10 @@ public class TokenizedWordGreedyAlgorithmTest {
 	@Test
 	@Ignore
 	public void testTokenizeTermsPlural() {
-		Term term = new Term("Cat");
-		fail("Not yet implemented");
+		Term term = new Term("Cats");
+		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
+		assertTrue("Didn't recieve 'Cats'", tokenizeTerms.get(0).equalsIgnoreCase("Cats") );
 	}
 	
 	@Test

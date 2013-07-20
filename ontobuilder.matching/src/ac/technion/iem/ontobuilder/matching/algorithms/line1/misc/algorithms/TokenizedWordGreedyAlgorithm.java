@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
+import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.WordNetAlgorithm;
 
 /**
@@ -42,11 +43,15 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 				String currentSuffix = termName.substring(termLength-i,termLength);
 				biggestPrefix = WordNetAlgorithm.isWordInDiction(currentPrefix) ? currentPrefix : biggestPrefix;
 				biggestSuffix = WordNetAlgorithm.isWordInDiction(currentSuffix) ? currentSuffix : biggestSuffix;
+				biggestPrefix = StringUtilities.isPlural(currentPrefix) ? currentPrefix : biggestPrefix ;
+				biggestSuffix = StringUtilities.isPlural(currentSuffix) ? currentSuffix : biggestSuffix ;
 			}
 			result = this.calcResult(biggestPrefix, biggestSuffix);
 		}
 		return result;
 	}
+
+
 	
 	/**
 	 * This method return an List of unique strings based on suffix and prefix<br>
