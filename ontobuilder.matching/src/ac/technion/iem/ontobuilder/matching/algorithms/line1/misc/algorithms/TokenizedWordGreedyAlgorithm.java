@@ -25,11 +25,12 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 	@Override
 	public List<String> tokenizeTerms(Term term) {
 		List<String> result = new ArrayList<String>();
+		if (term == null) {
+			return result;
+		}
 		String termName = term.getName();
 		//term's name is empty
-		if (termName == null || termName.equals("") ) {
-			result.add("");
-		} else {
+		if (termName != null && !termName.equals("") ) {
 			//removing all non alphabetic characters from a String
 			termName = termName.replaceAll("[^a-zA-Z]", "");
 			int termLength = termName.length();

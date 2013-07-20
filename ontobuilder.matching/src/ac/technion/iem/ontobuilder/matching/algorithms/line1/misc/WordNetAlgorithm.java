@@ -303,7 +303,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		POS[] partsOfSpeech = POS.values();
 		for (int i = 0; i < partsOfSpeech.length; i++) {
 			POS pos = partsOfSpeech[i];
-			defs.addAll(WS4J.findDefinitions(word, pos));
+			defs.addAll(JAWJAWWrapper.findDefinitions(word, pos));
 		}
 		if ( defs.isEmpty() ) {
 			return false;

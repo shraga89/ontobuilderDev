@@ -1,0 +1,77 @@
+package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import ac.technion.iem.ontobuilder.core.ontology.Term;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedAlgorithmType;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordGreedyAlgorithm;
+
+public class TokenizedWordGreedyAlgorithmTest {
+	
+	private TokenizedWordGreedyAlgorithm classUnderTest;
+
+	@Before
+	public void setUp() throws Exception {
+		classUnderTest = new TokenizedWordGreedyAlgorithm();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public void testTokenizeTermsNullAndEmpty() {
+		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(null);
+		assertTrue("Didn't recieve an empty list", tokenizeTerms.isEmpty() );
+		Term term = new Term();
+		tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Didn't recieve an empty list", tokenizeTerms.isEmpty() );
+	}
+	
+	@Test
+	public void testTokenizeTermsSingleWord() {
+		Term term = new Term("Cat");
+		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
+		assertTrue("Didn't recieve 'Cat'", tokenizeTerms.get(0).equalsIgnoreCase("Cat") );
+	}
+	
+	@Test
+	@Ignore
+	public void testTokenizeTermsPlural() {
+		Term term = new Term("Cat");
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testTokenizeTermsPrefixOnly() {
+		Term term = new Term("Catxd");
+		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
+		assertTrue("Didn't recieve 'Cat'", tokenizeTerms.get(0).equalsIgnoreCase("Cat") );
+	}
+	
+	@Test
+	public void testTokenizeTermsSuffixOnly() {
+		Term term = new Term("xdCat");
+		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
+		assertTrue("Didn't recieve 'Cat'", tokenizeTerms.get(0).equalsIgnoreCase("Cat") );
+	}
+
+	@Test
+	public void testGetAlgorithmType() {
+		assertEquals("Algorithm Type is not as expected", TokenizedAlgorithmType.greedy, classUnderTest.getAlgorithmType());
+	}
+
+}
