@@ -786,4 +786,15 @@ public class StringUtilities
 		}
 		return true;
 	}
+	
+	/**
+	 * Returns the singular form of the word in the string
+	 * @param word word the word that is to be pluralized
+	 * @return the pluralized form of the word, or the word itself if it could not be pluralized
+	 * @see {@link Inflector#singularize(Object)}
+	 */
+	public static String getSingularize(String word){
+		String singularize = Inflector.getInstance().singularize(word);
+		return singularize;
+	}
 }
