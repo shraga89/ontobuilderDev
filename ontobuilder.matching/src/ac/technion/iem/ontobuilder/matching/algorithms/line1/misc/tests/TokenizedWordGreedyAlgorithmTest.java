@@ -46,7 +46,6 @@ public class TokenizedWordGreedyAlgorithmTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testTokenizeTermsPlural() {
 		Term term = new Term("Cats");
 		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
