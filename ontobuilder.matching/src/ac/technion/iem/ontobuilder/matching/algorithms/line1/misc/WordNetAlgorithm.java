@@ -64,10 +64,12 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	}
 
 	/**
-	 * Converts term names to words, looks words up in wordnet and calculates similarity
-	 * @param cands
-	 * @param targs
-	 * @return
+	 * <p>Calcs similarity between two terms</p>
+	 * <p>This is done by tokenizing (extracting) the term into words by using different algorithms,
+	 *  and then calculating the similarity of those extracted words. Similarity value of two terms is 
+	 *  chosen by {@link WordNetStrategy} </p> 
+	 * @param mi MatchInformation of terms
+	 * @return a MatchInformation with updated similarity for each two terms
 	 */
 	private void match(MatchInformation mi) {
 		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<Term, TermTokenized>();
@@ -152,10 +154,30 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		}
 	}
 	
+	/**<p>Calcs the similarity of two Lists of words based on Distance By JiangConrath. Only words that are in the
+	 * English Diction are being handled, if a word isn't its similarity to other is 0.0; the total similarity
+	 * is an average of all candidate words (just words that are in the diction)</p>
+	 * 
+	 * <p>Each word is transformed to its Singular form and then it's checked if in the diction</p>
+	 * 
+	 * <p> JiangConrath distance is calculated in {@link WS4J#calcDistanceByJiangConrath(String, String)}, by using
+	 * the following formula: 
+	 * <blockquote><code>dist<sub>JS</sub>(c<sub>1</sub>, c<sub>2</sub>) = 2 * log( p(lso(c<sub>1</sub>, c<sub>2</sub>)) ) - ( log(p(c<sub>1</sub>))+log(p(c<sub>2</sub>) ) ).</blockquote>
+	 * Jiang-Conrath similarity: <i>Negative reciprocal distance</i>,
+	 * <blockquote><code>sim<sub>JS</sub>(c<sub>1</sub>, c<sub>2</sub>) = -1/<code>dist<sub>JS</sub>(c<sub>1</sub>, c<sub>2</sub>)</blockquote>
+	 * </p>
+	 * 
+	 * @param candidateWords List of words that represents the candidate term
+	 * @param targetWords List of words that represents the target term
+	 * @return a similarity measurement in the range [0.0,1.0]
+	 * @see {@link WS4J#calcDistanceByJiangConrath(String, String)}
+	 */
 	private Double calcSimilarity(List<String> candidateWords, List<String> targetWords) {
 		double avgSim = 0.0;
 		int validCandidateWords = 0;
 		for (String candidateWord : candidateWords) {
+			//get the Singularize form of a word so it will be found in the Diction
+			candidateWord = StringUtilities.getSingularize(candidateWord);
 			if ( isWordInDiction(candidateWord) ) {
 				validCandidateWords++;
 				double maxSim = 0.0;
@@ -164,7 +186,12 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				//choose the biggest similarity
 				for (String targetWord : targetWords) {
 					if ( isWordInDiction(targetWord) ) {
-						maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(candidateWord,targetWord));
+						double jiangConrathDistsace = WS4J.calcDistanceByJiangConrath(candidateWord,targetWord);
+						double jiangConrathSimilarity = 0;
+						if (jiangConrathDistsace !=0) {
+							jiangConrathSimilarity = -1/jiangConrathDistsace;
+						}
+						maxSim = Math.max(maxSim, jiangConrathSimilarity);
 						maxSim = Math.min(maxSim, 1.0);
 					}
 				}
@@ -202,60 +229,6 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		}
 	}
 	
-	//This is the original method
-	//
-	//
-	/*private void match(MatchInformation mi)
-	{
-		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
-		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
-
-		TokenizedWordsSimpleAlgorithm simpleAlgorithm = new TokenizedWordsSimpleAlgorithm();
-		TokenizedWordGreedyAlgorithm greedyAlgorithm = new TokenizedWordGreedyAlgorithm();
-
-		for (int i = 0; i < targs.size(); i++) {
-			for (int j = 0; j < cands.size(); j++) {
-
-				String candidateName = cands.get(j).getName();
-				String targetName = targs.get(i).getName();
-				//Extract words
-				ArrayList<String> candidatesWordList = tokenizedWordsSimple(candidateName);
-				ArrayList<String> targetWordList = tokenizedWordsSimple(targetName);
-				double avgSim = 0.0;
-				for (String candidateWord : candidatesWordList) {
-					double maxSim = 0.0;
-					String cleanCandWord = cleanWord(candidateWord);
-					if ( isWordInDiction(cleanCandWord) ) {
-						for (String tWord : targetWordList) {
-							String cleanTargWord = cleanWord(tWord);
-							if ( isWordInDiction(cleanTargWord) ) {
-								maxSim = Math.max(maxSim, WS4J.calcDistanceByJiangConrath(cleanCandWord,tWord));
-								maxSim = Math.min(maxSim, 1.0);
-							}
-							else {
-								addToUnknownwords(tWord, cleanTargWord);
-							}
-						}
-					}
-					else {
-						addToUnknownwords(candidateWord, cleanCandWord);
-					}
-					avgSim+=maxSim;
-				}
-				if (!candidatesWordList.isEmpty()) {
-					avgSim /= candidatesWordList.size();
-				}
-				mi.updateMatch(targs.get(i), cands.get(j), avgSim);
-			}
-		}
-		for (String word : unknownwords.keySet())
-		{
-			String cWord = unknownwords.get(word);
-			System.err.println("No definitions were found for " + word + " which was cleaned to " + cWord);
-		}
-	}*/
-
-
 	/**
 	 * Cleans non-alphabetical symbols (street1->street, from: -> from)
 	 * @TODO add option of removing stop words (of, you, your, etc.)
@@ -323,21 +296,5 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			result.add(i, terms.get(i));
 		}
 		return result;
-	}
-
-	/**
-	 * Breaks up a given string to words by Capitalized letters
-	 *  and separators (tab, space, hyphen, underscore)
-	 * @param canidateName
-	 * @return Arraylist of strings representing distinct words found
-	 */
-	private ArrayList<String> tokenizedWordsSimple(String canidateName)
-	{
-		String canidateCamelCase = StringUtilities.separateCapitalizedWords(canidateName);
-		ArrayList<String> canidateWordList = StringUtilities.breakTextIntoWords(canidateCamelCase);
-		if (canidateWordList.isEmpty()) {
-			System.err.println("No words were found in " + canidateName);
-		}
-		return canidateWordList;
 	}
 }
