@@ -67,25 +67,33 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 	private List<String> calcResult(String prefix,String suffix) {
 		List<String> result = new ArrayList<String>();
 		//case Suffix and Prefix were found
-		if (prefix == null && suffix == null) {
-			result.add("");
+		if (prefix==null && suffix==null) {
+			//result.add("");
 		}
 		//case found only Suffix
-		else if (prefix == null && suffix != null) {
-			result.add(suffix);
+		else if (prefix==null && suffix!=null) {
+			if (suffix.length()>=2){
+			result.add(suffix);}
 		}
 		//case found only Prefix
-		else if (prefix != null && suffix == null) {
-			result.add(prefix);
+		else if (prefix!=null && suffix==null) {
+			if (prefix.length()>=2){
+				result.add(prefix);}
 		}
 		//case prefix equals suffix (none of them can be null)
-		else if ( suffix.equals(prefix) ) {
-			result.add(prefix);
+		else if (suffix.equals(prefix) ) {
+			
+			if (prefix.length()>=2){
+				result.add(prefix);}
 		}
 		//case found both prefix and suffix
 		else {
-			result.add(suffix);
-			result.add(prefix);
+			
+			if (suffix.length()>=2){
+				result.add(suffix);}
+			
+			if (prefix.length()>=2){
+				result.add(prefix);}
 		}
 		return result;
 	}
