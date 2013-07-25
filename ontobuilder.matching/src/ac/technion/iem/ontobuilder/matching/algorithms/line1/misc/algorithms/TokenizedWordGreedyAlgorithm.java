@@ -43,8 +43,8 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 				String currentSuffix = termName.substring(termLength-i,termLength);
 				biggestPrefix = WordNetAlgorithm.isWordInDiction(currentPrefix) ? currentPrefix : biggestPrefix;
 				biggestSuffix = WordNetAlgorithm.isWordInDiction(currentSuffix) ? currentSuffix : biggestSuffix;
-				biggestPrefix = StringUtilities.isPlural(currentPrefix) ? currentPrefix : biggestPrefix ;
-				biggestSuffix = StringUtilities.isPlural(currentSuffix) ? currentSuffix : biggestSuffix ;
+				//biggestPrefix = StringUtilities.isPlural(currentPrefix) ? currentPrefix : biggestPrefix ;
+				//biggestSuffix = StringUtilities.isPlural(currentSuffix) ? currentSuffix : biggestSuffix ;
 			}
 			result = this.calcResult(biggestPrefix, biggestSuffix);
 		}
