@@ -1,5 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -64,9 +65,8 @@ public final class GraphUtilities
     public static Set<Edge> getEdgesWithWeight(Graph g, double w)
     {
     	Set<Edge> es = new HashSet<Edge>();
-        for (Iterator<Edge> it = g.getEdgesSet().iterator(); it.hasNext();)
+        for (Edge e : g.getEdgesSet())
         {
-            Edge e = (Edge) it.next();
             if (e.getEdgeWeight() == w)
                 es.add(e.clone());
         }
@@ -80,17 +80,10 @@ public final class GraphUtilities
      * @param v the vertex
      * @return the set of edges
      */
-    public static Set<Edge> getVertexAdjEdges(Graph g, Vertex v) // O(E)
+    public static Set<Edge> getVertexAdjEdges(Graph g, Vertex v) // O(1)
     {
-    	Set<Edge> vAdjEdges = new HashSet<Edge>();
-        Iterator<Edge> edgesIterator = g.getEdgesIterator();
-        while (edgesIterator.hasNext())
-        {
-            Edge edge = (Edge) edgesIterator.next();
-            if (edge.getSourceVertexID() == v.getVertexID())
-                vAdjEdges.add(edge);
-        }
-        return vAdjEdges;
+    	HashMap<Integer,HashSet<Edge>> adjEMap = g.getAdjEMap();
+    	return adjEMap.get(v.getVertexID());
     }
 
     /**
@@ -102,6 +95,8 @@ public final class GraphUtilities
      */
     public static Vertex getEdgeTargetVertex(Graph g, Edge e) // O(V)
     {
+    	if (e == null)
+    		return null;
         return g.getVertex(e.getTargetVertexID());
     }
 
@@ -112,15 +107,13 @@ public final class GraphUtilities
      * @param v the {@link Vertex}
      * @return the {@link Edge}
      */
-    public static Edge getVertexFirstAdjEdge(Graph g, Vertex v) // O(E)
+    public static Edge getVertexFirstAdjEdge(Graph g, Vertex v) // O(1)
     {
-        Iterator<Edge> edgesIterator = g.getEdgesIterator();
-        while (edgesIterator.hasNext())
-        {
-            Edge edge = (Edge) edgesIterator.next();
-            if (edge.getSourceVertexID() == v.getVertexID())
-                return edge;
-        }
+    	
+        for (Edge e : g.getAdjEMap().get(v.getVertexID()))
+           return e;
+        
+        //If no edges found
         return null;
     }
 
@@ -131,16 +124,8 @@ public final class GraphUtilities
      * @param v the {@link Vertex}
      * @return the degree
      */
-    public static int getVertexOutDeg(Graph g, Vertex v) // O(E)
+    public static int getVertexOutDeg(Graph g, Vertex v) // O(1)
     {
-        Iterator<Edge> edgesIterator = g.getEdgesIterator();
-        int outDeg = 0;
-        while (edgesIterator.hasNext())
-        {
-            Edge edge = (Edge) edgesIterator.next();
-            if (edge.getSourceVertexID() == v.getVertexID())
-                outDeg++;
-        }
-        return outDeg;
+    	return g.getAdjEMap().get(v.getVertexID()).size();
     }
 }

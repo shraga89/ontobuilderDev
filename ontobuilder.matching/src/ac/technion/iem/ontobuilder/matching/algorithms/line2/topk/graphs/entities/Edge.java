@@ -184,4 +184,15 @@ public class Edge implements Serializable, Comparable<Object>
             return 0;
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Edge " + sourceVertexID + "->" + targetVertexID + ", weight=" + weight + ", directed="
+				+ directed;
+	}
+    
+    
+
 }

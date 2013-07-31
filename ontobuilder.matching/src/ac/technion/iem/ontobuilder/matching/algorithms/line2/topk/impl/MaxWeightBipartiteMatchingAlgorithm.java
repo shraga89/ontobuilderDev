@@ -224,6 +224,8 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             {
                 // continue shortest-path computation
                 Edge e = GraphUtilities.getVertexFirstAdjEdge(g, b);
+                if (e == null)
+                	System.err.println("null edge first adj of " +  b.toString());
                 Vertex a11 = GraphUtilities.getEdgeTargetVertex(g, e);
                 pred.setVertexProperty(a11, e);
                 RA.push(a11);
