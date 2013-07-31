@@ -34,7 +34,7 @@ public class TokenizedWordsSimpleAlgorithm implements TokenizedWordAlgorithm {
 		String wordCamelCase = StringUtilities.separateCapitalizedWords(word);
 		List<String> listOfWords = StringUtilities.breakTextIntoWords(wordCamelCase);
 		if (listOfWords.isEmpty()) {
-			System.err.println("No words were found in " + word);
+//			System.err.println("No words were found in " + word);
 		}
 		return listOfWords;
 	}

@@ -14,6 +14,7 @@ import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
+import ac.technion.iem.ontobuilder.core.utils.JAWJAWWrapper;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
@@ -178,14 +179,14 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		for (String candidateWord : candidateWords) {
 			//get the Singularize form of a word so it will be found in the Diction
 			candidateWord = StringUtilities.getSingularize(candidateWord);
-			if ( isWordInDiction(candidateWord) ) {
+			if ( StringUtilities.isWordInDiction(candidateWord) ) {
 				validCandidateWords++;
 				double maxSim = 0.0;
 				//for each word in the candidate list of words check similarity
 				//against all works in target.
 				//choose the biggest similarity
 				for (String targetWord : targetWords) {
-					if ( isWordInDiction(targetWord) ) {
+					if ( StringUtilities.isWordInDiction(targetWord) ) {
 						double jiangConrathDistsace = WS4J.calcDistanceByJiangConrath(candidateWord,targetWord);
 						double jiangConrathSimilarity = 0;
 						if (jiangConrathDistsace !=0) {
@@ -251,15 +252,15 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		String cWord = sb.toString().toLowerCase();
 
 		//Handle english plural
-		if ( !isWordInDiction(cWord) && cWord.endsWith("s") ) {
+		if ( !StringUtilities.isWordInDiction(cWord) && cWord.endsWith("s") ) {
 			if (cWord.endsWith("ies")) {
 				String singularWord = cWord.substring(0, cWord.length()-3) + "y";
-				if ( isWordInDiction(singularWord) ) {
+				if ( StringUtilities.isWordInDiction(singularWord) ) {
 					cWord = singularWord;
 				}
 			} else {	
 				String singularWord = cWord.substring(0, cWord.length()-1);
-				if ( isWordInDiction(singularWord) ) {
+				if ( StringUtilities.isWordInDiction(singularWord) ) {
 					cWord = singularWord;
 				}
 			}

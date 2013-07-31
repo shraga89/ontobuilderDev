@@ -2,13 +2,11 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
@@ -42,7 +40,7 @@ public class TokenizedWordGreedyAlgorithmTest {
 		Term term = new Term("Cat");
 		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
 		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
-		assertTrue("Didn't recieve 'Cat'", tokenizeTerms.get(0).equalsIgnoreCase("Cat") );
+		assertTrue("Didn't recieve 'Cat'", tokenizeTerms.contains("Cat") );
 	}
 	
 	@Test
@@ -51,6 +49,20 @@ public class TokenizedWordGreedyAlgorithmTest {
 		List<String> tokenizeTerms = classUnderTest.tokenizeTerms(term);
 		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
 		assertTrue("Didn't recieve 'Cats'", tokenizeTerms.get(0).equalsIgnoreCase("Cats") );
+		
+		term.setName("Orders");
+		tokenizeTerms = classUnderTest.tokenizeTerms(term); 
+		assertTrue("Recieved more than a single word", tokenizeTerms.size() == 1);
+		assertTrue("Didn't recieve 'Orders'", tokenizeTerms.contains("Orders")|| tokenizeTerms.contains("orders"));
+		
+		
+		term.setName("DogEatsCat");
+		term = new Term("CarBikeShip");
+		tokenizeTerms = classUnderTest.tokenizeTerms(term);
+		assertTrue("Recieved more or less than two words", tokenizeTerms.size() == 2);
+		assertTrue("Didn't recieve 'Car'", tokenizeTerms.contains("Car") || tokenizeTerms.contains("car"));
+		assertTrue("Didn't recieve 'Ship'", tokenizeTerms.contains("Ship") || tokenizeTerms.contains("ship") );
+		
 	}
 	
 	@Test

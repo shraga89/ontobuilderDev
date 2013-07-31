@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.WordNetAlgorithm;
+import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 /**
  * @author Arik Senderovic, Sapir Golan
  *
@@ -49,12 +49,12 @@ public class TokenizedWordGreedyStarAlgorithm implements TokenizedWordAlgorithm 
 				//if current prefix\suffix is a word in the English dictionary set it has the biggest prefix\suffix
 				String currentPrefix = termName.substring(0, i);
 				String currentSuffix = termName.substring(termLength-i,termLength);
-				if (WordNetAlgorithm.isWordInDiction(currentPrefix) == true)
+				if (StringUtilities.isWordInDiction(currentPrefix) == true)
 						{
 							biggestPrefix = currentPrefix;
 							arg_pref = i;
 						}
-				if (WordNetAlgorithm.isWordInDiction(currentSuffix) == true)
+				if (StringUtilities.isWordInDiction(currentSuffix) == true)
 				{
 					biggestSuffix = currentSuffix;
 					arg_suf =termLength-i;

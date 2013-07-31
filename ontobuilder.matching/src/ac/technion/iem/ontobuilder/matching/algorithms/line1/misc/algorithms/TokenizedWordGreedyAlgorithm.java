@@ -8,7 +8,6 @@ import java.util.List;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.WordNetAlgorithm;
 
 /**
  * @author Sapir Golan
@@ -41,10 +40,10 @@ public class TokenizedWordGreedyAlgorithm implements TokenizedWordAlgorithm {
 				//if current prefix\suffix is a word in the English dictionary set it has the biggest prefix\suffix
 				String currentPrefix = termName.substring(0, i);
 				String currentSuffix = termName.substring(termLength-i,termLength);
-				biggestPrefix = WordNetAlgorithm.isWordInDiction(currentPrefix) ? currentPrefix : biggestPrefix;
-				biggestSuffix = WordNetAlgorithm.isWordInDiction(currentSuffix) ? currentSuffix : biggestSuffix;
-				//biggestPrefix = StringUtilities.isPlural(currentPrefix) ? currentPrefix : biggestPrefix ;
-				//biggestSuffix = StringUtilities.isPlural(currentSuffix) ? currentSuffix : biggestSuffix ;
+				biggestPrefix = StringUtilities.isWordInDiction(currentPrefix) ? currentPrefix : biggestPrefix;
+				biggestSuffix = StringUtilities.isWordInDiction(currentSuffix) ? currentSuffix : biggestSuffix;
+				biggestPrefix = StringUtilities.isPlural(currentPrefix) ? currentPrefix : biggestPrefix ;
+				biggestSuffix = StringUtilities.isPlural(currentSuffix) ? currentSuffix : biggestSuffix ;
 			}
 			result = this.calcResult(biggestPrefix, biggestSuffix);
 		}
