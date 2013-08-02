@@ -39,6 +39,7 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 		assertTrue("Result of algorithm doesn't contain 'Bike'", result.contains("Bike"));
 		assertTrue("Result of algorithm doesn't contain 'Ship'", result.contains("Ship"));
 		assertTrue("Result of algorithm doesn't contain 'Order'", result.contains("Order"));
+		
 	}
 	
 	@Test
@@ -52,11 +53,23 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 	}
 	
 	@Test
+	//The good result in my opinion is Order
 	public void tokenizeTermsPluralTest() {
 		Term term = new Term();
 		term.setName("Orders");
 		List<String> result = classUndetTest.tokenizeTerms(term); 
 		assertEquals("Algorithm didn't find all words", 1, result.size());
-		assertTrue("Result of algorithm doesn't contain 'Orders'", result.contains("Orders"));
+		assertTrue("Result of algorithm doesn't contain 'Order'", result.contains("Order"));
 	}
+	public void tokenizeTermsMultiWordTest() {
+
+		Term term = new Term();
+		term.setName("purchaseimportantorder");
+		List<String> result = classUndetTest.tokenizeTerms(term); 
+		assertEquals("Algorithm didn't find all words", 5, result.size());
+		assertTrue("Result of algorithm doesn't contain 'purchase'", result.contains("purchase"));
+		assertTrue("Result of algorithm doesn't contain 'order'", result.contains("order"));
+		assertTrue("Result of algorithm doesn't contain 'order'", result.contains("important"));
+	}
+
 }
