@@ -8,7 +8,12 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedAlgorithmType;
 
 /**
+ * <p>This object stores details of similarity based on AlgorithmType</p>
+ * <p>For each Term (target term) there is a map that contains AlgorithmType (map's key) and similarity value
+ * that was calculated based on the words that were tokenized by this algorithm</p>
+ * 
  * @author Sapir Golan
+ * 
  *
  */
 public class TermSimilarity {
@@ -19,6 +24,10 @@ public class TermSimilarity {
 	 */
 	public TermSimilarity() {
 		this.similarityMap =  new HashMap<Term, Map<TokenizedAlgorithmType, Double>>();
+	}
+
+	public final HashMap<Term, Map<TokenizedAlgorithmType, Double>> getSimilarityMap() {
+		return similarityMap;
 	}
 
 	/**
@@ -55,7 +64,7 @@ public class TermSimilarity {
 	public Double getSimilarity(Term target,TokenizedAlgorithmType algorithmType){
 		Double result = null;
 		Map<TokenizedAlgorithmType, Double> map = similarityMap.get(target);
-		if (map != null) {
+		if (map != null && algorithmType != null) {
 			result = map.get(algorithmType);
 		}
 		return result;
@@ -68,7 +77,7 @@ public class TermSimilarity {
 	 * @param target
 	 * @return
 	 */
-	public final Collection<Double> getAllSimilarities(Term target) {
+	public final Collection<Double> getAllSimilaritiesByTerm(Term target) {
 		Collection<Double> result = null;
 		Map<TokenizedAlgorithmType, Double> map = similarityMap.get(target);
 		if (map != null) {

@@ -96,6 +96,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				TermTokenized candidateTokenized = candidateTermsTokenizedMap.get(currentCandidate);
 				TermTokenized targetTokenized = targetTermsTokenizedMap.get(currentTarget);
 				
+				//calc similarity between candidate and target terms 
 				List<TokenizedAlgorithmType> algorithms = candidateTokenized.getDoneAlgorithms();
 				for (TokenizedAlgorithmType algorithmType : algorithms) {
 					List<String> candidateTokens = candidateTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
@@ -112,6 +113,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 					}
 					
 				}
+			/*	ResultsWriter resultsWriter = new ResultsWriter();
+				resultsWriter.writeResults(termsSimilarityMap);*/
 				this.updateMatchSimilarity( termsSimilarityMap, currentCandidate, currentTarget, WordNetStrategy.BEST, mi);
 			}
 		}
@@ -138,7 +141,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		}
 		//choose maximum similarrity
 		else {
-			final Collection<Double> similarities = termsSimilarityMap.get(candidate).getAllSimilarities(target);
+			final Collection<Double> similarities = termsSimilarityMap.get(candidate).getAllSimilaritiesByTerm(target);
 			Double similarity = (double) 0;
 			Iterator<Double> iteratorOneTime = similarities.iterator();
 			//set maximum to be the value of the first value in similarities Collection
@@ -186,12 +189,14 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				//against all works in target.
 				//choose the biggest similarity
 				for (String targetWord : targetWords) {
+					targetWord = StringUtilities.getSingularize(targetWord);
 					if ( StringUtilities.isWordInDiction(targetWord) ) {
 						double jiangConrathDistsace = WS4J.calcDistanceByJiangConrath(candidateWord,targetWord);
 						double jiangConrathSimilarity = 0;
-						if (jiangConrathDistsace !=0) {
+						/*if (jiangConrathDistsace !=0) {
 							jiangConrathSimilarity = -1/jiangConrathDistsace;
-						}
+						}*/
+						jiangConrathSimilarity = jiangConrathDistsace;
 						maxSim = Math.max(maxSim, jiangConrathSimilarity);
 						maxSim = Math.min(maxSim, 1.0);
 					}

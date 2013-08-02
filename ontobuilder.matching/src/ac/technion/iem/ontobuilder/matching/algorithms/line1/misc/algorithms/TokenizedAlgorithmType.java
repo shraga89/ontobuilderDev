@@ -56,7 +56,7 @@ public enum TokenizedAlgorithmType {
 		return instance;
 	}
 	
-//	public TokenizedAlgorithmType getTokenizedAlgorithmType() {
-//		return algorithmType;
-//	}
+	public Class<?> getTokenizedAlgorithmType() {
+		return this.algorithmType;
+	}
 }
