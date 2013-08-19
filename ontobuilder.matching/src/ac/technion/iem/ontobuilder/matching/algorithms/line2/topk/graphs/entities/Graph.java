@@ -1,7 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -32,31 +31,8 @@ public class Graph implements Serializable
     protected Set<Vertex> vertexesSet = new HashSet<Vertex>();
     /** Adjacency matrix of the graph (hold also edges weights) */
     protected double[][] adjMatrix;
-    /**
-     * Adjancency map to provide in O(1) the edges for which a given vertex is source
-     */
-    protected HashMap<Integer,HashSet<Edge>> adjEMap = new HashMap<Integer,HashSet<Edge>>();
 
     /**
-	 * @return the adjEMap
-	 */
-	public HashMap<Integer, HashSet<Edge>> getAdjEMap() {
-		if (adjEMap.size() == 0)
-			buildAdjMap();
-		return adjEMap;
-	}
-
-	private void buildAdjMap() {
-        //Populate adjEMap
-        for (Vertex v : vertexesSet)
-        	adjEMap.put(v.getVertexID(), new HashSet<Edge>());
-        
-        for (Edge e : edgesSet)
-        	adjEMap.get(e.getSourceVertexID()).add(e);
-		
-	}
-
-	/**
      * Constructs a default Graph
      */
     public Graph()
@@ -69,12 +45,10 @@ public class Graph implements Serializable
      * @param e set of edges of the graph
      * @param v set of vertices of the graph
      */
-    public Graph(Set<Edge> eSet, Set<Vertex> vSet)
+    public Graph(Set<Edge> e, Set<Vertex> v)
     {
-        edgesSet = eSet;
-        vertexesSet = vSet;
-        buildAdjMap();
-
+        edgesSet = e;
+        vertexesSet = v;
     }
 
     /**
@@ -127,7 +101,6 @@ public class Graph implements Serializable
         else
         {
             adjMatrix[toRemove.getSourceVertexID()][toRemove.getTargetVertexID()] = Graph.INF;
-            adjEMap.get(toRemove.getSourceVertexID()).remove(toRemove);
             return toRemove;
         }
     }
@@ -141,7 +114,6 @@ public class Graph implements Serializable
     {
         edgesSet.add(toAdd);
         adjMatrix[toAdd.getSourceVertexID()][toAdd.getTargetVertexID()] = toAdd.getEdgeWeight();
-        adjEMap.get(toAdd.getSourceVertexID()).add(toAdd);
     }
 
     /**
@@ -167,17 +139,9 @@ public class Graph implements Serializable
      * 
      * @param e edges group to set
      */
-    public void setEdgesSet(Set<Edge> eSet)
+    public void setEdgesSet(Set<Edge> e)
     {
-        edgesSet = eSet;
-
-        //Populate adjEMap
-        for (Vertex v : vertexesSet)
-        	adjEMap.put(v.getVertexID(), new HashSet<Edge>());
-        
-        for (Edge e : eSet)
-        	adjEMap.get(e.getSourceVertexID()).add(e);
-
+        edgesSet = e;
     }
 
     /**
