@@ -23,7 +23,15 @@ public class Vertex implements Serializable
     private int vertexID;
     /** id of the entity represented by the vertex */
     private long vertexNameID;
-    /** name of the vertex */
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Vertex " + vertexID + ";" + vertexName;
+	}
+
+	/** name of the vertex */
     private String vertexName;
     
     /**

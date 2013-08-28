@@ -7,6 +7,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 
 /**
  * <p>Title: VertexArray</p>
+ *TODO (Tomer Sagi): See if we can rid ourselves of this construct
  */
 public class VertexArray
 {

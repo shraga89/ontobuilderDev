@@ -258,6 +258,7 @@ public class Term extends OntologyClass
     public void addTerm(final Term term)
     {
         addTerm(term, true);
+        term.setParent(this);
     }
 
     /**
