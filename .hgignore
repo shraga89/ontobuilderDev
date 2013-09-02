@@ -1,0 +1,17 @@
+# use regexp syntax.
+syntax: regexp
+/*.class
+/*.gif
+
+syntax: glob
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/ontology/DummyTerm.class
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/utils/properties/ResourceException.class
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/utils/network/NetworkUtilities.class
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/utils/StringUtilitiesTest.class
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/utils/properties/PropertyException.class
+ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/utils/properties/PropertiesHandler.class
+ontobuilder.io/bin/ac/technion/iem/ontobuilder/io/utils/xml/.nbattrs
+ontobuilder.gui/bin/config/tools.xml
+ontobuilder.matching/bin/ac/technion/iem/ontobuilder/matching/meta/match/SimpleMapping.java.shelved
+ontobuilder.matching/bin/ac/technion/iem/ontobuilder/matching/algorithms/line2/topk/wrapper/BestMappingsWrapper.java.shelved
+ontobuilder.core/bin/config/tidyconfig.PROPERTIES
