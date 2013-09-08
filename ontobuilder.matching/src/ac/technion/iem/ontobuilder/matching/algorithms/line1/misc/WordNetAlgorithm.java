@@ -27,9 +27,6 @@ import edu.cmu.lti.ws4j.WS4J;
 
 public class WordNetAlgorithm extends AbstractAlgorithm {
 
-	private HashMap<String,String> unknownwords = new HashMap<String,String>();
-	private HashMap<String,String> knownWords = new HashMap<String,String>();
-
 	public WordNetAlgorithm(){
 
 	}
@@ -236,44 +233,6 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	}
 	
 	/**
-	 * Cleans non-alphabetical symbols (street1->street, from: -> from)
-	 * @TODO add option of removing stop words (of, you, your, etc.)
-	 * @TODO add option to expand acronyms and shortened words (Num->Number, Dr. -> Doctor)
-	 * @TODO check why plural is not recognized (quotes in spid 55)
-	 * @param word to clean
-	 * @return clean word
-	 */
-	private String cleanWord(String word) {
-		if (knownWords.containsKey(word)) {
-			return knownWords.get(word);
-		}
-		//Remove non alphabetical characters
-		StringBuffer sb = new StringBuffer();
-		for (char c : word.toCharArray())
-			if (Character.isLetter(c)) {
-				sb.append(c);
-			}
-		//Lower case
-		String cWord = sb.toString().toLowerCase();
-
-		//Handle english plural
-		if ( !StringUtilities.isWordInDiction(cWord) && cWord.endsWith("s") ) {
-			if (cWord.endsWith("ies")) {
-				String singularWord = cWord.substring(0, cWord.length()-3) + "y";
-				if ( StringUtilities.isWordInDiction(singularWord) ) {
-					cWord = singularWord;
-				}
-			} else {	
-				String singularWord = cWord.substring(0, cWord.length()-1);
-				if ( StringUtilities.isWordInDiction(singularWord) ) {
-					cWord = singularWord;
-				}
-			}
-		}
-		knownWords.put(word, cWord);
-		return cWord;
-	}
-	/**
 	 * Check if word exists in dictionary
 	 * @param word to be checked
 	 */
@@ -290,10 +249,6 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		return true;
 	}
 	
-	private void addToUnknownwords(String origWord, String cleanWord) {
-		unknownwords.put(origWord,cleanWord);
-	}
-
 	private ArrayList<Term> getTerms(Ontology o) {
 		Vector<Term> terms = o.getTerms(true);
 		ArrayList<Term> result = new ArrayList<Term>();

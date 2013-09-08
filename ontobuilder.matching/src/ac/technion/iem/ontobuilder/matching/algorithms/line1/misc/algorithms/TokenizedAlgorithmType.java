@@ -35,8 +35,8 @@ public enum TokenizedAlgorithmType {
 	 */
 	public TokenizedWordAlgorithm getImplementedAlgorithm () {
 		TokenizedWordAlgorithm instance = null;
-		Constructor[] declaredConstructors = this.algorithmType.getDeclaredConstructors();
-		List<Constructor> list = Arrays.asList(declaredConstructors);
+		Constructor<?>[] declaredConstructors = this.algorithmType.getDeclaredConstructors();
+		List<Constructor<?>> list = Arrays.asList(declaredConstructors);
 		for (Constructor<?> constructor : list) {
 			if (Modifier.PUBLIC == constructor.getModifiers()) {
 				try {
