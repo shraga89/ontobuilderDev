@@ -9,7 +9,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.GraphUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexPQ;
@@ -48,14 +47,12 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      * Constructs a MaxWeightBipartiteMatchingAlgorithm with
      * 
      * @param g a {@link BipartiteGraph}
-     * @param ct {@link EdgeArray}
      * @param pot {@link VertexArray}
      */
-    public MaxWeightBipartiteMatchingAlgorithm(BipartiteGraph g, EdgeArray ct, VertexArray pot)
+    public MaxWeightBipartiteMatchingAlgorithm(BipartiteGraph g, VertexArray pot)
     {
         this.g = (BipartiteGraph) g.clone();
         this.pot = pot;
-        this.c = new EdgeArray(g);
         scaleWeights(g,3.0);
     }
 
@@ -384,14 +381,11 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     {
         double C = 0;
         for (Edge e : g.getEdgesSet())
-        {
             C = Math.max(C, fabs(e.getEdgeWeight()));
-        }
+
         double S = computeS(f, C);
         for (Edge e : g.getEdgesSet())
-        {
             e.setWeight(scaleWeight(e.getEdgeWeight(), S));
-        }
     }
 
     private double computeS(double f, double C)

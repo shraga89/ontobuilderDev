@@ -8,7 +8,6 @@ import java.util.Vector;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 
 
@@ -83,9 +82,8 @@ public class SecondBestMatchingAlgorithm_Algorithm1 implements SchemaMatchingsAl
             Edge eToRemove = it.next();
             bGraph.removeEdgeFromGraph(eToRemove);
             /****** new version 14/11/03 *****/
-            EdgeArray c = new EdgeArray(bGraph);
             VertexArray pot = new VertexArray(bGraph, new Double(0));
-            mwbma = new MaxWeightBipartiteMatchingAlgorithm(bGraph, c, pot);
+            mwbma = new MaxWeightBipartiteMatchingAlgorithm(bGraph, pot);
             /**** new version 14/11/03 *****/
             matches.add(mwbma.runAlgorithm());
             bGraph.addEdgeToGraph(eToRemove);

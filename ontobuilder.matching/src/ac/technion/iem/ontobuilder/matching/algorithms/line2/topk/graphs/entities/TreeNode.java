@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.MaxWeightBipartiteMatchingAlgorithm;
 
@@ -262,14 +261,12 @@ public class TreeNode implements Serializable
             eTmp.removeAll(adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
             /******** new version 14/11/03 ***********/
             BipartiteGraph bg = null;
-            EdgeArray c = null;
             VertexArray pot = null;
             MaxWeightBipartiteMatchingAlgorithm aBest = null;
             bg = new BipartiteGraph(new HashSet<Edge>(eTmp), graph.getRightVertexesSet(),
                 graph.getLeftVertexesSet());
-            c = new EdgeArray(bg);
             pot = new VertexArray(bg, new Double(0));
-            aBest = new MaxWeightBipartiteMatchingAlgorithm(bg, c, pot);
+            aBest = new MaxWeightBipartiteMatchingAlgorithm(bg, pot);
             /******** new version ***********/
             matching = aBest.runAlgorithm();// O(V^3)
             matching.addAll(si); // M<-M U Si O(E)
@@ -282,7 +279,6 @@ public class TreeNode implements Serializable
             adjacentEdges = null;
             bg = null;
             aBest = null;
-            c = null;
             pot = null;
         }
         catch (Throwable e)

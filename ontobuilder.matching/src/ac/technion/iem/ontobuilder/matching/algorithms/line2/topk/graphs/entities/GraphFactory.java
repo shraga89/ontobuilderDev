@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.EdgeArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.MaxWeightBipartiteMatchingAlgorithm;
 
@@ -168,10 +167,8 @@ public abstract class GraphFactory
     public final static DGraph buildDgraph(BipartiteGraph bg)
     {
         /****** new version 14/11/03 ******/
-        EdgeArray c = new EdgeArray(bg);
         VertexArray pot = new VertexArray(bg, new Double(0));
-        MaxWeightBipartiteMatchingAlgorithm algo = new MaxWeightBipartiteMatchingAlgorithm(bg, c,
-            pot);
+        MaxWeightBipartiteMatchingAlgorithm algo = new MaxWeightBipartiteMatchingAlgorithm(bg, pot);
         /****** new version 14/11/03 ******/
         Set<Edge> bestMatching = algo.runAlgorithm();
         return new DGraph(bg, bestMatching);
