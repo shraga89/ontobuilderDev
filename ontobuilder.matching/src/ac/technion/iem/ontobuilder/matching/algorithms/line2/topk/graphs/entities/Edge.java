@@ -184,4 +184,8 @@ public class Edge implements Serializable, Comparable<Object>
             return 0;
     }
 
+	public void setWeight(double newWeight) {
+		this.weight = newWeight;
+	}
+
 }

@@ -39,7 +39,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.V
 public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatchingsAlgorithm
 {
     private BipartiteGraph g;
-    private EdgeArray c;
     private VertexArray pot;
     private MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum heuristic = MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum.REFINED_HEURISTIC;
     private double oneOverS;
@@ -54,10 +53,10 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      */
     public MaxWeightBipartiteMatchingAlgorithm(BipartiteGraph g, EdgeArray ct, VertexArray pot)
     {
-        this.g = g;
+        this.g = (BipartiteGraph) g.clone();
         this.pot = pot;
         this.c = new EdgeArray(g);
-        scaleWeights(g, ct, c, 3.0);
+        scaleWeights(g,3.0);
     }
 
     /**
@@ -96,7 +95,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             for (Edge e : g.getEdgesSet())
             {
 
-                Double edgeC = (Double) c.getEdgeProperty(e);
+                Double edgeC = e.getEdgeWeight();
                 if (edgeC.compareTo(C) == 1)// bigger than...
                     C = edgeC;
             }
@@ -111,10 +110,10 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 double C_max = 0;
                 for (Edge e : GraphUtilities.getVertexAdjEdges(g, a))
                 {
-                    if (((Double) c.getEdgeProperty(e)).doubleValue() > C_max)
+                    if (e.getEdgeWeight() > C_max)
                     {
                         eMax = e;
-                        C_max = ((Double) c.getEdgeProperty(e)).doubleValue();
+                        C_max = e.getEdgeWeight();
                     }
                 }
                 pot.setVertexProperty(a, new Double(C_max));
@@ -131,13 +130,13 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             break;
         default:
             // REFINED_HEURISTIC
-            mwbmHeuristic(g, c, pot, free);
+            mwbmHeuristic(g, pot, free);
             break;
         }
         
         for (Vertex a : g.getLeftVertexesSet())
             if (((Boolean) free.getVertexProperty(a)).booleanValue())
-                augment(g, a, c, pot, free, pred, dist, PQ);
+                augment(g, a, pot, free, pred, dist, PQ);
         for (Vertex b : g.getRightVertexesSet())
         	result.addAll(GraphUtilities.getVertexOutEdges(g, b));
         EdgeUtil.turnOverEdges(false,result);
@@ -149,15 +148,14 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      * 
      * @param g {@link BipartiteGraph}
      * @param a {@link Vertex}
-     * @param c an {@link EdgeArray}
      * @param pot a {@link VertexArray}
      * @param free a {@link VertexArray}
      * @param pred a {@link VertexArray}
      * @param dist a {@link VertexArray}
      * @param PQ a vertex priority queue {@link VertexPQ}
      */
-    private void augment(BipartiteGraph g, Vertex a, final EdgeArray c, VertexArray pot,
-        VertexArray free, VertexArray pred, VertexArray dist, VertexPQ PQ)
+    private void augment(BipartiteGraph g, Vertex a, VertexArray pot, VertexArray free,
+        VertexArray pred, VertexArray dist, VertexPQ PQ)
     {
         // augument:initialization
         dist.setVertexProperty(a, new Double(0));
@@ -173,8 +171,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             Vertex b = GraphUtilities.getEdgeTargetVertex(g, e);
             double db = ((Double) dist.getVertexProperty(a1)).doubleValue() +
                 (((Double) pot.getVertexProperty(a1)).doubleValue() +
-                    ((Double) pot.getVertexProperty(b)).doubleValue() - ((Double) c
-                    .getEdgeProperty(e)).doubleValue());
+                    ((Double) pot.getVertexProperty(b)).doubleValue() - e.getEdgeWeight());
             if (pred.getVertexProperty(b) == null)
             {
                 dist.setVertexProperty(b, new Double(db));
@@ -240,8 +237,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                     Vertex b1 = GraphUtilities.getEdgeTargetVertex(g, e);
                     double db1 = ((Double) dist.getVertexProperty(a11)).doubleValue() +
                         (((Double) pot.getVertexProperty(a11)).doubleValue() +
-                            ((Double) pot.getVertexProperty(b1)).doubleValue() - ((Double) c
-                            .getEdgeProperty(e)).doubleValue());
+                            ((Double) pot.getVertexProperty(b1)).doubleValue() - e.getEdgeWeight());
                     if (pred.getVertexProperty(b1) == null)
                     {
                         dist.setVertexProperty(b1, new Double(db1));
@@ -304,11 +300,10 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      * The maximum weight bipartite matching heuristis
      * 
      * @param g {@link BipartiteGraph}
-     * @param c an {@link EdgeArray}
      * @param pot a {@link VertexArray}
      * @param free free {@link VertexArray}
      */
-    private void mwbmHeuristic(BipartiteGraph g, EdgeArray c, VertexArray pot, VertexArray free)
+    private void mwbmHeuristic(BipartiteGraph g, VertexArray pot, VertexArray free)
     {
     	Vertex b;
         Edge e2, eb;
@@ -321,9 +316,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             // compute edges with largest and second largest slack
             for(Edge e : GraphUtilities.getVertexAdjEdges(g, a))
             {
-                double we = ((Double) c.getEdgeProperty(e)).doubleValue() -
+                double we = ((Double) e.getEdgeWeight() -
                     ((Double) pot.getVertexProperty(GraphUtilities.getEdgeTargetVertex(g, e)))
-                        .doubleValue();
+                        .doubleValue());
                 if (we >= max2)
                 {
                     if (we >= max)
@@ -383,29 +378,20 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      * Scale weights in the graph
      * 
      * @param g {@link BipartiteGraph}
-     * @param c2 first {@link EdgeArray}
-     * @param c1 second {@link EdgeArray}
      * @param f value
-     * @return <code>true</code> is none of the edges properties in the two array are equal
      */
-    private boolean scaleWeights(final BipartiteGraph g, final EdgeArray c2, EdgeArray c1, double f)
+    private void scaleWeights(final BipartiteGraph g, double f)
     {
         double C = 0;
         for (Edge e : g.getEdgesSet())
         {
-            C = Math.max(C, fabs((((Double) c2.getEdgeProperty(e)).doubleValue())));
+            C = Math.max(C, fabs(e.getEdgeWeight()));
         }
         double S = computeS(f, C);
-        boolean noScaling = true;
         for (Edge e : g.getEdgesSet())
         {
-            c1.setEdgeProperty(e,
-                new Double(scaleWeight(((Double) c2.getEdgeProperty(e)).doubleValue(), S)));
-            if (((Double) c2.getEdgeProperty(e)).doubleValue() != ((Double) c1.getEdgeProperty(e))
-                .doubleValue())
-                noScaling = false;
+            e.setWeight(scaleWeight(e.getEdgeWeight(), S));
         }
-        return noScaling;
     }
 
     private double computeS(double f, double C)
@@ -492,8 +478,6 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         try
         {
             g = null;
-            c.nullify();
-            c = null;
             pot.nullify();
             pot = null;
         }
