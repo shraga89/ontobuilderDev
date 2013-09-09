@@ -33,9 +33,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     protected HashMap<Long,Edge> edgeMap = new HashMap<Long,Edge>() ;
     /** holds for each VertexId its touching Edges, by Edge Id */
     protected HashMap<Integer,Set<Long> > vertexTouchEdges = new HashMap<Integer,Set<Long>>();
-    
-
-	/** holds the right vertexes group of the graph */
+    /** holds the right vertexes group of the graph */
     protected Set<Vertex> rightVertexesSet= new HashSet<Vertex>();
     /** holds the left vertexes group of the graph */
     protected Set<Vertex> leftVertexesSet = new HashSet<Vertex>();
@@ -63,7 +61,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     	super.edgesSet = e;
     	Set<Vertex> union = new HashSet<Vertex>(x);
     	union.addAll(y);
-    	super.setVertexesSet(union);
+    	super.vertexesSet = union;
     	
     	//Initialize Vertices
     	rightVertexesSet = x;
@@ -126,25 +124,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
             return toRemove;
         }
     }
-    
-    public Set<Edge> getAllAdjacentEdges(int vid)
-    {// O(V)
-    	HashSet<Edge> res = new HashSet<Edge>();
-    	for (Long eid : vertexTouchEdges.get(vid)){
-    		res.add(edgeMap.get(eid));
-    	}
-    	return res;
-    }
-    
-    public Edge getVertexFirstAdjEdge(int vid)
-    {
-    
-    	for (Long eid : vertexTouchEdges.get(vid)){
-    		return edgeMap.get(eid);
-    	}
-    	return null;
-    	
-    }
+
     /**
      * @return right vertexes group
      */
@@ -277,7 +257,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
      */
     public Iterator<Vertex> getVertexesIterator()
     {
-        return vertexesSet.values().iterator();
+        return vertexesSet.iterator();
     }
     
     

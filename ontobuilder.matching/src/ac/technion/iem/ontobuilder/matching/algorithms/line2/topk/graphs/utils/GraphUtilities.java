@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.BipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
@@ -22,7 +21,6 @@ public final class GraphUtilities
      * @param v the {@link Vertex}
      * @return the set of edges
      */
-	//TODO
     public static Set<Edge> getVertexOutEdges(Graph g, Vertex v) // O(E)
     {
     	Set<Edge> vOutEdges = new HashSet<Edge>();
@@ -84,12 +82,6 @@ public final class GraphUtilities
      */
     public static Set<Edge> getVertexAdjEdges(Graph g, Vertex v) // O(E)
     {
-    	
-    	
-    	if (g instanceof BipartiteGraph) {
-    		BipartiteGraph bp = (BipartiteGraph)g;
-    		return bp.getAllAdjacentEdges(v.getVertexID());
-    	}
     	Set<Edge> vAdjEdges = new HashSet<Edge>();
         Iterator<Edge> edgesIterator = g.getEdgesIterator();
         while (edgesIterator.hasNext())
@@ -108,7 +100,7 @@ public final class GraphUtilities
      * @param e the {@link Edge}
      * @return the {@link Vertex}
      */
-    public static Vertex getEdgeTargetVertex(Graph g, Edge e) // O(1)
+    public static Vertex getEdgeTargetVertex(Graph g, Edge e) // O(V)
     {
         return g.getVertex(e.getTargetVertexID());
     }
@@ -119,15 +111,9 @@ public final class GraphUtilities
      * @param g the {@link Graph}
      * @param v the {@link Vertex}
      * @return the {@link Edge}
-     *  //TODO
      */
     public static Edge getVertexFirstAdjEdge(Graph g, Vertex v) // O(E)
     {
-    	if (g instanceof BipartiteGraph) {
-    		BipartiteGraph bp = (BipartiteGraph)g;
-    		return bp.getVertexFirstAdjEdge(v.getVertexID());
-    	}
-    	
         Iterator<Edge> edgesIterator = g.getEdgesIterator();
         while (edgesIterator.hasNext())
         {
