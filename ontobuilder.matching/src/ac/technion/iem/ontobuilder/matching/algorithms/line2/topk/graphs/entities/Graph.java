@@ -2,6 +2,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entiti
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class Graph implements Serializable
     /** edges of the graph */
     protected Set<Edge> edgesSet;
     /** Vertexes of the graph */
-    protected Set<Vertex> vertexesSet = new HashSet<Vertex>();
+    protected HashMap<Integer,Vertex> vertexesSet = new HashMap<Integer,Vertex>();
     /** Adjacency matrix of the graph (hold also edges weights) */
     protected double[][] adjMatrix;
 
@@ -49,7 +50,8 @@ public class Graph implements Serializable
     public Graph(Set<Edge> e, Set<Vertex> v)
     {
         edgesSet = e;
-        vertexesSet = v;
+        for (Vertex v1 : v)
+        	vertexesSet.put(v1.getVertexID(), v1);
     }
 
     /**
@@ -59,7 +61,9 @@ public class Graph implements Serializable
      */
     public void setVertexesSet(Set<Vertex> vertexesSet)
     {
-        this.vertexesSet = vertexesSet;
+        this.vertexesSet.clear();
+        for (Vertex v : vertexesSet)
+        	this.vertexesSet.put(v.getVertexID(), v);
     }
 
     /**
@@ -125,15 +129,8 @@ public class Graph implements Serializable
      * @return the {@link Vertex} of specified id
      */
     public Vertex getVertex(int vID)
-    {// O(V)
-        Iterator<Vertex> it = vertexesSet.iterator();
-        while (it.hasNext())
-        {
-            Vertex v = it.next();
-            if (v.getVertexID() == vID)
-                return v;
-        }
-        return null;
+    {// O(1)
+        return vertexesSet.get(vID);
     }
 
     /**
@@ -161,9 +158,9 @@ public class Graph implements Serializable
      * 
      * @return vertexes of the graph
      */
-    public Set<Vertex> getVertexesSet()
+    public Collection<Vertex> getVertexesSet()
     {
-        return vertexesSet;
+        return vertexesSet.values();
     }
 
     /**
@@ -235,7 +232,7 @@ public class Graph implements Serializable
      */
     public void printVertexs()
     {
-        Iterator<Vertex> it = vertexesSet.iterator();
+        Iterator<Vertex> it = vertexesSet.values().iterator();
         System.out.println("Vertexes info:");
         while (it.hasNext())
         {
@@ -274,7 +271,7 @@ public class Graph implements Serializable
      */
     public Iterator<Vertex> getVertexesIterator()
     {
-        return vertexesSet.iterator();
+        return vertexesSet.values().iterator();
     }
 
     /**
@@ -285,7 +282,7 @@ public class Graph implements Serializable
     public Object clone()
     {
         Graph clonedGraph = new Graph(new HashSet<Edge>(edgesSet),
-            new HashSet<Vertex>(vertexesSet));
+            new HashSet<Vertex>(vertexesSet.values()));
         clonedGraph.buildAdjMatrix();
         return clonedGraph;
     }
