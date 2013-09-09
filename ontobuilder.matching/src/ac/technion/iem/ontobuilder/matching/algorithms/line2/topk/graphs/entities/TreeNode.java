@@ -249,7 +249,7 @@ public class TreeNode implements Serializable
         try
         {
             
-        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdgesSet());
+        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdges());
         	eTmp.removeAll(se);// E'<-E\Se O(E)
             Iterator<Edge> it = si.iterator();
             // will hold all edges to remove from the graph
@@ -299,7 +299,7 @@ public class TreeNode implements Serializable
     {
         try
         {
-        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdgesSet());
+        	Set<Edge> eTmp = new HashSet<Edge>(graph.getEdges());
         	eTmp.removeAll(se);
             Iterator<Edge> it = si.iterator();
             // will hold all edges to remove from the graph
@@ -330,7 +330,7 @@ public class TreeNode implements Serializable
                 }
                 else
                 {
-                    Edge e = EdgeUtil.getMaximalEdgeThatStartsWith(v.getVertexID(), bg.getEdgesSet());
+                    Edge e = EdgeUtil.getMaximalEdgeThatStartsWith(v.getVertexID(), new HashSet<Edge>(bg.getEdges()));
                     if (e != null)
                         matching.add(e);
                 }

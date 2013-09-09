@@ -75,7 +75,7 @@ public class Tree
     {
         // new version add by Haggai 2/11/03
         // root = new TreeNode(g); old version
-        Iterator<Edge> it = g.getEdgesSet().iterator();
+        Iterator<Edge> it = g.getEdges().iterator();
         Set<Edge> zeroWeightEdges = new HashSet<Edge>();
         while (it.hasNext()) // O(E)
         {

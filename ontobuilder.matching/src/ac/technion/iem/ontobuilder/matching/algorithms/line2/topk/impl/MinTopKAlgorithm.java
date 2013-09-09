@@ -75,7 +75,7 @@ public abstract class MinTopKAlgorithm implements TopKAlgorithm
     public MinTopKAlgorithm(BipartiteGraph g)
     {
         graph = g;
-        edges = new LinkedList<Edge>(graph.getEdgesSet());
+        edges = new LinkedList<Edge>(graph.getEdges());
         Collections.sort(edges);// 1.
         out = new HashSet<Edge>();// 2.3
     }

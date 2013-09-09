@@ -76,7 +76,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     	Set<Edge> result = new HashSet<Edge>();
         // for all nodes(v,G) pot[v] = 0;
         // this will be done by giving pot:= VertexArray(g,new Double(0))
-        if (g.getEdgesSet().isEmpty())
+        if (g.getEdges().isEmpty())
             return result;
         // check that all edges are directed from A to B
         // this should be a precondition also
@@ -89,7 +89,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         {
         case NAIVE_HEURISTIC:
             Double C = new Double(0);
-            for (Edge e : g.getEdgesSet())
+            for (Edge e : g.getEdges())
             {
 
                 Double edgeC = e.getEdgeWeight();
@@ -380,11 +380,11 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     private void scaleWeights(final BipartiteGraph g, double f)
     {
         double C = 0;
-        for (Edge e : g.getEdgesSet())
+        for (Edge e : g.getEdges())
             C = Math.max(C, fabs(e.getEdgeWeight()));
 
         double S = computeS(f, C);
-        for (Edge e : g.getEdgesSet())
+        for (Edge e : g.getEdges())
             e.setWeight(scaleWeight(e.getEdgeWeight(), S));
     }
 

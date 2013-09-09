@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -65,6 +66,7 @@ public class Graph implements Serializable
      * Set the Adjacency matrix
      * 
      * @param adjMatrix the matrix to set
+     * 
      */
     public void setAdjMatrix(double[][] adjMatrix)
     {
@@ -287,4 +289,8 @@ public class Graph implements Serializable
         clonedGraph.buildAdjMatrix();
         return clonedGraph;
     }
+
+	public Collection<Edge> getEdges() {
+		return edgesSet;
+	}
 }

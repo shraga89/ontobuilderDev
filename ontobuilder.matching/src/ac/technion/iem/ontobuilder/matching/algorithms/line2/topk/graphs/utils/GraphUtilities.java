@@ -45,12 +45,12 @@ public final class GraphUtilities
     {
         Graph g_ = (Graph) g.clone();
         Set<Edge> toRemove = new HashSet<Edge>();
-        for (Edge e : g_.getEdgesSet())
+        for (Edge e : g_.getEdges())
         {
             if (e.getEdgeWeight() < w)
                 toRemove.add(e);
         }
-        g_.getEdgesSet().removeAll(toRemove);
+        g_.getEdges().removeAll(toRemove);
         return g_;
     }
 
