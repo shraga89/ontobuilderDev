@@ -2,12 +2,15 @@ package ac.technion.iem.ontobuilder.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import ac.technion.iem.ontobuilder.core.ontology.operator.NGramStringOperator;
 import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
+import edu.cmu.lti.jawjaw.pobj.POS;
 
 /**
  * <p>Title: StringUtilities</p>
@@ -769,4 +772,52 @@ public class StringUtilities
         char c = args[0].charAt(0);
         System.out.println("Char '" + c + "' is " + (int) c);
     }
+    
+	/**
+	 * The method check if a given string is Plural from of some word.
+	 * @param word the word that is to be pluralized.
+	 * @return <code>true</code> if word is pluralized form of, or false otherwise
+	 * 
+	 */
+	public static boolean isPlural(String word) {
+		if (word == null || word.equals("")) {
+			return false;
+		}
+		String singularize = Inflector.getInstance().singularize(word);
+		if (singularize.toLowerCase().equalsIgnoreCase(word)) {
+			return false;
+		}
+		if (!isWordInDiction(singularize)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the singular form of the word in the string
+	 * @param word word the word that is to be pluralized
+	 * @return the pluralized form of the word, or the word itself if it could not be pluralized
+	 * @see {@link Inflector#singularize(Object)}
+	 */
+	public static String getSingularize(String word){
+		String singularize = Inflector.getInstance().singularize(word);
+		return singularize;
+	}
+	
+	/**
+	 * Check if word exists in dictionary
+	 * @param word to be checked
+	 */
+	public static boolean isWordInDiction(String word) {
+		Set<String> defs = new HashSet<String>();
+		POS[] partsOfSpeech = POS.values();
+		for (int i = 0; i < partsOfSpeech.length; i++) {
+			POS pos = partsOfSpeech[i];
+			defs.addAll(JAWJAWWrapper.findDefinitions(word, pos));
+		}
+		if ( defs.isEmpty() ) {
+			return false;
+		}
+		return true;
+	}
 }

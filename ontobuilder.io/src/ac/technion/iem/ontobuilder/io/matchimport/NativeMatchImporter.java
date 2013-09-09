@@ -159,7 +159,7 @@ public class NativeMatchImporter implements MatchImporter {
                     NodeList currentChilds = current.getChildNodes();
                     for (int k = 0; k < currentChilds.getLength(); k++)
                     {
-                    	if(!currentChilds.item(k).getClass().getName().equals("com.sun.org.apache.xerces.internal.dom.DeferredElementImpl")) continue;
+                    	//if(!currentChilds.item(k).getClass().getName().equals("com.sun.org.apache.xerces.internal.dom.DeferredElementImpl")) continue;
                         Element child = (Element) currentChilds.item(k);
                         if (child.getNodeName().compareTo("CandidateTerm") == 0)
                         {

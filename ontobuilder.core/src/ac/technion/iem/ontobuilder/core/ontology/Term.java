@@ -258,6 +258,7 @@ public class Term extends OntologyClass
     public void addTerm(final Term term)
     {
         addTerm(term, true);
+        term.setParent(this);
     }
 
     /**
@@ -862,7 +863,7 @@ public class Term extends OntologyClass
     {
         Term term = new Term(operator.transformString(name),
             ((value instanceof String) ? operator.transformString((String) value) : value));
-        term.setDomain(domain.applyStringOperator(operator));
+        term.setDomain(domain);
         term.terms = terms;
         term.superClass = superClass;
         term.parent = parent;
