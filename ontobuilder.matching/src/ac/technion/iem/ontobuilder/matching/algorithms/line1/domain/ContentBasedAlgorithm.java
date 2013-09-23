@@ -18,7 +18,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithmF
 
 public class ContentBasedAlgorithm extends TermAlgorithm{
 
-	protected double soundexWeight;
 	
 	 /**
      * Make a copy of the algorithm instance
@@ -43,8 +42,8 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     {
         super();
         this.threshold = 0.5;
-        this.soundexWeight = 0.5;
-        this.nGramWeight = 0.5;
+        this.jaroWinklerWeight = 0;
+        this.nGramWeight = 1;
         this.nGram = 3;
 
     }
@@ -56,7 +55,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     public String getName()
     {
     	return "Content-Based Similarity Algorithm";
-    	//return PropertiesHandler.getResourceString("algorithm.Domain ");
     }
 
     /**
@@ -66,7 +64,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
      */
     public String getDescription()
     {
-    //    return PropertiesHandler.getResourceString("algorithm.value.description");
     	return "Match based on content-based of schemas";
     }
 
@@ -82,19 +79,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     	return;
     }
 
-    /**
-	 * @return the soundexWeight
-	 */
-	public double getSoundexWeight() {
-		return soundexWeight;
-	}
-
-	/**
-	 * @param soundexWeight the soundexWeight to set
-	 */
-	public void setSoundexWeight(double soundexWeight) {
-		this.soundexWeight = soundexWeight;
-	}
 
 	/**
      * Get the terms/domains to match
@@ -104,7 +88,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
      */
     protected void getTermsToMatch(Ontology targetOntology, Ontology candidateOntology)
     {
-   //	System.out.println("getTermsToMatch of DomainAlgorithm");
         super.getTermsToMatch(targetOntology, candidateOntology);
         if (!targetOntology.isLight())
         {
@@ -114,6 +97,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         else
         {
             originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
+            originalTargetTerms = originalTargetTerms.get(0).getTerms().get(0).getTerms();
         }
 
         if (!candidateOntology.isLight())
@@ -124,6 +108,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         else
         {
             originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
+            originalCandidateTerms = originalCandidateTerms.get(0).getTerms().get(0).getTerms();
         }
 
     }
@@ -138,13 +123,10 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     {
         effectiveness = 0;
         double total = 0.0;
-        ArrayList<Double> maxBetweenInstancesTarget2Candidate = new  ArrayList<Double>();
-		ArrayList<Double> maxBetweenInstancesCandidate2Target = new  ArrayList<Double>();
-       // System.out.print("threshold:" + threshold);
         Domain tDom = targetTerm.getDomain();
         Domain cDom = candidateTerm.getDomain();    
-//////////////////////////////////////////////////////////
         for (int k = 0; k < tDom.getEntries().size() ; k++){
+        	ArrayList<Double> maxBetweenInstancesTarget2Candidate = new  ArrayList<Double>();
     		for (int m = 0; m < cDom.getEntries().size() ; m++){
     			Double result = getSimilarity(tDom.getEntries().get(k), cDom.getEntries().get(m));
     			maxBetweenInstancesTarget2Candidate.add(result);
@@ -153,6 +135,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     		total += maxTargertList;
     	}
     	for (int k = 0; k < cDom.getEntries().size() ; k++){
+    		ArrayList<Double> maxBetweenInstancesCandidate2Target = new  ArrayList<Double>();
     		for (int m = 0; m < tDom.getEntries().size() ; m++){
     			Double result = getSimilarity(cDom.getEntries().get(k), tDom.getEntries().get(m));
     			maxBetweenInstancesCandidate2Target.add(result);
@@ -162,9 +145,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     	}
     	double similarityBetweenElements = total/(cDom.getEntries().size()+tDom.getEntries().size());
     	effectiveness = similarityBetweenElements;
- /////////////////////////////////////////////////////       
-//        effectiveness = getDistance(cDom,tDom);
-//        return effectiveness >= threshold;
         return effectiveness > threshold;
 
     }
@@ -176,16 +156,16 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
      */
     public Double getSimilarity(DomainEntry tDomainEntry, DomainEntry cDomainEntry){
 
-        String targetName = tDomainEntry.getName();
-        String candidateName = cDomainEntry.getName();
+        String targetName = tDomainEntry.getEntry().toString();
+        String candidateName = cDomainEntry.getEntry().toString();
 
-        // n Gram matching
+        // 3 Gram matching
         double nGramEffectiveness = StringUtilities.getNGramEffectivity(targetName, candidateName, nGram);
 
-        // soundex matching
-        double soundexEffectiveness = StringUtilities.getSoundexEffectivity(targetName, candidateName);
+        // JaroWinkler matching
+        double jaroWinklerEffectiveness = StringUtilities.getHybridJaroWinklerDistance(targetName, candidateName);
 
-		double res = (nGramEffectiveness * nGramWeight + soundexEffectiveness * soundexWeight) /(nGramWeight + soundexWeight);
+		double res = (nGramEffectiveness * nGramWeight + jaroWinklerEffectiveness * jaroWinklerWeight) /(nGramWeight + jaroWinklerWeight);
 		
 		return res;
     }
