@@ -2,6 +2,7 @@ package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
@@ -24,6 +26,8 @@ import ac.technion.iem.ontobuilder.core.ontology.Relationship;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.io.utils.xml.XSDEntityResolver;
 
+import com.sun.xml.xsom.XSAttributeDecl;
+import com.sun.xml.xsom.XSAttributeUse;
 import com.sun.xml.xsom.XSComplexType;
 import com.sun.xml.xsom.XSElementDecl;
 import com.sun.xml.xsom.XSModelGroup;
@@ -42,6 +46,9 @@ import com.sun.xml.xsom.parser.XSOMParser;
 /**
  * <p>Title: XSDImporter Using XSOM </p>
  * Implements {@link Importer}
+ * @author Tomer Sagi
+ * Elements are mapped to terms. Element attributes are mapped to terms as well. Tree structure retained through 
+ * Term-Subterm construct. 
  */
 public class XSDImporterUsingXSOM implements Importer
 {
@@ -165,7 +172,18 @@ public class XSDImporterUsingXSOM implements Importer
 				getNodesRecursive(newProv,child,provMap);
 				break;
 				
-			}	
+			}
+			
+			NamedNodeMap atts = child.getAttributes();
+			if (atts !=null)
+			{
+				for (int j=0 ; j< atts.getLength();j++)
+				{
+					Node n = atts.item(j);
+					getNodesRecursive(newProv + "." + child.getNodeName(),n,provMap);
+				}
+				
+			}
 		}
 	
 	}
@@ -324,20 +342,36 @@ public class XSDImporterUsingXSOM implements Importer
 		else
 		if(!(ct.getContentType().asEmpty()==ct.getContentType()))//if it is anonymous skip the type and make terms from the type's elements
 		{
-			XSTerm xst = ct.getContentType().asParticle().getTerm();
-			XSModelGroup g =  xst.asModelGroup();
-			for (XSParticle p : g.getChildren())
+			if (ct.getContentType().asParticle() != null ) //simple content extension
 			{
-				if(p.getTerm().isModelGroup()) //extension
+				XSTerm xst = ct.getContentType().asParticle().getTerm();
+				XSModelGroup g =  xst.asModelGroup();
+				for (XSParticle p : g.getChildren())
 				{
-					for (XSParticle p1 : p.getTerm().asModelGroup().getChildren())
-						t.addTerm(makeTermFromElement(t,p1.getTerm().asElementDecl()));
+					if(p.getTerm().isModelGroup()) //extension
+					{
+						for (XSParticle p1 : p.getTerm().asModelGroup().getChildren())
+							t.addTerm(makeTermFromElement(t,p1.getTerm().asElementDecl()));
+					}
+					else
+					{t.addTerm(makeTermFromElement(t,p.getTerm().asElementDecl()));}
 				}
-				else
-				{t.addTerm(makeTermFromElement(t,p.getTerm().asElementDecl()));}
 			}
 //			for (XSElementDecl e : ct.getElementDecls())
 //				t.addTerm(makeTermFromElement(t, e));
+		}
+		//if term has attributes, make subterms from them:
+		Collection<? extends XSAttributeUse> atts = getComplexAttributes(ct);
+		for (XSAttributeUse attU : atts)
+		{
+			XSAttributeDecl attributeDecl = attU.getDecl();
+			String n = attributeDecl.getName();
+			Term aT = new Term(n);
+			aT.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("name",n));
+			aT.setDomain(new Domain(attributeDecl.getType().getName()));//TODO improve this by understanding the domain usage in ontobuilder matchers
+		 	aT.setParent(t);
+			aT.setOntology(xsdOntology);
+			t.addTerm(aT);
 		}
 		
 		return t;
@@ -465,4 +499,33 @@ public class XSDImporterUsingXSOM implements Importer
 		return term;
 	}
 	
+	private static Collection<? extends XSAttributeUse> getComplexAttributes(XSComplexType xsComplexType) {
+	    Collection<? extends XSAttributeUse> c = xsComplexType.getAttributeUses();
+	    //Iterator<? extends XSAttributeUse> i = c.iterator();
+	    //while(i.hasNext()) {
+	       // i.next is attributeUse
+	       //XSAttributeUse attUse = i.next();
+	       //System.out.println("Attributes for ComplexType:"+ xsComplexType.getName());
+
+	       //parseAttribute(attUse); //for debug
+	       
+	    //}
+	return c;
+	}
+
+	// To Get attribute info - for debug usage
+
+	@SuppressWarnings("unused")
+	private static void parseAttribute(XSAttributeUse attUse) { 
+	    XSAttributeDecl attributeDecl = attUse.getDecl();
+	    System.out.println("Attribute Name:"+attributeDecl.getName());
+	    XSSimpleType xsAttributeType = attributeDecl.getType();
+	    System.out.println("Attribute Type: " + xsAttributeType.getName());
+	    if (attUse.isRequired())
+	        System.out.println("Use: Required");
+	    else
+	        System.out.println("Use: Optional");
+	    System.out.println("Fixed: " + attributeDecl.getFixedValue());
+	    System.out.println("Default: " + attributeDecl.getDefaultValue());
+	}
 }

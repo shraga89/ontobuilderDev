@@ -29,7 +29,7 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/slf4j-log4j12-1.6.4.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/slf4j-api-1.6.4.jar"/>
-	<classpathentry kind="lib" path="/ontobuilder.core/lib/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/xercesImpl-2.11.0.jar" sourcepath="C:/Program Files/Java/xercesImpl/Xerces-J-src.2.11.0.zip"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-arq-2.10.1.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-iri-0.9.6.jar"/>
