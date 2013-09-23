@@ -23,7 +23,8 @@ public enum MatchingAlgorithmsNamesEnum
     NEW_PRECEDENCE("New Precedence Match"),
     SIMILARITY_FLOODING("SimilarityFlooding Match"),
     DOMAIN("Domain Match"),
-    WordNet("WordNet Match");
+    WordNet("WordNet Match"),
+    CONTEND_BASED("ContentBasedAlgorithm");
 
     private String _name;
 
