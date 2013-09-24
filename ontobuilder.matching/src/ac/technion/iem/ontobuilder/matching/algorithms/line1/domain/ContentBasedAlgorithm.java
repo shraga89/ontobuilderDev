@@ -42,8 +42,8 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     {
         super();
         this.threshold = 0.5;
-        this.jaroWinklerWeight = 0;
-        this.nGramWeight = 1;
+        this.jaroWinklerWeight = 0.9;
+        this.nGramWeight = 0.1;
         this.nGram = 3;
 
     }
@@ -125,23 +125,27 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         double total = 0.0;
         Domain tDom = targetTerm.getDomain();
         Domain cDom = candidateTerm.getDomain();    
-        for (int k = 0; k < tDom.getEntries().size() ; k++){
+        for (int k = 0; k < tDom.getEntries().size() && !tDom.getEntries().isEmpty() ; k++){
         	ArrayList<Double> maxBetweenInstancesTarget2Candidate = new  ArrayList<Double>();
-    		for (int m = 0; m < cDom.getEntries().size() ; m++){
+    		for (int m = 0; m < cDom.getEntries().size() && !cDom.getEntries().isEmpty() ; m++){
     			Double result = getSimilarity(tDom.getEntries().get(k), cDom.getEntries().get(m));
     			maxBetweenInstancesTarget2Candidate.add(result);
     		}
-    		Double maxTargertList = Collections.max(maxBetweenInstancesTarget2Candidate);
-    		total += maxTargertList;
+    		if(!maxBetweenInstancesTarget2Candidate.isEmpty()){
+    			Double maxTargertList = Collections.max(maxBetweenInstancesTarget2Candidate);
+    			total += maxTargertList;
+    		}
     	}
-    	for (int k = 0; k < cDom.getEntries().size() ; k++){
+    	for (int k = 0; k < cDom.getEntries().size() && !cDom.getEntries().isEmpty() ; k++){
     		ArrayList<Double> maxBetweenInstancesCandidate2Target = new  ArrayList<Double>();
-    		for (int m = 0; m < tDom.getEntries().size() ; m++){
+    		for (int m = 0; m < tDom.getEntries().size() && !tDom.getEntries().isEmpty() ; m++){
     			Double result = getSimilarity(cDom.getEntries().get(k), tDom.getEntries().get(m));
     			maxBetweenInstancesCandidate2Target.add(result);
     		}
-    		Double maxCandidateList = Collections.max(maxBetweenInstancesCandidate2Target);
-    		total += maxCandidateList;
+    		if(!maxBetweenInstancesCandidate2Target.isEmpty()){
+    			Double maxCandidateList = Collections.max(maxBetweenInstancesCandidate2Target);
+    			total += maxCandidateList;
+    		}
     	}
     	double similarityBetweenElements = total/(cDom.getEntries().size()+tDom.getEntries().size());
     	effectiveness = similarityBetweenElements;
