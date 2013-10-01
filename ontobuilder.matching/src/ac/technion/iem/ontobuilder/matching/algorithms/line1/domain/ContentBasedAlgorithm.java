@@ -97,7 +97,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         else
         {
             originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
-            originalTargetTerms = originalTargetTerms.get(0).getTerms().get(0).getTerms();
         }
 
         if (!candidateOntology.isLight())
@@ -108,7 +107,6 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         else
         {
             originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
-            originalCandidateTerms = originalCandidateTerms.get(0).getTerms().get(0).getTerms();
         }
 
     }
