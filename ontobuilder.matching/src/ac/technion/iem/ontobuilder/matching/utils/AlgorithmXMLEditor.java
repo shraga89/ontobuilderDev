@@ -10,11 +10,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.XMLOutputter;
+
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
 
@@ -29,7 +32,7 @@ public class AlgorithmXMLEditor {
 			HashMap<String, Double> parameterValues) throws Exception {
 		File file = new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
-        SAXBuilder builder = new SAXBuilder(true);
+        SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
         builder.setEntityResolver(new NetworkEntityResolver());
         Document doc = builder.build(reader);
 		Element root = doc.getRootElement();

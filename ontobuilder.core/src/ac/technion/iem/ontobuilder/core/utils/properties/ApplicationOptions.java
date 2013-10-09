@@ -20,6 +20,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.XMLOutputter;
 
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
@@ -60,7 +61,7 @@ public class ApplicationOptions
             // throw new
             // OptionException(StringUtilities.getReplacedString(ApplicationUtilities.getResourceString("error.options.file"),params));
             // }
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             loadOptionsFromDocument(doc);
@@ -100,7 +101,7 @@ public class ApplicationOptions
 
         try
         {
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(configStream);
             loadOptionsFromDocument(doc);

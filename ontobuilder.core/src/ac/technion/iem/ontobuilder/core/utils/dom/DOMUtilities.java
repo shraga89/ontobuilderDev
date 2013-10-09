@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.hccp.net.CookieManager;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.DOMOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -146,7 +147,7 @@ public class DOMUtilities
 
         try
         {
-            SAXBuilder builder = new SAXBuilder(validation);
+            SAXBuilder builder = new SAXBuilder((validation?XMLReaders.DTDVALIDATING:XMLReaders.NONVALIDATING));
             org.jdom2.Document doc = builder.build(stream);
 
             DOMOutputter fmt = new DOMOutputter();

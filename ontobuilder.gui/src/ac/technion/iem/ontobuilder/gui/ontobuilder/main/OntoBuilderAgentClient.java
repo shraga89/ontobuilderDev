@@ -4,8 +4,10 @@ import java.net.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+
 import org.jdom2.*;
 import org.jdom2.input.*;
+import org.jdom2.input.sax.XMLReaders;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.AgentEntityResolver;
@@ -102,7 +104,7 @@ public class OntoBuilderAgentClient extends Thread
     {
         try
         {
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new AgentEntityResolver());
             Document doc = builder.build(new StringReader(message));
 

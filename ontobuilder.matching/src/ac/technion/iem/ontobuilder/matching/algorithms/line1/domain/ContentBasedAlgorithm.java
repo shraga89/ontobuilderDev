@@ -14,7 +14,6 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithmFlagsEnum;
 
 public class ContentBasedAlgorithm extends TermAlgorithm{
 
