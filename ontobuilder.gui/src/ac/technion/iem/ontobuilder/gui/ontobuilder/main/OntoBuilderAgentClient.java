@@ -1,12 +1,21 @@
 package ac.technion.iem.ontobuilder.gui.ontobuilder.main;
 
-import java.net.*;
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
-import org.jdom2.*;
-import org.jdom2.input.*;
+import java.io.StringReader;
+import java.net.Socket;
+import org.jdom2.input.sax.XMLReaders;
+import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
