@@ -4,10 +4,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
+import java.net.URL;
+
 import org.jdom2.input.sax.XMLReaders;
+
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -16,8 +19,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
-
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.AgentEntityResolver;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationOptions;

@@ -153,7 +153,8 @@ public class XSDImporterUsingXSOM implements Importer
 	private void getNodesRecursive(String prov ,Node node,
 			HashMap<String,ArrayList<String>> provMap) {
 		
-		String newProv = prov + (prov.length()==0?"":".") + node.getNodeName();
+		String nodeName = node.getNodeName().replaceAll("ns:", "");
+		String newProv = prov + (prov.length()==0?"":".") + nodeName;
 		for (int i=0;i<node.getChildNodes().getLength();i++)
 		{
 			Node child = node.getChildNodes().item(i);
