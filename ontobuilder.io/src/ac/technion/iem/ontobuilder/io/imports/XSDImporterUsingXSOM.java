@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
@@ -17,6 +19,7 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
@@ -101,7 +104,10 @@ public class XSDImporterUsingXSOM implements Importer
         
         //mine domain from instances
         if (instances!=null) 
+        {
         	createDomainsFromInstances(file,instances);
+        }
+        	
         
         return xsdOntology;
     }
@@ -112,42 +118,70 @@ public class XSDImporterUsingXSOM implements Importer
 	 * @param instances
 	 */
 	private void createDomainsFromInstances(File schema, File instances) {
-		
+
+		try {		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
 		factory.setNamespaceAware(true);
-
-		HashMap<String,ArrayList<String>> provMap = new HashMap<String,ArrayList<String>>();
-		try {
-			SchemaFactory schemaFactory = 
-				    SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		SchemaFactory schemaFactory = 
+			    SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 			factory.setSchema(schemaFactory.newSchema(
 				    new Source[] {new StreamSource(schema)}));
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			builder.setErrorHandler(new DraconianErrorHandler());
-			Document document = builder.parse(instances);
-			getNodesRecursive("",document.getFirstChild(),provMap);
-			//Create domains
-			for (Term t : xsdOntology.getTerms(true))
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		builder.setErrorHandler(new DraconianErrorHandler());
+		HashMap<String,ArrayList<String>> provMap = new HashMap<String,ArrayList<String>>();
+		if (instances.isDirectory())
+		{
+			for (File i : instances.listFiles())
 			{
-				if (provMap.containsKey(t.getProvenance()))
-				{
-					Domain d = new Domain(t.getName() + "Dom");
-					HashSet<String> instanceSet = new HashSet<String>(provMap.get(t.getProvenance()));
-					for(String i : instanceSet)
-						d.addEntry(new DomainEntry(d,i));
-					t.setDomain(d);
-				}
-				else
-				{
-					System.err.println("No instances found in provMap for " + t.getProvenance());
-				}
+				try {
+					Document document = builder.parse(i);
+					getNodesRecursive("",document.getFirstChild(),provMap);
+				} catch (Exception e) {
+				
+					System.err.println("Failed import of " + i.getName() + "\n");
+					System.err.println(e.getMessage());
+				
+			} 
 				
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
-		
+		} else
+		{
+			Document document;
+			try {
+				document = builder.parse(instances);
+				getNodesRecursive("",document.getFirstChild(),provMap);
+			} catch (SAXException e) {
+				System.err.println("Instance file parse error: \n" );
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println("Instance file load error: \n" );
+				e.printStackTrace();
+			}
+		}
+		//Create domains
+		for (Term t : xsdOntology.getTerms(true))
+		{
+			if (provMap.containsKey(t.getProvenance()))
+			{
+				Domain d = new Domain(t.getName() + "Dom");
+				HashSet<String> instanceSet = new HashSet<String>(provMap.get(t.getProvenance()));
+				for(String i : instanceSet)
+					d.addEntry(new DomainEntry(d,i));
+				t.setDomain(d);
+			}
+			else
+			{
+				System.err.println("No instances found in provMap for " + t.getProvenance());
+			}
+				
+		}
+		} catch (SAXException e1) {
+			e1.printStackTrace();
+		} catch (ParserConfigurationException e1) {
+			e1.printStackTrace();
+		}
+
 	}
 
 	private void getNodesRecursive(String prov ,Node node,
