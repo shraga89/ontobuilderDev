@@ -1,6 +1,11 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jdom2.Element;
 
@@ -54,7 +61,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	public void configure(Element element) {
 
 	}
-	
+
 	@Override
 	public Algorithm makeCopy() {
 		WordNetAlgorithm algo = new WordNetAlgorithm();
@@ -73,16 +80,16 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<Term, TermTokenized>();
 		HashMap<Term, TermTokenized> targetTermsTokenizedMap = new HashMap<Term, TermTokenized>();
 		HashMap<Term, TermSimilarity> termsSimilarityMap = new HashMap<Term, TermSimilarity>();
-		
+
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
 		TokenizedWordAlgorithmFactory factory = new TokenizedWordAlgorithmFactory();
-		
+
 		ArrayList<TokenizedWordAlgorithm> tokenizedWordAlgorithms = factory.build();
-		
+
+		AbbrExpand ae = new AbbrExpand();
 		for (int i = 0; i < targs.size(); i++) {
 			for (int j = 0; j < cands.size(); j++) {
-
 				Term currentCandidate = cands.get(j);
 				Term currentTarget = targs.get(i);
 				//Extract words by all algorithms
@@ -92,13 +99,23 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				}
 				TermTokenized candidateTokenized = candidateTermsTokenizedMap.get(currentCandidate);
 				TermTokenized targetTokenized = targetTermsTokenizedMap.get(currentTarget);
-				
+
 				//calc similarity between candidate and target terms 
 				List<TokenizedAlgorithmType> algorithms = candidateTokenized.getDoneAlgorithms();
 				for (TokenizedAlgorithmType algorithmType : algorithms) {
 					List<String> candidateTokens = candidateTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
 					List<String> targetTokens = targetTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
-					Double similarity = calcSimilarity(candidateTokens, targetTokens);
+
+					List<String> candTokenAbbred = new ArrayList<String>();
+					List<String> targTokenAbbred = new ArrayList<String>();
+					for (String candStr: candidateTokens) {
+						candTokenAbbred.add(ae.expandAbbreviation(candStr));
+					}
+					for (String targStr: targetTokens) {
+						targTokenAbbred.add(ae.expandAbbreviation(targStr));
+					}
+					Double similarity = calcSimilarity(candTokenAbbred, targTokenAbbred);
+
 					//current candidate term already has an entry in termsSimilarityMap
 					if (termsSimilarityMap.containsKey(currentCandidate)) {
 						termsSimilarityMap.get(currentCandidate).addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
@@ -108,15 +125,15 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 						termSimilarity.addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
 						termsSimilarityMap.put(currentCandidate, termSimilarity);
 					}
-					
+
 				}
-			/*	ResultsWriter resultsWriter = new ResultsWriter();
+				/*	ResultsWriter resultsWriter = new ResultsWriter();
 				resultsWriter.writeResults(termsSimilarityMap);*/
 				this.updateMatchSimilarity( termsSimilarityMap, currentCandidate, currentTarget, WordNetStrategy.BEST, mi);
 			}
 		}
 	}
-	
+
 	/**
 	 * Update the match similarity based on a specific algorithm matching {@link WordNetStrategy} or by
 	 * finding the biggest similarity 
@@ -154,7 +171,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			mi.updateMatch(target, candidate, similarity);
 		}
 	}
-	
+
 	/**<p>Calcs the similarity of two Lists of words based on Distance By JiangConrath. Only words that are in the
 	 * English Diction are being handled, if a word isn't its similarity to other is 0.0; the total similarity
 	 * is an average of all candidate words (just words that are in the diction)</p>
@@ -198,7 +215,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 						maxSim = Math.min(maxSim, 1.0);
 					}
 				}
-			avgSim += maxSim;
+				avgSim += maxSim;
 			}
 		}
 		if (validCandidateWords != 0) {
@@ -231,7 +248,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			termsTokenized.put(currentTerm, termTokenized);
 		}
 	}
-	
+
 	/**
 	 * Check if word exists in dictionary
 	 * @param word to be checked
@@ -248,7 +265,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		}
 		return true;
 	}
-	
+
 	private ArrayList<Term> getTerms(Ontology o) {
 		Vector<Term> terms = o.getTerms(true);
 		ArrayList<Term> result = new ArrayList<Term>();
@@ -257,5 +274,247 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			result.add(i, terms.get(i));
 		}
 		return result;
+	}
+
+	/* 
+	 * Abbreviation expansion algorithm.
+	 * based on the following paper: Abbreviation Expansion in Schema Matching and Web Integration, L. Ratinov, E. Gudes.
+	 */
+	private class AbbrExpand {
+
+		// CONFIGURATION
+		public String WORD_LIST_PATH = "data/alist.txt";
+		private String[] wordList;
+		private HashMap<String, String> abbrCache;
+
+		public AbbrExpand() {
+			this.wordList = loadFile(WORD_LIST_PATH);
+			this.abbrCache = new HashMap<String, String>();
+		}
+
+		/* 
+		 * Create Abbreviation rule 1 regular expression
+		 */
+		public Pattern createSubsetAbbr(String abbr) {
+			String ptrn = "\\b";
+			for (int i=0, n = abbr.length(); i < n; i++) {
+				char c1 = Character.toLowerCase(abbr.charAt(i));
+				ptrn = ptrn.concat(c1 +"\\w*");
+			}
+			ptrn = ptrn.concat("\\b");
+			Pattern pattern = Pattern.compile(ptrn);
+			return pattern;
+		}
+
+		/* 
+		 * Create Abbreviation rule 2 regular expression
+		 */
+		public Pattern createFirstPartLettersAbbr(String abbr) {
+			String ptrn = "^";
+			for (int i=0, n = abbr.length(); i < n; i++) {
+				char c1 = Character.toLowerCase(abbr.charAt(i));
+				ptrn = ptrn.concat("[" + c1 +"]\\w*");
+				if (i+1 < n) {
+					ptrn = ptrn.concat("[\\s]+");
+					ptrn = ptrn.concat("(\\w*\\s+)*");
+				}
+				else {
+					ptrn = ptrn.concat("[\\s]*");
+				}
+			}
+			ptrn = ptrn.concat("$");
+			Pattern pattern = Pattern.compile(ptrn);
+			return pattern;
+		}
+
+		/*
+		 * Get all matching phrases from the corpus given a regex patten (could be rule 1 or 2)
+		 * return all phrases that match the rule.
+		 */
+		public String[] getMatchingPhrases(Pattern pattern, boolean returnPhrase) {
+			Map<String, String> resultArr = new HashMap<String,String>();
+			Matcher matcher;
+			for (String phrase: this.wordList) {
+				matcher = pattern.matcher(phrase);
+				while (matcher.find()) {
+					if (!resultArr.containsKey(matcher.group())) {
+						if (returnPhrase)
+							resultArr.put(phrase, null);
+						else
+							resultArr.put(matcher.group(), null);
+					}
+				}
+			}
+			String[] result = new String[resultArr.keySet().size()];
+			result = resultArr.keySet().toArray(result);
+			return result;
+		}
+
+		/*
+		 * Construct the pattern of a word
+		 */
+		public String[] getWordPattern(String abbr, String phrase) {
+			ArrayList<String> patterns = new ArrayList<String>();
+			abbr = abbr.toLowerCase();
+			phrase = phrase.toLowerCase();
+			getAllPatterns(patterns, abbr, phrase, "");
+
+			String[] result = new String[patterns.size()];
+			result = patterns.toArray(result);
+			return result;
+		}
+
+		/*
+		 * Construct all possible pattern of a word/phrase
+		 */
+		private void getAllPatterns(ArrayList<String> patterns, String abbr,
+				String phrase, String pat) {
+			if (abbr.length() == 0) {
+				// found of abbrs, fill in the xxxes and add to array
+				for (int i=0, n=phrase.length(); i<n; i++) {
+					pat = pat.concat("x");
+				}
+				patterns.add(pat);
+				return;
+			}
+			else if (abbr.length() !=0 && phrase.length() == 0) {
+				// fail this try
+				return;
+			}
+
+			if (abbr.charAt(0) == phrase.charAt(0)) {
+				char c = abbr.charAt(0);
+				String add_c; 
+				if (c=='a' || c=='e' || c=='u' || c=='i' || c=='o') {
+					add_c = "V";
+				} else {
+					add_c = "C";
+				}
+				getAllPatterns(patterns, abbr.substring(1), phrase.substring(1), pat.concat(add_c));
+				getAllPatterns(patterns, abbr, phrase.substring(1), pat.concat("x"));
+			} 
+			else {
+				if (phrase.charAt(0) == ' ')
+					getAllPatterns(patterns, abbr, phrase.substring(1), pat.concat("_"));
+				else 
+					getAllPatterns(patterns, abbr, phrase.substring(1), pat.concat("x"));
+			}
+		}
+
+		/* 
+		 * Return the score of a word (as defined in Algorithm 1)
+		 */
+		private double scoreWord(String word) {
+			double score = 0.0;
+			for (int i=0, n = word.length(); i < n; i++) {
+				char c = word.charAt(i);
+				if (c == 'x') {
+					score += -1.0 * Math.pow(0.5, i);
+				}
+				else if (c == 'V' || c == 'C') {
+					score += Math.pow(0.5, i);
+				}
+			}
+			return score;
+		}
+
+		/* 
+		 * return the score of a given pattern
+		 */
+		public double scorePattern(String pattern) {
+			double score = 0.0;
+			String[] words = pattern.split("_");
+			for (String word: words) {
+				score += scoreWord(word);
+			}
+			return score;
+		}
+
+		/*
+		 * Expand abbreviation (according to the algorithm in the paper)
+		 */
+		public String expandAbbreviation(String abbr) {
+
+			// check if phrase exists for the given abbreviation
+			if (this.abbrCache.containsKey(abbr))
+				return abbrCache.get(abbr);
+
+			Pattern p1;
+			String[] phrases = {};
+			p1 = this.createSubsetAbbr(abbr);
+			phrases = concat(phrases, this.getMatchingPhrases(p1, false));
+			p1 = this.createFirstPartLettersAbbr(abbr);
+			phrases = concat(phrases, this.getMatchingPhrases(p1, true));
+
+			double max_score = -9999.0;
+			String best_guess = "";
+
+			for (String phrase: phrases) {
+				String[] patterns = this.getWordPattern(abbr, phrase);
+				boolean valid = false;
+				double c_score = -9999.0;
+				for (String ptrn: patterns) {
+					double score = scorePattern(ptrn);
+					c_score = Math.max(c_score, score);
+					if (score > 0.2) {
+						valid = true;
+					}
+				}
+				if (valid) {
+					if (c_score > max_score) {
+						max_score = c_score;
+						best_guess = phrase;
+					}
+				}
+			}
+			String returned_guess;
+			if (best_guess.length() < 1)
+				returned_guess = abbr;
+			else
+				returned_guess = best_guess;
+			this.abbrCache.put(abbr, returned_guess);
+			return returned_guess;
+		}
+
+		/* 
+		 * Concatenate two collections
+		 */
+		private <T> T[] concat(T[] first, T[] second) {
+			T[] result = Arrays.copyOf(first, first.length + second.length);
+			System.arraycopy(second, 0, result, first.length, second.length);
+			return result;
+		}
+
+		/*
+		 * load a file
+		 */
+		private String[] loadFile(String path) {
+			BufferedReader br = null;
+			ArrayList<String> lines_arr = new ArrayList<String>();
+			try {
+				br = new BufferedReader(new FileReader(path));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			try {
+				String line = br.readLine();
+				while (line != null) {
+					lines_arr.add(line.replace("\n", ""));
+					line = br.readLine();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			String[] result = new String[lines_arr.size()];
+			result = lines_arr.toArray(result);
+			return result;
+		}
+
 	}
 }

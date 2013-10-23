@@ -26,7 +26,7 @@ public class TED extends AbstractAlgorithm {
 	private double threshold;
 		
 	public TED(){
-		this("Term Match");
+		this("TED Graph Match");
 	}
 	
 	public TED(String stepOne){
