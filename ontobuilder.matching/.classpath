@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.core"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/ws4j-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

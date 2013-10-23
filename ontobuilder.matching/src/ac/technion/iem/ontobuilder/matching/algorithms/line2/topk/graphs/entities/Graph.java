@@ -181,6 +181,9 @@ public class Graph implements Serializable
      */
     public void buildAdjMatrix()
     {// O(V^2+E)
+    	//TODO 
+    	if (1==1)
+    		return;
         adjMatrix = new double[vertexesSet.size()][vertexesSet.size()];
         for (int i = 0; i < vertexesSet.size(); i++)
             // O(V^2)

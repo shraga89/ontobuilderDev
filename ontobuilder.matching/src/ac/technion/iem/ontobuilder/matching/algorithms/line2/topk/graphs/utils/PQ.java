@@ -65,6 +65,9 @@ public class PQ extends Queue
         return ((PQItem) pop()).getObject();
     }
 
+    public Object deleteMinAndGetIt() {
+    	return ((PQItem) pop());
+    }
     /**
      * Delete the first occurrence of the specifiedobject from the queue, if it is present
      * 

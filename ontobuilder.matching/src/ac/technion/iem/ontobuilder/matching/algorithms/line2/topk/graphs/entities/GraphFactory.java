@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.FastMWBGAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.MaxWeightBipartiteMatchingAlgorithm;
 
 
@@ -168,7 +169,7 @@ public abstract class GraphFactory
     {
         /****** new version 14/11/03 ******/
         VertexArray pot = new VertexArray(bg, new Double(0));
-        MaxWeightBipartiteMatchingAlgorithm algo = new MaxWeightBipartiteMatchingAlgorithm(bg, pot);
+        FastMWBGAlgorithm algo = new FastMWBGAlgorithm(bg, pot);
         /****** new version 14/11/03 ******/
         Set<Edge> bestMatching = algo.runAlgorithm();
         return new DGraph(bg, bestMatching);

@@ -8,6 +8,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.LightBipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.GraphUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
@@ -32,6 +33,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.V
  * Implements {@link SchemaMatchingsAlgorithm}
  * 
  * @author Haggai Roitman
+ * @author Omer Ben-Porat
  * @version 1.1
  */
 
@@ -39,7 +41,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
 {
     private BipartiteGraph g;
     private VertexArray pot;
-    private MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum heuristic = MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum.REFINED_HEURISTIC;
+    private MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum heuristic = MaxWeightBipartiteMatchingAlgorithmHeuristicsEnum.NAIVE_HEURISTIC;
+    //TODO
+    //Currently, our goal is to minimize running time with naive heuristic. if done, we shall move back to Refined heuristic 
     private double oneOverS;
     private int exp;
 
@@ -55,7 +59,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         this.pot = pot;
         scaleWeights(g,3.0);
     }
-
+    
     /**
      * Set the heuristic
      * 
@@ -87,7 +91,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
 
         switch (heuristic)
         {
-        case NAIVE_HEURISTIC:
+        //Naive - sets the potential of every node in B equal to zero
+        // and every node of A equal to the maximal cost of all edges
+        case NAIVE_HEURISTIC: 
             Double C = new Double(0);
             for (Edge e : g.getEdges())
             {
@@ -136,7 +142,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 augment(g, a, pot, free, pred, dist, PQ);
         for (Vertex b : g.getRightVertexesSet())
         	result.addAll(GraphUtilities.getVertexOutEdges(g, b));
+        
         EdgeUtil.turnOverEdges(false,result);
+
         return result;
     }
 
@@ -154,7 +162,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     private void augment(BipartiteGraph g, Vertex a, VertexArray pot, VertexArray free,
         VertexArray pred, VertexArray dist, VertexPQ PQ)
     {
-        // augument:initialization
+        // augument:initialization - phase 1
         dist.setVertexProperty(a, new Double(0));
         Vertex bestVertexInA = a;
         double minA = ((Double) pot.getVertexProperty(a)).doubleValue();
@@ -162,10 +170,11 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         Stack<Vertex> RA = new Stack<Vertex>(), RB = new Stack<Vertex>();
         RA.push(a);
         Vertex a1 = a;
-        // relax all edges out of a1
+        // relax all edges out of a1 - phase 1.1
         for (Edge e: GraphUtilities.getVertexAdjEdges(g, a1))
         {
             Vertex b = GraphUtilities.getEdgeTargetVertex(g, e);
+            //db = dist[a1]+(pot[a1]+pot[b]-c[e])
             double db = ((Double) dist.getVertexProperty(a1)).doubleValue() +
                 (((Double) pot.getVertexProperty(a1)).doubleValue() +
                     ((Double) pot.getVertexProperty(b)).doubleValue() - e.getEdgeWeight());
@@ -183,9 +192,9 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 PQ.decreaseP(b, new Double(db));
             }
         }
-        while (true)
+        while (true) //the main loop
         {
-            // select from PQ the node b with minimal distance db
+            // select from PQ the node b with minimal distance db - phase 2
             Vertex b;
             double db = 0;
             if (PQ.isEmpty())
@@ -195,8 +204,8 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 b = (Vertex) PQ.deleteMin();
                 db = ((Double) dist.getVertexProperty(b)).doubleValue();
             }
-            // distinguish three cases
-            if (b == null || db >= minA)
+            // distinguish three cases - phase 3
+            if (b == null || db >= minA) //case 3.1
             {
                 Delta = minA;
                 // augmentation by path to best node in A
@@ -205,7 +214,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 free.setVertexProperty(bestVertexInA, new Boolean(true));
                 break;
             }
-            else if (((Boolean) free.getVertexProperty(b)).booleanValue())
+            else if (((Boolean) free.getVertexProperty(b)).booleanValue()) //case 3.2
             {
                 Delta = db;
                 // augmentation by path to b
@@ -214,7 +223,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 free.setVertexProperty(b, new Boolean(false));
                 break;
             }
-            else
+            else //case 3.3
             {
                 // continue shortest-path computation
                 Edge e = GraphUtilities.getVertexFirstAdjEdge(g, b);
@@ -222,6 +231,8 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 pred.setVertexProperty(a11, e);
                 RA.push(a11);
                 dist.setVertexProperty(a11, new Double(db));
+                //the following condition checks if we will gain points flowing
+                //on the opposite direction
                 if (db + ((Double) pot.getVertexProperty(a11)).doubleValue() < minA)
                 {
                     bestVertexInA = a11;
@@ -251,7 +262,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
                 }
             }
         }
-        // augment: potential update and re-initialization
+        // augment: potential update and re-initialization - phase 4
         while (!RA.isEmpty())
         {
             Vertex a12 = (Vertex) RA.pop();
@@ -310,7 +321,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
             double max2 = 0, max = 0;
             eb = null;
             e2 = null;
-            // compute edges with largest and second largest slack
+            // compute edges with largest and second largest slack - and nothing else
             for(Edge e : GraphUtilities.getVertexAdjEdges(g, a))
             {
                 double we = ((Double) e.getEdgeWeight() -
@@ -379,6 +390,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
      */
     private void scaleWeights(final BipartiteGraph g, double f)
     {
+    	//TODO the first for can be deleted - apparently used in older version - the call computeS does not use f nor c
         double C = 0;
         for (Edge e : g.getEdges())
             C = Math.max(C, fabs(e.getEdgeWeight()));
@@ -398,6 +410,7 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     /**
      * Scale the weight
      */
+    //TODO change label back to private
     private double scaleWeight(double w, double S)
     {
         if (w == 0)
@@ -487,5 +500,21 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
     {
         return TopKAlgorithmsNamesEnum.MWBM_ALGORITHM.getName();
     }
+    
+    private void CompareToFastAlgorithm(Set<Edge> SlowResult){
+        Set<Edge> FastResult = new HashSet<Edge>();
+		pot = new VertexArray(g, new Double(0));
+		FastMWBGAlgorithm FastAlg = new FastMWBGAlgorithm(g, pot);
+		FastResult = FastAlg.runAlgorithm();
+        //checking if the result from the slow Alg match the Fast Alg
+        if (SlowResult.containsAll(FastResult) && FastResult.containsAll(SlowResult)) {
+        	System.out.println("************************************************");
+        	System.out.println("there is exact match");
+        	System.out.println("************************************************");
+        }
+        System.out.println("************************************************");
+        System.out.println("no match!");
+        System.out.println("************************************************");
+	}
 
 }

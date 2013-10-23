@@ -271,7 +271,7 @@ public class BipartiteGraph extends Graph implements Serializable // G(X,Y,E)
     }
     
     /**
-     * @deprecated returns copy of the edges in the edge map, should not be used as the returned
+     * returns copy of the edges in the edge map, should not be used as the returned
      * set will be unsynchronized with the original set. 
      */
     public HashSet<Edge> getEdgesSet() 

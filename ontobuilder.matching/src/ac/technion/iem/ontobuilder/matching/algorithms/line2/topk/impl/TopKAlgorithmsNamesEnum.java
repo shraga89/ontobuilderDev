@@ -20,7 +20,8 @@ public enum TopKAlgorithmsNamesEnum
     MWBM_ALGORITHM("Max Weighted Bipartite Matching Algorithm"), 
     SECOND_BEST_NAIVE_ALGORITHM("Second Best Mapping Naive Algorithm"), 
     SECOND_BEST_REFINED_ALGORITHM("Second Best Mapping Refined Algorithm"),
-    MIN_TOP_K_ALGORITHM("Min Top K Algorithm");
+    MIN_TOP_K_ALGORITHM("Min Top K Algorithm"),
+    FMWBM_ALGORITHM("Fast Max Weighted Bipartite Matching Algorithm");
 
     private String _name;
 

@@ -11,7 +11,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.MaxWeightBipartiteMatchingAlgorithm;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.FastMWBGAlgorithm;
+
 
 
 /**
@@ -259,22 +260,17 @@ public class TreeNode implements Serializable
                 adjacentEdges.addAll(graph.getAllAdjacentEdges((Edge) it.next()));
             }
             eTmp.removeAll(adjacentEdges); // E'<-E'\{adjacentEdges} O(E)
-            /******** new version 14/11/03 ***********/
             BipartiteGraph bg = null;
             VertexArray pot = null;
-            MaxWeightBipartiteMatchingAlgorithm aBest = null;
+            FastMWBGAlgorithm aBest = null;
             bg = new BipartiteGraph(new HashSet<Edge>(eTmp), graph.getRightVertexesSet(),
                 graph.getLeftVertexesSet());
             pot = new VertexArray(bg, new Double(0));
-            aBest = new MaxWeightBipartiteMatchingAlgorithm(bg, pot);
-            /******** new version ***********/
-            matching = aBest.runAlgorithm();// O(V^3)
+            aBest = new FastMWBGAlgorithm(bg, pot);
+            matching = aBest.runAlgorithm();// O(V*E)
             matching.addAll(si); // M<-M U Si O(E)
             matchWeight = EdgeUtil.getEdgesSetWeight(matching); // sets the weight of this node
-            /**** added 29/12/03 *****/
             aBest.nullify();// release algorithm resources
-            /*************************/
-            /**** added 10/1/04 ******/
             eTmp = null;
             adjacentEdges = null;
             bg = null;
@@ -286,7 +282,6 @@ public class TreeNode implements Serializable
             e.printStackTrace();
             throw new Exception(e);
         }
-        /*************************/
     }
 
     /**
