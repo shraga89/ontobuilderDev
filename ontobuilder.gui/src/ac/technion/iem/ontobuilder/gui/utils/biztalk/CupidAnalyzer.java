@@ -15,6 +15,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 import ac.technion.iem.ontobuilder.core.biztalk.Link;
 import ac.technion.iem.ontobuilder.gui.application.PropertiesTableModel;
@@ -65,7 +66,7 @@ public class CupidAnalyzer
         ArrayList<Link> tentativeLinks = new ArrayList<Link>();
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        SAXBuilder builder = new SAXBuilder(false);
+        SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
         Document doc = builder.build(reader);
 
         Namespace b = Namespace.getNamespace("b", "urn:schemas-microsoft-com:BizTalkServer");

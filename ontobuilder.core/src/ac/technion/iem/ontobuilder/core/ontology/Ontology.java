@@ -24,6 +24,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -985,7 +986,7 @@ public class Ontology extends OntologyObject
         try
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             org.jdom2.Document ontologyDocument = builder.build(reader);
 

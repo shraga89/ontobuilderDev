@@ -12,6 +12,8 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -29,6 +31,8 @@ import org.semanticweb.owlapi.util.QNameShortFormProvider;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataPropertyAssertionAxiomImpl;
 
 import ac.technion.iem.ontobuilder.core.ontology.Attribute;
+import ac.technion.iem.ontobuilder.core.ontology.Domain;
+import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 
@@ -175,6 +179,24 @@ public class OWLImporter implements Importer {
 						}
 					}
 				}
+				
+				//Create ontobuilder domain
+				Domain d = new Domain("Dom" + q.getShortForm(op));
+				for (OWLClassExpression oc : ocSet)
+			    	//for (Node<OWLClass> nCls : reasoner.getDataPropertyDomains(op,false))
+			    	{
+			    		for (OWLClass c : oc.getClassesInSignature())
+			    		{
+			    			for (OWLIndividual i : c.getIndividuals(owlO))
+			    			{
+			    				if (!i.isNamed()) continue;
+			    				for (OWLLiteral l : reasoner.getDataPropertyValues(i.asOWLNamedIndividual(), op))
+			    				{
+			    					d.addEntry(new DomainEntry(l.getLiteral()));
+			    				}
+			    			}
+			    		}
+			    	}
 				for (OWLClassExpression oc : ocSet)
 		    	//for (Node<OWLClass> nCls : reasoner.getDataPropertyDomains(op,false))
 		    	{
@@ -182,6 +204,7 @@ public class OWLImporter implements Importer {
 		    		{
 		    			if (c.isOWLThing()) continue;
 		    			Term subT = makeTerm(op);
+		    			subT.setDomain(d);
 		    			Term t = findTermByResourceID(c.getIRI().toString());
 		    			if (t== null)
 		    			{
@@ -274,8 +297,33 @@ public class OWLImporter implements Importer {
 		t.addAttribute(new Attribute("name",q.getShortForm(cls)));
 		t.addAttribute(new Attribute("resourceID",cls.getIRI().toString()));
 		for (OWLAnnotation a : cls.getAnnotations(owlO))
-			t.addAttribute(new Attribute(a.getProperty().toString(),a.getValue()));	
-		
+			t.addAttribute(new Attribute(a.getProperty().toString(),a.getValue()));
+//		String clsTypeName = cls.getEntityType().getName();
+//		if (clsTypeName == "Class")
+//		{
+//			for (Node<OWLNamedIndividual> n : reasoner.getInstances(cls.asOWLClass(), true))
+//			{
+//				for (OWLNamedIndividual i : n)
+//				{
+//					System.err.println(q.getShortForm(i));
+//				}
+//			}
+//		}
+//		else if (clsTypeName == "ObjectProperty")
+//		{
+//			
+//		}
+//		else // clsTypeName == "DataProperty"
+//		{
+//			for (OWLNamedIndividual i : cls.asOWLDataProperty().getDomains(owlO))
+//			for (Node<OWLNamedIndividual> n : reasoner.getDataPropertyValues(cls.asOWLDataProperty() , cls.asOWLDataProperty()))
+//			{
+//				
+//				{
+//					System.err.println(q.getShortForm(i));
+//				}
+//			}
+//		}
 		//TODO Add domains, ontology classes, instances, additional relationships
 		return t;
 	}

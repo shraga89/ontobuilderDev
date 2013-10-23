@@ -14,7 +14,11 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/easywsdl-schema-2.1.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/easywsdl-wsdl-2.1.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jbpt-0.2.314.jar"/>
-	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom.jar" sourcepath="C:/Program Files/Java/jdom/jdom-2.0.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Program%20Files/Java/jdom/jdom-2.0.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/owlapi-distribution-3.4.5.jar" sourcepath="C:/Users/Tomer/Dropbox/workspace/ontobuilderdev/ontobuilder.io/lib/owlapi-3.4.5/owlapi-src.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/C:/Users/Tomer/Dropbox/workspace/ontobuilderdev/ontobuilder.io/lib/owlapi-3.4.5/javadoc/"/>
@@ -29,7 +33,7 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/slf4j-log4j12-1.6.4.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/slf4j-api-1.6.4.jar"/>
-	<classpathentry kind="lib" path="/ontobuilder.core/lib/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/xercesImpl-2.11.0.jar" sourcepath="C:/Program Files/Java/xercesImpl/Xerces-J-src.2.11.0.zip"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-arq-2.10.1.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-iri-0.9.6.jar"/>

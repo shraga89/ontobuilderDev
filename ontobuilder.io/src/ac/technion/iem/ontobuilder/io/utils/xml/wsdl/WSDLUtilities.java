@@ -20,6 +20,7 @@ import javax.wsdl.xml.WSDLReader;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
@@ -29,7 +30,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgo
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsWrapper;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import ac.technion.iem.ontobuilder.matching.utils.SchemaTranslator;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 
 /**
@@ -101,7 +101,7 @@ public final class WSDLUtilities
     {
         Vector<EEE05Challenge> challenges = new Vector<EEE05Challenge>();
         BufferedReader reader = new BufferedReader(new FileReader(challengeFile));
-        SAXBuilder builder = new SAXBuilder(true);
+        SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
         builder.setEntityResolver(new NetworkEntityResolver());
         Document doc = builder.build(reader, CHALLENGES_DTD);
         Element EEE05ChallengeElement = doc.getRootElement();
@@ -173,7 +173,7 @@ public final class WSDLUtilities
             {
                 smw = new SchemaMatchingsWrapper(match);
                 // 1:1 mapping
-                score = (new SchemaTranslator(smw.getBestMatching())).getTotalMatchWeight();
+                score = smw.getBestMatching().getTotalMatchWeight();
                 if (challenge.getInputDiscoverScore() < score)
                 {
                     challenge.setInputDiscoverScore(score);
@@ -195,7 +195,7 @@ public final class WSDLUtilities
             {
                 smw = new SchemaMatchingsWrapper(match);
                 // 1:1 mapping
-                score = (new SchemaTranslator(smw.getBestMatching())).getTotalMatchWeight();
+                score = smw.getBestMatching().getTotalMatchWeight();
                 if (challenge.getOutputDiscoverScore() < score)
                 {
                     challenge.setOutputDiscoverScore(score);

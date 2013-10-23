@@ -1,16 +1,24 @@
 package ac.technion.iem.ontobuilder.core.thesaurus;
 
-import java.util.List;
-import java.util.Vector;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.io.*;
+import java.util.List;
+import java.util.Vector;
 
-import org.jdom2.JDOMException;
-import org.jdom2.Element;
-import org.jdom2.Document;
 import org.jdom2.DocType;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.XMLOutputter;
 
 import ac.technion.iem.ontobuilder.core.thesaurus.event.ThesaurusModelAdapter;
@@ -182,7 +190,7 @@ public class Thesaurus extends ThesaurusModelAdapter
         }
         try
         {
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(stream);
             loadFromDocument(doc);
@@ -206,7 +214,7 @@ public class Thesaurus extends ThesaurusModelAdapter
         try
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            SAXBuilder builder = new SAXBuilder(true);
+            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             loadFromDocument(doc);

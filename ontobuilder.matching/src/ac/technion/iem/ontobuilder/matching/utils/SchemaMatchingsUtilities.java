@@ -1,7 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,22 +8,14 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.wrapper.SchemaMatchingsException;
 import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.meta.match.AbstractMapping;
@@ -59,7 +50,7 @@ public final class SchemaMatchingsUtilities
      * @param stPrevious SchemaTranslator Object of previous invoked best matching
      * @param stNext SchemaTranslator Object of next invoked best matching
      * @return ArrayList with new matched pairs (difference info)
-     */
+     *//*
     public static ArrayList<MatchedAttributePair> diffBestMatches(SchemaTranslator stNext,
         SchemaTranslator stPrevious)
     {
@@ -72,7 +63,7 @@ public final class SchemaMatchingsUtilities
             if (!stPrevious.isExist(nextPairs[i]))
                 diff.add(nextPairs[i]);
         return diff;
-    }
+    }*/
 
     /**
      * Returns all the MatchedAttributePair that are in the first array and not in the second one
@@ -173,7 +164,7 @@ public final class SchemaMatchingsUtilities
      * @param targetOntologyName
      * @param filepath
      * @throws SchemaMatchingsException
-     */
+     *//*
     public static void saveDiffBestMatchesToXML(SchemaTranslator stPrevious,
         SchemaTranslator stNext, int previousIndex, int nextIndex, String candOntologyName,
         String targetOntologyName, String filepath) throws SchemaMatchingsException
@@ -231,7 +222,7 @@ public final class SchemaMatchingsUtilities
             e.printStackTrace();
             throw new SchemaMatchingsException(e.getMessage());
         }
-    }
+    }*/
 
     /**
      * Prints the difference between to best matches to standard output
@@ -291,7 +282,7 @@ public final class SchemaMatchingsUtilities
      * @param includeOriginalTranslation flags if need to include in all possible matchs the
      * original mapping attribute
      * @return ArrayList with all possible mappings for the attribute
-     */
+     *//*
     public static ArrayList<Long> getAllPossibleTranslations(SchemaTranslator st,
         Long attribute, boolean candidateAttribute, boolean includeOriginalTranslation)
     {
@@ -328,7 +319,7 @@ public final class SchemaMatchingsUtilities
             }
         }
         return allPossibleTranslations;
-    }
+    }*/
 
     /**
      * Read the best matching XML file
@@ -336,7 +327,7 @@ public final class SchemaMatchingsUtilities
      * @param filepath path to the file to read
      * @return the schema translator
      * @throws Exception
-     */
+     *//*
     public static SchemaTranslator readXMLBestMatchingFile(String filepath) throws Exception
     {
         File file = new File(filepath);
@@ -346,7 +337,7 @@ public final class SchemaMatchingsUtilities
         Document doc = docBuilder.parse(file);
         parseNode(doc, null);
         return new SchemaTranslator(pairs, false);
-    }
+    }*/
 
     /**
      * Read the best matching XML file
@@ -635,21 +626,6 @@ public final class SchemaMatchingsUtilities
         // DoublePrecision.getDoubleP(st2.getGlobalScore(),precision));
         return (DoublePrecision.getDoubleP(st1.getGlobalScore(), precision) == DoublePrecision
             .getDoubleP(st2.getGlobalScore(), precision));
-    }
-
-    public static void main(String[] args)
-    {
-        try
-        {
-            SchemaTranslator st = SchemaMatchingsUtilities
-                .readXMLBestMatchingFile("www.bbltamex.co-www.experienced-people.co.u1.xml");
-            st.saveMatchToXML(1, "Mevo", "Nepton", "afterRead.xml");
-            System.out.println("P=" + SchemaMatchingsUtilities.calculatePrecision(st, st));
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-        }
     }
 
 }
