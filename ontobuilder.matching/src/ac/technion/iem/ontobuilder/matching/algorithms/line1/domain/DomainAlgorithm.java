@@ -2,7 +2,6 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.Math;
 
 import org.jdom2.Element;
 
@@ -14,15 +13,9 @@ import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 
-/**
- * <p>
- * Title: DomainAlgorithm
- * </p>
- * Extends a {@link TermAlgorithm}
- */
-public class DomainAlgorithm extends TermAlgorithm
-{
-    /**
+public class DomainAlgorithm extends TermAlgorithm {
+	
+	/**
      * Make a copy of the algorithm instance
      */
     public Algorithm makeCopy()
@@ -123,7 +116,7 @@ public class DomainAlgorithm extends TermAlgorithm
         effectiveness = 0;
        // System.out.print("threshold:" + threshold);
         Domain tDom = targetTerm.getDomain();
-        Domain cDom = candidateTerm.getDomain();    
+        Domain cDom = candidateTerm.getDomain(); 
         effectiveness = getDistance(cDom,tDom);
 //        return effectiveness >= threshold;
         return effectiveness > threshold;
@@ -138,7 +131,7 @@ public class DomainAlgorithm extends TermAlgorithm
     public Double getDistance(Domain cDomain,Domain tDomain){
     	Double val = 0.0;
 
-    	DomainDataType[] ddts = DomainDataType.values();
+    	DomainDataTypeNew[] ddts = DomainDataTypeNew.values();
      	Integer orInt = 0;
      	Integer andInt = 0;
      	Boolean c;
@@ -146,8 +139,9 @@ public class DomainAlgorithm extends TermAlgorithm
      	
      	
      	// Get values for Similarity //
-    	for (DomainDataType d : ddts)
+    	for (DomainDataTypeNew d : ddts)
     	{
+    		//System.out.println(d.name());
     		DataTypeSniffer s = d.getSniff();
     		c = s.sniff(cDomain);
     		t = s.sniff(tDomain);
@@ -169,20 +163,72 @@ public class DomainAlgorithm extends TermAlgorithm
         
      	if (orInt == 0 && andInt == 0){ 
      	// Should give result according to String length Comparison //
+     		/*
+     		System.out.println(" result according to String length Comparison");
      		List<Integer> cAverageDomainLength = getDomainLength(cDomain);
      		List<Integer> tAverageDomainLength = getDomainLength(tDomain);
      		Double cMean = StatMethods.mean(cAverageDomainLength);
      		Double tMean = StatMethods.mean(tAverageDomainLength);
      		val = 1 - (Math.abs(cMean-tMean)/(Math.max(cMean,tMean)*1.0));
+     		*/
+     		
+     	// Should give result according to Comparison Number of digits and letters in string//
+     		
+     		List<Integer> cDomainLength = getDomainLength(cDomain);
+     		List<Integer> tDomainLength = getDomainLength(tDomain);
+     		
+     		List<Integer> cDomainLengthByDigits = getDomainLengthByDigits(cDomain);
+     		List<Integer> tDomainLengthByDigits = getDomainLengthByDigits(tDomain);
+     		
+     		List<Integer> cDomainLengthByLetters=new ArrayList<Integer>();
+     		List<Integer> tDomainLengthByLetters=new ArrayList<Integer>();
+     		
+     		//if ( cDomainLength.size()>0 && tDomainLength.size()>0){
+	     		for ( int i=0; i<cDomainLength.size();i++){
+	     			cDomainLengthByLetters.add(cDomainLength.get(i)-cDomainLengthByDigits.get(i));
+	     		}
+	     		
+	     		for ( int i=0; i<tDomainLength.size();i++){
+	     			tDomainLengthByLetters.add(tDomainLength.get(i)-tDomainLengthByDigits.get(i));
+	
+	     		}
+     		
+     		
+     		// Calculating the distance
+     		
+     		Double cMeanDigits = StatMethods.mean(cDomainLengthByDigits);
+     		Double tMeanDigits = StatMethods.mean(tDomainLengthByDigits);
+     		
+     		Double cMeanLetters = StatMethods.mean(cDomainLengthByLetters);
+     		Double tMeanLetters = StatMethods.mean(tDomainLengthByLetters);
+
+     		
+     		if (cMeanDigits==0 && tMeanDigits==0) {     			
+     			
+     			val = 1 -calcDistBetweenMeans(cMeanLetters,tMeanLetters);
+     			
+     		}
+     		else if(cMeanLetters==0 && tMeanLetters==0 ){
+     			val = 1 -calcDistBetweenMeans(cMeanDigits,tMeanDigits);
+     		}
+     		else{
+     		
+     		val = 1 -calcDistBetweenMeans(cMeanDigits,tMeanDigits)
+     				*calcDistBetweenMeans(cMeanLetters,tMeanLetters);
+     		}
+     		
      	}
      	else {
+     		
      		val = andInt/(orInt*1.0);
      	}
     	return val;
+    	
+    
     }
     
     
-/* returns a list with length of the Domain Entries*/
+    /* returns a list with length of the Domain Entries*/
 	public List<Integer> getDomainLength(Domain d){
 		List<Integer> entriesLength = new ArrayList<Integer>();
 		for (DomainEntry de : d.getEntries()){
@@ -191,15 +237,33 @@ public class DomainAlgorithm extends TermAlgorithm
 		return entriesLength;
 	}
 	
-  
-		             
-		  
-		          
-		  
-		               
-		  
-		           
-		           
-		           
+	/* returns a list with length of digit substrings the Domain Entries*/
+	public List<Integer> getDomainLengthByDigits(Domain d){
+		List<Integer> entriesLength = new ArrayList<Integer>();
+		String entryVal;
+		int counter;
+		for (DomainEntry de : d.getEntries()){
+			
+			entryVal=de.toString();
+			counter = 0;
+			
+		    for(char c : entryVal.toCharArray()) {
+		        if( c >= '0' && c<= '9') {
+		            ++counter;
+		        }
+		    }
+			entriesLength.add(counter);		
+		}
+		return entriesLength;
+	}
 	
+	public double calcDistBetweenMeans( double cMean, double tMean){
+		
+		return Math.abs(cMean-tMean)/(Math.max(cMean,tMean)*1.0);
+		
+		//return Math.abs(cMean-tMean+1)/((Math.max(cMean,tMean)+1)*1.0);
+		
+	}
+  
+
 }

@@ -8,7 +8,6 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entitie
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Edge;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.EdgeUtil;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Graph;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.LightBipartiteGraph;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.entities.Vertex;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.GraphUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
@@ -501,7 +500,8 @@ public final class MaxWeightBipartiteMatchingAlgorithm implements SchemaMatching
         return TopKAlgorithmsNamesEnum.MWBM_ALGORITHM.getName();
     }
     
-    private void CompareToFastAlgorithm(Set<Edge> SlowResult){
+    @SuppressWarnings("unused")
+	private void CompareToFastAlgorithm(Set<Edge> SlowResult){
         Set<Edge> FastResult = new HashSet<Edge>();
 		pot = new VertexArray(g, new Double(0));
 		FastMWBGAlgorithm FastAlg = new FastMWBGAlgorithm(g, pot);

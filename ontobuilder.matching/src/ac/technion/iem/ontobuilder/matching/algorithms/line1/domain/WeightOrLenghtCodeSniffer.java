@@ -3,30 +3,20 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
 
-public class CurrencySniffer implements DataTypeSniffer {
+public class WeightOrLenghtCodeSniffer implements DataTypeSniffer {
 
 	@Override
 	public boolean sniff(Domain d) {
-		String currChar = new String("$") ;
-		boolean flag = true;
+		String [] currencies = {"kg","g","gr","l","ml","kl","mcg","mg","mt","t","oz","lb","unit",
+				"cm","mm","km","m","nm","pm","in","ft","yd","mi"};
+		boolean flag = false;
 		for (DomainEntry de : d.getEntries()){
-			
 			String entryVal = de.toString();
-
-			if (entryVal.indexOf(currChar) == -1){
-				flag = false;
-				break;
-			}
-			else {
-				try	{
-					@SuppressWarnings("unused")
-					Double d1 = Double.parseDouble(entryVal.replace(currChar,""));
-					
+			for(String currChar :  currencies){
+				if (entryVal.equals(currChar)){
+					flag = true;
+					break;
 				}
-				catch (NumberFormatException e)	{
-					flag = false;
-				}
-				 
 			}
 		}
 	
@@ -36,7 +26,7 @@ public class CurrencySniffer implements DataTypeSniffer {
 	@Override
 	public String name() {
 		// TODO Auto-generated method stub
-		return "Currency";
+		return "Weight Unit";
 	}
 
 }

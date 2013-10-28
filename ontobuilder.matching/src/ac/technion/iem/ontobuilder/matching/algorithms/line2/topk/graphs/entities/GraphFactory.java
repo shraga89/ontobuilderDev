@@ -6,7 +6,6 @@ import java.util.Set;
 
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.graphs.utils.VertexArray;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.FastMWBGAlgorithm;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.impl.MaxWeightBipartiteMatchingAlgorithm;
 
 
 /**

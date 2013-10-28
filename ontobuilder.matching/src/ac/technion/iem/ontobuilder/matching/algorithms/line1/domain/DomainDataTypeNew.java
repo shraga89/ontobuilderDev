@@ -1,7 +1,8 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 
+public enum DomainDataTypeNew {
 
-public enum DomainDataType {
+	
 	NUMERIC(new NumberSniffer()),
 	DAY(new DaySniffer()),
 	MONTH(new MonthSniffer()),
@@ -11,9 +12,22 @@ public enum DomainDataType {
     BOOLEAN(new BooleanSniffer()),
     CURRENCY(new CurrencySniffer()),
     PHONE(new PhoneSniffer()),
-    DOUBLE(new DoubleSniffer());
+    DOUBLE(new DoubleSniffer()),
+	
+	// new sniffers
+	PersonName(new PersonNameSniffer()),
+	DaysOfWeek (new DaysOfWeekSniffer()),
+    CurrencyCode( new CurrencyCodeSniffer()),
+	ISBN(new ISBNCodeSniffer()),
+	Price ( new PriceSniffer()),
+	UOMCode ( new WeightOrLenghtCodeSniffer()),
+	UOMField ( new WeightOrLenghtFieldSniffer()),
+	DateTime (new DateTimeSniffer()),
+	Time( new TimeSniffer());
+	
+	
 
-private DomainDataType(DataTypeSniffer sniff)
+private DomainDataTypeNew(DataTypeSniffer sniff)
 {
 	this.sniff=sniff;
 }
@@ -26,4 +40,5 @@ public DataTypeSniffer getSniff() {
 }
 
 	private DataTypeSniffer sniff;
+
 }
