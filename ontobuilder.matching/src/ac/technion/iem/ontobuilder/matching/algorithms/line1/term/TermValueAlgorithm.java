@@ -274,6 +274,7 @@ public class TermValueAlgorithm extends AbstractAlgorithm
 //            }
 //            // end gabi
 
+            mode = FLM_ONLY;
             matchInformation = buildMatchInformation(matchMatrix, candidateOntology, targetOntology);
 
             // haggai
