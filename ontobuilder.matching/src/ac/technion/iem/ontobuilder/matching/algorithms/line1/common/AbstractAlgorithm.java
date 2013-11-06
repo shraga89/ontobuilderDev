@@ -22,6 +22,7 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 abstract public class AbstractAlgorithm implements Algorithm
 {
     public static final int NO_MODE = 0;
+    public static final int FLM_ONLY = 1;
 
     protected String pluginName;
     protected int mode = NO_MODE;
@@ -202,7 +203,8 @@ abstract public class AbstractAlgorithm implements Algorithm
     }
 
     /**
-     * Builds match information
+     * Builds match information from matrix by retaining the max value of each row over threshold
+     * TODO: remove SLM features from this FLM template. 
      *
      * @param matchMatrix the match matrix
      * @return {@link MatchInformation}
@@ -211,25 +213,44 @@ abstract public class AbstractAlgorithm implements Algorithm
     {
         MatchInformation matchInformation = new MatchInformation(candidate, target);
 
-        for (int j = 0; j < candidateTerms.size(); j++)
+        if (mode==NO_MODE)
         {
-            Term originalCandidateTerm = (Term) originalCandidateTerms.get(j);
-            Term maxTargetTerm = null;
-            double maxEffectiveness = -1;
-            for (int i = 0; i < targetTerms.size(); i++)
-            {
-                Term originalTargetTerm = (Term) originalTargetTerms.get(i);
-                if (matchMatrix[j][i] >= threshold && matchMatrix[j][i] >= maxEffectiveness)
-                {
-                	assert(maxEffectiveness<=1.0);
-                    maxEffectiveness = matchMatrix[j][i];
-                    maxTargetTerm = originalTargetTerm;
-                }
-            }
-            if (maxTargetTerm != null && maxEffectiveness>0)
-                matchInformation.updateMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
+        	for (int j = 0; j < candidateTerms.size(); j++)
+	        {
+	            Term originalCandidateTerm = (Term) originalCandidateTerms.get(j);
+	            Term maxTargetTerm = null;
+	            double maxEffectiveness = -1;
+	            for (int i = 0; i < targetTerms.size(); i++)
+	            {
+	                Term originalTargetTerm = (Term) originalTargetTerms.get(i);
+	                if (matchMatrix[j][i] >= threshold && matchMatrix[j][i] >= maxEffectiveness)
+	                {
+	                	assert(maxEffectiveness<=1.0);
+	                    maxEffectiveness = matchMatrix[j][i];
+	                    maxTargetTerm = originalTargetTerm;
+	                }
+	            }
+	            if (maxTargetTerm != null && maxEffectiveness>0)
+	                matchInformation.updateMatch(maxTargetTerm, originalCandidateTerm, maxEffectiveness);
+	        }
+        } else {//no FLM
+        	for (int j = 0; j < candidateTerms.size(); j++)
+	        {
+	            Term originalCandidateTerm = (Term) originalCandidateTerms.get(j);
+	            for (int i = 0; i < targetTerms.size(); i++)
+	            {
+	                Term originalTargetTerm = (Term) originalTargetTerms.get(i);
+	                if (matchMatrix[j][i] >= threshold)
+	                {
+	                	assert(matchMatrix[j][i]<=1.0);
+	                	matchInformation.updateMatch(originalTargetTerm, originalCandidateTerm,matchMatrix[j][i]);
+	                }
+	            }
+	        }
+	        
         }
         return matchInformation;
+	            
     }
 
 //    // added by haggai 13/12/03 - for meta matching use

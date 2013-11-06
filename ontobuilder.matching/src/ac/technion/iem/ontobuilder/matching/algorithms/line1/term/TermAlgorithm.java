@@ -134,6 +134,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             // changed haggai - 6/12/03
             MatchMatrix matchMatrix = MatchOntologyHandler.createMatchMatrix(originalTargetTerms,
                 targetTerms, originalCandidateTerms, candidateTerms, this);
+            mode = FLM_ONLY;
             matchInformation = buildMatchInformation(matchMatrix.transpose(),candidateOntology, targetOntology);
 //            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
 //            matchInformation.setTargetOntology(targetOntology);
