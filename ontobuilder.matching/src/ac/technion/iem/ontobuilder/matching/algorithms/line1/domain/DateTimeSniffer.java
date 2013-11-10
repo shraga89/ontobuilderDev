@@ -1,6 +1,5 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 
-import static java.lang.System.out;
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

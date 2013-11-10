@@ -215,7 +215,7 @@ public final class SchemaMatchingAlgorithmsRunner implements TKM
                 initialSchemataIDs.length, true, rnNames, lnNames);
             bg.buildAdjMatrix();
             kba = new KBest_Algorithm(bg);
-            bestMatching = kba.getNextMatching(true);
+            bestMatching = kba.getNextMatching(false);
         }
         catch (Throwable e)
         {

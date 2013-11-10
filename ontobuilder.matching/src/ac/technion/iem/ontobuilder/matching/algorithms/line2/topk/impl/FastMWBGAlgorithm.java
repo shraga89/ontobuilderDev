@@ -95,7 +95,7 @@ public class FastMWBGAlgorithm implements SchemaMatchingsAlgorithm {
      */
     public Set<Edge> runAlgorithm()
     {
-    	System.out.println("Fast MWBG is Running");
+    	//System.out.println("Fast MWBG is Running");
         Set<Edge> result = new HashSet<Edge>();
         if (lg.getSize()==0)
             return result;
@@ -150,7 +150,7 @@ public class FastMWBGAlgorithm implements SchemaMatchingsAlgorithm {
         		result.add(new Edge(le.gettID(),b,le.getW(),true));
         	}
         }
-        System.out.println("Fast MWBG has finished");
+        //System.out.println("Fast MWBG has finished");
         return result;
         
 

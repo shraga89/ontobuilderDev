@@ -128,12 +128,15 @@ public class KBest_Algorithm implements TopKAlgorithm
                     if (treeSaved)
                         maxLeaf.addSon(tmpNode);// O(1) marked// haggai 10/1/04
                 }
+                
                 if (tr.getLeaves().size() >= 2)
                     secondBestLeaf = tr.getSecondBestLeaf();
             }
-            // added by Haggai 4/1/05
-            //
-            // new version 10/1/04
+            else
+            {
+            	maxLeaf = tr.getMaxLeaf();
+            }
+        
             Set<Edge> match = maxLeaf.getMatching();
             maxLeaf.nullify(false);
             maxLeaf = null;
