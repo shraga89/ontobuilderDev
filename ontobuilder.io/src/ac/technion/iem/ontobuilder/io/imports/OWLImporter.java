@@ -7,6 +7,7 @@ import java.util.Set;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -29,7 +30,6 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.util.QNameShortFormProvider;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLDataPropertyAssertionAxiomImpl;
-
 import ac.technion.iem.ontobuilder.core.ontology.Attribute;
 import ac.technion.iem.ontobuilder.core.ontology.Domain;
 import ac.technion.iem.ontobuilder.core.ontology.DomainEntry;
@@ -293,11 +293,20 @@ public class OWLImporter implements Importer {
 	 * @return
 	 */
 	private Term makeTerm(OWLEntity cls) {
-		Term t = new Term(q.getShortForm(cls)); // pm.getShortForm(cls));
-		t.addAttribute(new Attribute("name",q.getShortForm(cls)));
-		t.addAttribute(new Attribute("resourceID",cls.getIRI().toString()));
+		String label = q.getShortForm(cls);
+		String name = q.getShortForm(cls);
+		String annotation = "";
 		for (OWLAnnotation a : cls.getAnnotations(owlO))
-			t.addAttribute(new Attribute(a.getProperty().toString(),a.getValue()));
+		{
+			if (a.getProperty().toString().equals("rdfs:label"))
+				label = a.getValue().toString();
+			if (a.getProperty().toString().equals("rdfs:comment"))
+				annotation = a.getValue().toString();
+		}
+		Term t = new Term(label); // pm.getShortForm(cls));
+		t.addAttribute(new Attribute("name",name));
+		t.addAttribute(new Attribute("resourceID",cls.getIRI().toString()));
+		t.addAttribute(new Attribute("annotation",annotation));
 //		String clsTypeName = cls.getEntityType().getName();
 //		if (clsTypeName == "Class")
 //		{
