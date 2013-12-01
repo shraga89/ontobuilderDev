@@ -283,7 +283,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	private class AbbrExpand {
 
 		// CONFIGURATION
-		public String WORD_LIST_PATH = "data/alist.txt";
+		public String WORD_LIST_PATH = "./data/alist.txt";
 		private String[] wordList;
 		private HashMap<String, String> abbrCache;
 
@@ -299,11 +299,18 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			String ptrn = "\\b";
 			for (int i=0, n = abbr.length(); i < n; i++) {
 				char c1 = Character.toLowerCase(abbr.charAt(i));
+				if (!Character.isLetterOrDigit(c1)) continue;
 				ptrn = ptrn.concat(c1 +"\\w*");
 			}
 			ptrn = ptrn.concat("\\b");
+			try {
 			Pattern pattern = Pattern.compile(ptrn);
 			return pattern;
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		/* 
