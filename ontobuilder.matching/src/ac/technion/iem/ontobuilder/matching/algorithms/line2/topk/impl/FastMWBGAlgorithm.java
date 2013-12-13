@@ -72,7 +72,7 @@ public class FastMWBGAlgorithm implements SchemaMatchingsAlgorithm {
      */
     public FastMWBGAlgorithm(BipartiteGraph g, VertexArray pot)
     {
-    	System.out.println("Fast MWBG is now initialized");
+    	//System.out.println("Fast MWBG is now initialized");
     	lg = new LightBipartiteGraph(g);
         lgSize = lg.getSize();
         scaleWeights();

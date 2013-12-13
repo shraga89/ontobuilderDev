@@ -53,8 +53,47 @@ import com.sun.xml.xsom.parser.XSOMParser;
  * Elements are mapped to terms. Element attributes are mapped to terms as well. Tree structure retained through 
  * Term-Subterm construct. 
  */
+
 public class XSDImporterUsingXSOM implements Importer
 {
+	public static final HashMap<String,String> TypeDomMAP;
+	
+	static
+    {
+		TypeDomMAP = new HashMap<String, String>();
+		TypeDomMAP.put("decimal", "Float");
+		TypeDomMAP.put("byte", "Integer");
+		TypeDomMAP.put("int", "Integer");
+		TypeDomMAP.put("integer", "Integer");
+		TypeDomMAP.put("long", "Integer");
+		TypeDomMAP.put("short", "Integer");
+		TypeDomMAP.put("negativeInteger", "Negative Integer");
+		TypeDomMAP.put("nonNegativeInteger", "Positive Integer");
+		TypeDomMAP.put("nonPositiveInteger", "Negative Integer");
+		TypeDomMAP.put("positiveInteger", "Positive Integer");
+		TypeDomMAP.put("unsignedLong", "Positive Integer");
+		TypeDomMAP.put("unsignedInt", "Positive Integer");
+		TypeDomMAP.put("unsignedshort", "Positive Integer");
+		TypeDomMAP.put("unsignedByte", "Positive Integer");
+		TypeDomMAP.put("date", "Date");
+		TypeDomMAP.put("time", "Time");
+		TypeDomMAP.put("ENTITIES", "Text");
+		TypeDomMAP.put("ENTITY", "Text");
+		TypeDomMAP.put("ID", "Text");
+		TypeDomMAP.put("IDREF", "Text");
+		TypeDomMAP.put("IDREFS", "Text");
+		TypeDomMAP.put("language", "Text");
+		TypeDomMAP.put("Name", "Text");
+		TypeDomMAP.put("NCName", "Text");
+		TypeDomMAP.put("NMTOKEN", "Text");
+		TypeDomMAP.put("normalizedString", "Text");
+		TypeDomMAP.put("QName", "Text");
+		TypeDomMAP.put("string", "Text");
+		TypeDomMAP.put("token", "Text");
+		TypeDomMAP.put("boolean", "Boolean");
+		TypeDomMAP.put("anyURI", "URL");
+    }
+	
 	private Ontology xsdOntology;
 	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
     /**
@@ -164,7 +203,7 @@ public class XSDImporterUsingXSOM implements Importer
 		{
 			if (provMap.containsKey(t.getProvenance()))
 			{
-				Domain d = new Domain(t.getName() + "Dom");
+				Domain d = t.getDomain();
 				HashSet<String> instanceSet = new HashSet<String>(provMap.get(t.getProvenance()));
 				for(String i : instanceSet)
 					d.addEntry(new DomainEntry(d,i));
@@ -467,7 +506,10 @@ public class XSDImporterUsingXSOM implements Importer
 		term.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("annotation",e.getAnnotation()));
 		if (e.getType().isGlobal())
 		{
-			term.setDomain(new Domain(e.getType().getName()));//TODO improve this by understanding the domain usage in ontobuilder matchers
+			String t = e.getType().getName();
+			String domName = (TypeDomMAP.containsKey(t)?TypeDomMAP.get(t):t);
+								
+			term.setDomain(new Domain(domName));
 			term.setSuperClass(xsdOntology.findClass(e.getType().getName()));
 		}
 		if (parent != null) 

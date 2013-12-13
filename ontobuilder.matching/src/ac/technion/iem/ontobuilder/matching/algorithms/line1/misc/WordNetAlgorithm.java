@@ -320,6 +320,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			String ptrn = "^";
 			for (int i=0, n = abbr.length(); i < n; i++) {
 				char c1 = Character.toLowerCase(abbr.charAt(i));
+				if (!Character.isLetterOrDigit(c1)) continue;
 				ptrn = ptrn.concat("[" + c1 +"]\\w*");
 				if (i+1 < n) {
 					ptrn = ptrn.concat("[\\s]+");
