@@ -18,6 +18,7 @@ import ac.technion.iem.ontobuilder.io.utils.xml.schema.XSDSimpleElement;
 /**
  * <p>Title: XSDImporter</p>
  * Implements {@link Importer}
+ * @deprecated use XSOM Based XSD Importer instead
  */
 public class XSDImporter implements Importer
 {

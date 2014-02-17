@@ -1312,5 +1312,14 @@ public class Term extends OntologyClass
             Term term = (Term) i.next();
             term.buildPrecedenceRelationships(cells, attributes, cs);
         }
+
+    }
+    
+    public int hashCode()
+    {
+    	if (id==-1)
+    		return toString().hashCode();
+    	else
+    		return (new Long(id)).hashCode(); 
     }
 }

@@ -205,7 +205,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				for (String targetWord : targetWords) {
 					targetWord = StringUtilities.getSingularize(targetWord);
 					if ( StringUtilities.isWordInDiction(targetWord) ) {
-						double jiangConrathDistsace = WS4J.calcDistanceByJiangConrath(candidateWord,targetWord);
+						double jiangConrathDistsace = WS4J.runJCN(candidateWord,targetWord);
 						double jiangConrathSimilarity = 0;
 						/*if (jiangConrathDistsace !=0) {
 							jiangConrathSimilarity = -1/jiangConrathDistsace;

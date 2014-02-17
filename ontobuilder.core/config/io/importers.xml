@@ -10,13 +10,13 @@
                 <icon>wsdl.gif</icon>
         </importer>
 	<importer>
-                <classpath>ac.technion.iem.ontobuilder.io.imports.XSDImporter</classpath>
+                <classpath>ac.technion.iem.ontobuilder.io.imports.XSDImporterUsingXSOM</classpath>
                 <type>XML Schema</type>
                 <extension>xsd</extension>
 		<shortDescription>XML Schema</shortDescription>
 		<longDescription>Import XML Schema file and generate ontology</longDescription>
                 <icon>xsd.gif</icon>
-        </importer>
+    </importer>
 	<importer>
                 <classpath>ac.technion.iem.ontobuilder.io.imports.HTMLImporter</classpath>
                 <type>HTML</type>

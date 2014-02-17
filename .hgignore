@@ -21,3 +21,6 @@ ontobuilder.io/lib/HermiT
 ontobuilder.io/lib/HermiT.zip
 ontobuilder.io/lib/owlapi-3.4.5.zip
 ontobuilder.io/lib/owlapi-3.4.5/
+ontobuilder.core/target/
+ontobuilder.io/target/
+ontobuilder.matching/target/
