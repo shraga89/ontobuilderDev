@@ -14,16 +14,20 @@ public class TokenizedWordGreedyStarAlgorithm implements TokenizedWordAlgorithm 
 	public List<String> tokenizeTerms(Term term) {
 		
 		List<String> result = new ArrayList<String>();
+		Term temp = term.clone();
+		
+		
+		
 		if (term != null) {
 			
-			String fullTermName = term.getName();
+			String fullTermName = new String(temp.getName());
 			if (fullTermName != null) {
 				fullTermName = fullTermName.replaceAll("[^a-zA-Z]", "");
 			}
 			boolean continueTokenizing = true;
 			
 			TokenizedWordGreedyAlgorithm greedyAlgorithm = new TokenizedWordGreedyAlgorithm();
-			List<String> greedyResult = greedyAlgorithm.tokenizeTerms(term);
+			List<String> greedyResult = greedyAlgorithm.tokenizeTerms(temp);
 			while (continueTokenizing){
 				
 				result.addAll(greedyResult);
@@ -36,8 +40,8 @@ public class TokenizedWordGreedyStarAlgorithm implements TokenizedWordAlgorithm 
 								fullTermName.length() - name.length());
 											}
 				}
-				term.setName(fullTermName);
-				greedyResult = greedyAlgorithm.tokenizeTerms(term);
+				temp.setName(fullTermName); 
+				greedyResult = greedyAlgorithm.tokenizeTerms(temp);
 				if (greedyResult.isEmpty() == true){
 					continueTokenizing=false;
 				}

@@ -271,7 +271,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		ArrayList<Term> result = new ArrayList<Term>();
 		for (int i = 0; i < terms.size(); i++)
 		{
-			result.add(i, terms.get(i));
+			result.add(i, terms.get(i).clone());
 		}
 		return result;
 	}
