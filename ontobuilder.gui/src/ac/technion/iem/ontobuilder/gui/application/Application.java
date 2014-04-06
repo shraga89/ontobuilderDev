@@ -151,7 +151,7 @@ public abstract class Application extends JPanel
     }
 
     /**
-     * Initialise the application (parameters, option, actions, GUI components etc)
+     * Initialize the application (parameters, option, actions, GUI components etc)
      */
     protected void init()
     {

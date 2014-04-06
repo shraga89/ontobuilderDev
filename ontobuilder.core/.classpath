@@ -13,10 +13,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/ws4j-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/cm-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jtidy-4aug2000r7-dev.jar"/>
+	<classpathentry kind="lib" path="lib/jdom2-2.0.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

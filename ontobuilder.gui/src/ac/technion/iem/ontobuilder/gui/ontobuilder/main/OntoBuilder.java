@@ -145,6 +145,7 @@ import com.jgraph.JGraph;
  */
 public final class OntoBuilder extends Application
 {
+	public static enum PanelOption{ONTOLOGY_MAIN,ONTOSBS_Source, ONTOSBS_Target};
     public static FileFilter ontologyFileFilter = new OntologyFileFilter();
     public static FileFilter ontologyONTFileFilter = new OntologyONTFileFilter();
     public static FileFilter ontologyXMLFileFilter = new OntologyXMLFileFilter();
@@ -163,6 +164,7 @@ public final class OntoBuilder extends Application
     protected LowerPanel lowerPanel;
     protected MainPanel mainPanel;
     protected ArrayList<Process> runningProcesses;
+    protected boolean ontologyViewSBS = false; 
 
     public static void main(String args[])
     {
@@ -1276,6 +1278,30 @@ public final class OntoBuilder extends Application
             }
         }
 
+        //Toggle Ontology View
+        action = new AbstractAction(ApplicationUtilities.getResourceString("action.toggleOView"),
+                ApplicationUtilities.getImage("options.gif"))
+            {
+                private static final long serialVersionUID = 1L;
+
+                public void actionPerformed(ActionEvent e)
+                {
+                    commandToggleOView();
+                }
+            };
+            action.putValue(Action.LONG_DESCRIPTION,
+                ApplicationUtilities.getResourceString("action.toggleOView.longDescription"));
+            action.putValue(Action.SHORT_DESCRIPTION,
+                ApplicationUtilities.getResourceString("action.toggleOView.shortDescription"));
+            action.putValue(
+                Action.MNEMONIC_KEY,
+                new Integer(KeyStroke.getKeyStroke(
+                    ApplicationUtilities.getResourceString("action.toggleOView.mnemonic")).getKeyCode()));
+            action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(ApplicationUtilities
+                .getResourceString("action.toggleOView.accelerator")));
+            actions.addAction("toggleOView", action);
+        
+        
         // Tools
         ToolMetadata[] tools = ToolsUtilities.getAllToolMetadata();
 
@@ -1999,7 +2025,7 @@ public final class OntoBuilder extends Application
                             try
                             {
                                 Ontology ontology = OntologyGui.open(file);
-                                addOntologyToPanel(ontology);
+                                addOntologyToPanel(ontology, PanelOption.ONTOLOGY_MAIN);
                             }
                             catch (IOException e)
                             {
@@ -2035,7 +2061,7 @@ public final class OntoBuilder extends Application
                                 Importer importer = ImportUtilities.getImporterPlugin(FileUtilities
                                     .getFileExtension(file));
                                 Ontology ontology = importer.importFile(file);
-                                addOntologyToPanel(ontology);
+                                addOntologyToPanel(ontology, PanelOption.ONTOLOGY_MAIN);
                                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
                             }
@@ -2074,8 +2100,9 @@ public final class OntoBuilder extends Application
      * Add an ontology to the panel
      *
      * @param ontology the {@link Ontology} to add
+     * @param option to use (from enum type)
      */
-    public void addOntologyToPanel(Ontology ontology)
+    public void addOntologyToPanel(Ontology ontology, PanelOption po)
     {
         if (ontology == null)
             return;
@@ -2106,8 +2133,18 @@ public final class OntoBuilder extends Application
                     lowerPanel.propertiesPanel.showProperties(null);
             }
         });
-        mainPanel.ontologyPanel.addOntology(ontologyGui);
-        mainPanel.selectPanel(MainPanel.ONTOLOGY_TAB);
+        if (po.equals(PanelOption.ONTOLOGY_MAIN))
+        {
+        	mainPanel.ontologyPanel.addOntology(ontologyGui);
+        	mainPanel.selectPanel(MainPanel.ONTOLOGY_TAB);
+        }
+        else if (po.equals(PanelOption.ONTOSBS_Source))
+        {
+        	mainPanel.sbsPanel.addOntology(ontologyGui,true);
+        } else
+        {
+        	mainPanel.sbsPanel.addOntology(ontologyGui,false);
+        }
     }
 
     /**
@@ -2131,7 +2168,7 @@ public final class OntoBuilder extends Application
         catch (IOException e)
         {
         }
-        addOntologyToPanel(ontology);
+        addOntologyToPanel(ontology, PanelOption.ONTOLOGY_MAIN);
     }
 
     /**
@@ -2160,7 +2197,7 @@ public final class OntoBuilder extends Application
                     try
                     {
                         Ontology ontology = OntologyGui.open(file);
-                        addOntologyToPanel(ontology);
+                        addOntologyToPanel(ontology, PanelOption.ONTOLOGY_MAIN);
                     }
                     catch (IOException e)
                     {
@@ -2410,7 +2447,7 @@ public final class OntoBuilder extends Application
 
                             Importer importer = ImportUtilities.getImporterPlugin(type);
                             Ontology ontology = importer.importFile(file);
-                            addOntologyToPanel(ontology);
+                            addOntologyToPanel(ontology, PanelOption.ONTOLOGY_MAIN);
                             setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
                         }
@@ -2635,7 +2672,7 @@ public final class OntoBuilder extends Application
                 OntologyMergeWizard wizard = new OntologyMergeWizard(frame, ontologies, ontology,
                     algorithms);
                 Ontology mergedOntology = wizard.startOntologyMerge();
-                addOntologyToPanel(mergedOntology);
+                addOntologyToPanel(mergedOntology, PanelOption.ONTOLOGY_MAIN);
             }
         });
     }
@@ -2672,7 +2709,7 @@ public final class OntoBuilder extends Application
                 OntologyMetaTopKWizard wizard = new OntologyMetaTopKWizard(frame, ontologies,
                     ontology, algorithms);
                 Ontology mergedOntology = wizard.startOntologyMerge();
-                addOntologyToPanel(mergedOntology);
+                addOntologyToPanel(mergedOntology,PanelOption.ONTOLOGY_MAIN);
             }
         });
     }
@@ -2925,5 +2962,34 @@ public final class OntoBuilder extends Application
         dialog.setContentPane(panel);
 
         dialog.setVisible(true);// show();
+    }
+    
+    public void commandToggleOView()
+    {
+    	System.out.println("Toggling Ontology View");
+    	if (ontologyViewSBS)
+    	{
+    		//clear ontologies from sbs panel, return focus to Ontology panel
+    		mainPanel.sbsPanel.closeSourceOntology();
+    		mainPanel.sbsPanel.closeTargetOntology();
+    		mainPanel.selectPanel(MainPanel.ONTOLOGY_TAB);
+    	}
+    	else
+    	{
+    		//check if two ontologies are open if not error message
+    		if (this.mainPanel.ontologyPanel.getOntologies().size()!=2)
+    		{
+    			//TODO error message
+    			String msg = "Side by Side View requires two ontologies to be open";
+    			System.err.println(msg);
+    			return;
+    		}
+    		//TODO create ontologyGui
+    		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
+    		addOntologyToPanel(v.get(0), PanelOption.ONTOSBS_Source);
+    		addOntologyToPanel(v.get(1), PanelOption.ONTOSBS_Target);
+    		mainPanel.selectPanel(MainPanel.ONTOLOGY_SBS_TAB);
+    	}
+    	this.ontologyViewSBS = (this.ontologyViewSBS?false:true);
     }
 }

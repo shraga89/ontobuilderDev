@@ -109,8 +109,7 @@ public class OntoBuilderMenuBar extends MenuBar
                 ExporterMetadata exporter = exporters[i];
                 if (exporter.getExClass().equalsIgnoreCase(ExportersTypeEnum.ONTOLOGY.getName()))
                 {
-                    addMenuItem(exportMenu, application.getAction("export." + exporter.getType()),
-                        true);
+                    addMenuItem(exportMenu, application.getAction("export." + exporter.getType()),true);
                 }
             }
         }
@@ -178,6 +177,12 @@ public class OntoBuilderMenuBar extends MenuBar
         // Meta Top K
         addMenuItem(menuOntology, application.getAction("metaTopK"));
 
+        //View
+        JMenu menuView = new JMenu(ApplicationUtilities.getResourceString("menu.view"));
+        menuView.setMnemonic(ApplicationUtilities.getResourceString("menu.view.mnemonic").charAt(0));
+        add(menuView);
+        addMenuItem(menuView, application.getAction("toggleOView"));
+        
         // Tools menu
         JMenu menuTools = new JMenu(ApplicationUtilities.getResourceString("menu.tools"));
         menuTools.setMnemonic(ApplicationUtilities.getResourceString("menu.tools.mnemonic").charAt(
@@ -220,7 +225,13 @@ public class OntoBuilderMenuBar extends MenuBar
         addMenuItem(menuTools, application.getAction("options"));
 
         add(Box.createHorizontalGlue());
+        
 
+        // OntoParser
+        addMenuItem(menuTools, application.getAction("ontoparser"));
+        menuTools.addSeparator();
+
+        
         // Help menu
         JMenu menuHelp = new JMenu(ApplicationUtilities.getResourceString("menu.help"));
         menuHelp

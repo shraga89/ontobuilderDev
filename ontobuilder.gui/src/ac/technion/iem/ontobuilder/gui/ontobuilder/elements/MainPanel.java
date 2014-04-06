@@ -26,6 +26,7 @@ public class MainPanel extends TabbedPane
     public final static String SITEMAP_PANEL_VISIBLE_PROPERTY = "sitemapPanelVisible";
     public final static String ELEMENTS_PANEL_VISIBLE_PROPERTY = "elementsPanelVisible";
     public final static String ONTOLOGY_PANEL_VISIBLE_PROPERTY = "ontologyPanelVisible";
+    public final static String ONTOLOGY_PANEL_SBS_PROPERTY = "ontologyPanelSBSVisible";
     public final static String TOOLS_PANEL_VISIBLE_PROPERTY = "toolsPanelVisible";
 
     public final static String HTML_TAB = "html";
@@ -34,6 +35,7 @@ public class MainPanel extends TabbedPane
     public final static String SITEMAP_TAB = "sitemap";
     public final static String ELEMENTS_TAB = "elements";
     public final static String ONTOLOGY_TAB = "ontology";
+    public final static String ONTOLOGY_SBS_TAB = "ontologySBS";
     public final static String TOOLS_TAB = "tools";
 
     // public CobraHTMLPanel htmlPanel;
@@ -43,6 +45,7 @@ public class MainPanel extends TabbedPane
     public SiteMapPanel siteMapPanel;
     public ElementsPanel elementsPanel;
     public OntologyPanel ontologyPanel;
+    public OntologyPanelSBS sbsPanel;
     public ToolsPanel toolsPanel;
 
     protected JScrollPane htmlPanelScroll;
@@ -99,8 +102,13 @@ public class MainPanel extends TabbedPane
             toolsPanel = new ToolsPanel(ontoBuilder));
         tab6.setIcon(ApplicationUtilities.getImage("tools.gif"));
         addTab(tab6);
-
         toolsPanel.initToolTabs();
+        
+        Tab tab7 = new Tab(ONTOLOGY_SBS_TAB, ApplicationUtilities.getResourceString("panel.ontologySBS"),
+                sbsPanel = new OntologyPanelSBS(ontoBuilder));
+            tab7.setIcon(ApplicationUtilities.getImage("ontology.gif"));
+        addTab(tab7);
+            
 
         setTabVisible(HTML_TAB, Boolean.valueOf(ontoBuilder.getOption(HTML_PANEL_VISIBLE_PROPERTY))
             .booleanValue());
@@ -116,6 +124,8 @@ public class MainPanel extends TabbedPane
             Boolean.valueOf(ontoBuilder.getOption(ONTOLOGY_PANEL_VISIBLE_PROPERTY)).booleanValue());
         setTabVisible(TOOLS_TAB,
             Boolean.valueOf(ontoBuilder.getOption(TOOLS_PANEL_VISIBLE_PROPERTY)).booleanValue());
+        setTabVisible(ONTOLOGY_SBS_TAB,
+                Boolean.valueOf(ontoBuilder.getOption(ONTOLOGY_PANEL_SBS_PROPERTY)).booleanValue());
     }
 
     public void selectPanel(String panel)
@@ -135,5 +145,7 @@ public class MainPanel extends TabbedPane
             setSelectedComponent(ontologyPanel);
         else if (panel.equals(TOOLS_TAB))
             setSelectedComponent(toolsPanel);
+        else if (panel.equals(ONTOLOGY_SBS_TAB))
+        	setSelectedComponent(sbsPanel);
     }
 }
