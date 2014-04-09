@@ -2984,7 +2984,8 @@ public final class OntoBuilder extends Application
     			System.err.println(msg);
     			return;
     		}
-    		//TODO create ontologyGui
+    		//TODO remove placeholder panels
+    		//TODO label ontology tabs source and target
     		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
     		addOntologyToPanel(v.get(0), PanelOption.ONTOSBS_Source);
     		addOntologyToPanel(v.get(1), PanelOption.ONTOSBS_Target);
