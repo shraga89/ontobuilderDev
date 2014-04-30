@@ -86,6 +86,8 @@ public class OntologyPanel extends JTabbedPane
         Vector<Ontology> ontologies = new Vector<Ontology>();
         for (int i = 0; i < getTabCount(); i++)
         {
+        	if (!JScrollPane.class.isInstance(getComponentAt(i)))
+        			continue;
             JScrollPane scroll = (JScrollPane) getComponentAt(i);
             ontologies.add(((OntologyGui)(scroll.getViewport().getView())).getOntology());
         }

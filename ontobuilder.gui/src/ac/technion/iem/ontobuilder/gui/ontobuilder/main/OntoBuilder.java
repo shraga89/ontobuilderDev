@@ -2966,7 +2966,6 @@ public final class OntoBuilder extends Application
     
     public void commandToggleOView()
     {
-    	System.out.println("Toggling Ontology View");
     	if (ontologyViewSBS)
     	{
     		//clear ontologies from sbs panel, return focus to Ontology panel
@@ -2979,9 +2978,15 @@ public final class OntoBuilder extends Application
     		//check if two ontologies are open if not error message
     		if (this.mainPanel.ontologyPanel.getOntologies().size()!=2)
     		{
-    			//TODO error message
     			String msg = "Side by Side View requires two ontologies to be open";
     			System.err.println(msg);
+    			JOptionPane.showMessageDialog(
+                        OntoBuilder.this,
+                        ApplicationUtilities.getResourceString("error") + ": " +
+                            msg,
+                        ApplicationUtilities.getResourceString("error"),
+                        JOptionPane.ERROR_MESSAGE);
+    			
     			return;
     		}
     		//TODO remove placeholder panels

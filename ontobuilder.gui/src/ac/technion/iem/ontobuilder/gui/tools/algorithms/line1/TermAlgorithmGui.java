@@ -81,10 +81,11 @@ public class TermAlgorithmGui extends AbstractAlgorithmGui
                 new Double(_termAlgorithm.getJaroWinklerWeight())
             },
             {
-                ApplicationUtilities.getResourceString("algorithm.term.nGram"), new Integer(_termAlgorithm.getNGram())
+                ApplicationUtilities.getResourceString("algorithm.term.nGram"), 
+                new Integer(_termAlgorithm.getNGram())
             }
         };
-        JTable properties = new JTable(new PropertiesTableModel(columnNames, 10, data));
+        JTable properties = new JTable(new PropertiesTableModel(columnNames, data.length, data));
         TableColumn valueColumn = properties.getColumn(ApplicationUtilities
             .getResourceString("properties.value"));
         valueColumn.setCellRenderer(new PropertiesCellRenderer());
