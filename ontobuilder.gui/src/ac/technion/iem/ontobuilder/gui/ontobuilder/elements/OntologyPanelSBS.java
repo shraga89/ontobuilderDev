@@ -5,14 +5,9 @@ import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.table.TableModel;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
-import ac.technion.iem.ontobuilder.gui.match.MatchMatrixTableModel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -28,9 +23,7 @@ public class OntologyPanelSBS extends JPanel
     private static final long serialVersionUID = 1L;
     private OntologyPanel sourcePanel;
     private OntologyPanel targetPanel;
-    private JScrollPane miPane;
-    private MatchInformation mi;
-    private TableModel tm;
+    private MIPanel miPanel;
     /**
      * Constructs a default OntologyPanel
      * 
@@ -38,12 +31,10 @@ public class OntologyPanelSBS extends JPanel
      */
     public OntologyPanelSBS(OntoBuilder ontoBuilder)
     {
-    	JTable table = new JTable(30,30);
-        miPane = new JScrollPane(table);
-        //miPane.setLayout(new BorderLayout());
+        miPanel = new MIPanel();
 		JPanel topPane = new JPanel();
-		JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, miPane);
-		mainPane.setDividerLocation(0.3);
+		JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, miPanel);
+		mainPane.setDividerLocation(0.7);
 		topPane.setLayout(new GridLayout(1,2));
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, mainPane);
@@ -74,14 +65,14 @@ public class OntologyPanelSBS extends JPanel
    			sourcePanel.remove(0);
     		sourcePanel.addOntology(ontology);
     		if (hasTarget)
-    			setMi(new MatchInformation(ontology.getOntology(),targetPanel.getOntologies().get(0)));
+    			miPanel.setMi(ontology,targetPanel.getCurrentOntologyGui());
     	}
     	else 
     	{
     		targetPanel.remove(0);
     		targetPanel.addOntology(ontology);
     		if (hasSource)
-    			setMi(new MatchInformation(sourcePanel.getOntologies().get(0),ontology.getOntology()));
+    			miPanel.setMi(sourcePanel.getCurrentOntologyGui(),ontology);
     	}
     	
     }
@@ -130,19 +121,7 @@ public class OntologyPanelSBS extends JPanel
 	 * @return the matchInformation
 	 */
 	public MatchInformation getMi() {
-		return mi;
-	}
-
-	/**
-	 * @param mi the matchInformation to set
-	 */
-	private void setMi(MatchInformation mi) {
-		this.mi = mi;
-			tm = new MatchMatrixTableModel(mi,false);
-		JTable t = (JTable) ((JViewport) miPane.getComponent(0)).getComponent(0);
-		t.setModel(tm);
-		t.validate();
-		miPane.validate();
+		return miPanel.getMi();
 	}
 
 }

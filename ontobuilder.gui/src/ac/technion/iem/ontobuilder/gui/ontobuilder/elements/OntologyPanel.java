@@ -65,6 +65,20 @@ public class OntologyPanel extends JTabbedPane
         Ontology o = ((OntologyGui) scroll.getViewport().getView()).getOntology();
         return o;
     }
+    
+    /**
+     * Get the current ontologyGui
+     *
+     * @return the {@link OntologyGui}
+     */
+    public OntologyGui getCurrentOntologyGui()
+    {
+        JScrollPane scroll = (JScrollPane) getSelectedComponent();
+        if (scroll == null)
+            return null;
+        ;
+        return (OntologyGui) scroll.getViewport().getView();
+    }
 
     /**
      * Close the current ontology
