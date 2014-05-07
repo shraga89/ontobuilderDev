@@ -2195,4 +2195,8 @@ public class OntologyGui extends JPanel
 		return true;
 	}
 
+	//roee
+	public JTree get_tree(){
+		return ontologyTree;
+	}
 }
