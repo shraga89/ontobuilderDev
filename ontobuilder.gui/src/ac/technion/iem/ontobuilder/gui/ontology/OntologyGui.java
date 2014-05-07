@@ -92,6 +92,7 @@ import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.PopupListener;
 import ac.technion.iem.ontobuilder.gui.elements.PopupTrigger;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.ButtonINPUTElementGui;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.CheckboxINPUTElementGui;
@@ -2212,6 +2213,28 @@ public class OntologyGui extends JPanel
         ontologyTree.setSelectionPath(path);
         ontologyTree.scrollPathToVisible(path);
 		return true;
+	}
+	
+    /**
+     * Adds a term selection listener to ontologyPanel that
+     * updates the miPanel upon term selection
+     */
+    public void addTermListener() {
+    	addOntologySelectionListener(new OntologySelectionListener()
+        {
+            public void valueChanged(OntologySelectionEvent e)
+            {
+                Object object = e.getSelectedObject();
+                if (object == null)
+                    return;
+                if (object instanceof TermGui)
+                {
+                	TermGui tg = (TermGui)object;
+                	MIPanel.getMIPanel().setTargetTerm(tg.getTerm());;
+                }
+            }
+        });
+		
 	}
 
 }

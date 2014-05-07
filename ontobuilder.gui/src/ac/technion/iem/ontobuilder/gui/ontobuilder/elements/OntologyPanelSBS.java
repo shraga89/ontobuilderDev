@@ -31,7 +31,7 @@ public class OntologyPanelSBS extends JPanel
      */
     public OntologyPanelSBS(OntoBuilder ontoBuilder)
     {
-        miPanel = new MIPanel();
+        miPanel = MIPanel.getMIPanel();
 		JPanel topPane = new JPanel();
 		JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, miPanel);
 		mainPane.setDividerLocation(0.7);
@@ -73,7 +73,7 @@ public class OntologyPanelSBS extends JPanel
     		targetPanel.addOntology(ontology);
     		if (hasSource)
     			miPanel.setMi(candidatePanel.getCurrentOntologyGui(),ontology);
-    		targetPanel.addTermListener(this.miPanel);
+    		targetPanel.addTermListener();
     	}
     	
     }

@@ -107,14 +107,19 @@ public class OntologyPanel extends JTabbedPane
         }
         return ontologies;
     }
-    
+
     /**
-     * Adds a term selection listener to ontologyPanel that
+     * Adds a term selection listener to ontologyGui that
      * updates the miPanel upon term selection
-     * @param miPanel
      */
-    public void addTermListener(MIPanel miPanel) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void addTermListener() {
+    	for (int i = 0; i < getTabCount(); i++)
+        {
+        	if (!JScrollPane.class.isInstance(getComponentAt(i)))
+        			continue;
+            JScrollPane scroll = (JScrollPane) getComponentAt(i);
+            OntologyGui og = (OntologyGui)(scroll.getViewport().getView());
+            og.addTermListener();
+        }
+	}  
 }
