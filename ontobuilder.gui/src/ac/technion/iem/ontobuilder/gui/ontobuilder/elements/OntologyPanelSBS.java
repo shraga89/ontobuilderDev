@@ -21,7 +21,7 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 public class OntologyPanelSBS extends JPanel
 {
     private static final long serialVersionUID = 1L;
-    private OntologyPanel sourcePanel;
+    private OntologyPanel candidatePanel;
     private OntologyPanel targetPanel;
     private MIPanel miPanel;
     /**
@@ -38,12 +38,12 @@ public class OntologyPanelSBS extends JPanel
 		topPane.setLayout(new GridLayout(1,2));
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, mainPane);
-		sourcePanel = new OntologyPanel(ontoBuilder);
+		candidatePanel = new OntologyPanel(ontoBuilder);
         targetPanel = new OntologyPanel(ontoBuilder);
         
-        sourcePanel.add(new JLabel("Source"));
+        candidatePanel.add(new JLabel("Source"));
         targetPanel.add(new JLabel("Target"));
-        topPane.add(sourcePanel);
+        topPane.add(candidatePanel);
         topPane.add(targetPanel);
       
         
@@ -54,16 +54,16 @@ public class OntologyPanelSBS extends JPanel
      * Add an ontology
      *
      * @param ontology the {@link Ontology} to add
-     * @param toLeft if true, adds the ontology to source panel
+     * @param toCandidate if true, adds the ontology to candidate panel
      */
-    public void addOntology(final OntologyGui ontology,final boolean toSource)
+    public void addOntology(final OntologyGui ontology,final boolean toCandidate)
     {
-    	boolean hasSource = sourcePanel.getOntologies().size()>0;
+    	boolean hasSource = candidatePanel.getOntologies().size()>0;
     	boolean hasTarget = targetPanel.getOntologies().size()>0;
     	//TODO remove all arcs
-    	if (toSource){
-   			sourcePanel.remove(0);
-    		sourcePanel.addOntology(ontology);
+    	if (toCandidate){
+   			candidatePanel.remove(0);
+    		candidatePanel.addOntology(ontology);
     		if (hasTarget)
     			miPanel.setMi(ontology,targetPanel.getCurrentOntologyGui());
     	}
@@ -72,7 +72,8 @@ public class OntologyPanelSBS extends JPanel
     		targetPanel.remove(0);
     		targetPanel.addOntology(ontology);
     		if (hasSource)
-    			miPanel.setMi(sourcePanel.getCurrentOntologyGui(),ontology);
+    			miPanel.setMi(candidatePanel.getCurrentOntologyGui(),ontology);
+    		targetPanel.addTermListener(this.miPanel);
     	}
     	
     }
@@ -84,7 +85,7 @@ public class OntologyPanelSBS extends JPanel
      */
     public Ontology getSourceOntology()
     {
-        return sourcePanel.getCurrentOntology();
+        return candidatePanel.getCurrentOntology();
     }
     
     /**
@@ -104,7 +105,7 @@ public class OntologyPanelSBS extends JPanel
      */
     public void closeSourceOntology()
     {
-        sourcePanel.closeCurrentOntology();
+        candidatePanel.closeCurrentOntology();
     }
     
     /**

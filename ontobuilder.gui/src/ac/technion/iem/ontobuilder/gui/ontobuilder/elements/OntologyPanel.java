@@ -107,4 +107,14 @@ public class OntologyPanel extends JTabbedPane
         }
         return ontologies;
     }
+    
+    /**
+     * Adds a term selection listener to ontologyPanel that
+     * updates the miPanel upon term selection
+     * @param miPanel
+     */
+    public void addTermListener(MIPanel miPanel) {
+		// TODO Auto-generated method stub
+		
+	}
 }

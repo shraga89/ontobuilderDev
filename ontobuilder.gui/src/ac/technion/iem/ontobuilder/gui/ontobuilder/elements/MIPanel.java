@@ -2,13 +2,17 @@ package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Component;
 import java.awt.Label;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -19,6 +23,8 @@ import ac.technion.iem.ontobuilder.gui.elements.TextPane;
 import ac.technion.iem.ontobuilder.gui.match.MIPanelMatchTableModel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
+import ac.technion.iem.ontobuilder.gui.ontology.TermGui;
+import ac.technion.iem.ontobuilder.matching.algorithms.line1.term.TermAlgorithm;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 /**
@@ -71,10 +77,12 @@ public class MIPanel extends JPanel
 		this.candGui = candidate;
 		this.targGui = target;
 		this.mi = new MatchInformation(candidate.getOntology(),target.getOntology());
-		//TODO calculate suggestion MI
+		//TODO make algorithm choice interactive / property based
+		this.suggestions = targGui.match(candGui.getOntology(), new TermAlgorithm());
 		tm = new MIPanelMatchTableModel(mi,suggestions);
 		JTable t = (JTable) ((JViewport) miPane.getComponent(0)).getComponent(0);
 		t.setModel(tm);
+		t.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		t.removeColumn(t.getColumn("termIDs"));
 		t.validate();
 		miPane.validate();
@@ -88,10 +96,25 @@ public class MIPanel extends JPanel
 		};
 		ListSelectionListener selectionListener = new ListSelectionListener() {
 			
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				// TODO This should set focus in the candidate ontology gui on the selected term
+			
+			/**
+			 * Sets focus in the candidate ontology gui on the selected term
+			 * @Override
+			 */
+			public void valueChanged(ListSelectionEvent e) { 
+				if (e.getValueIsAdjusting()) return;
+				ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                if (!lsm.isSelectionEmpty()) {
+                    int selectedRow = lsm.getMinSelectionIndex();
+                    System.out.println("Row " + selectedRow
+                                       + " is now selected.");
+                    String termID = (String)tm.getValueAt(selectedRow,0);
+                    candGui.setSelectionToTerm(Long.parseLong(termID));
+    				//TODO show arc from target term to this term
+                }
 				
+				
+			
 			}
 		};
 		t.getSelectionModel().addListSelectionListener(selectionListener ); 
@@ -115,8 +138,8 @@ public class MIPanel extends JPanel
 	{
 		this.targetTerm = t;
 		this.ttt.setText(t.getName());
-		//TODO update Match Table
 		tm.setTerm(t);
+		miPane.validate();
 	}
 
 }

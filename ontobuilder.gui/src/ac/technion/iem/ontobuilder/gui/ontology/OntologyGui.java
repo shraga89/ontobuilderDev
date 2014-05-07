@@ -2195,4 +2195,23 @@ public class OntologyGui extends JPanel
 		return true;
 	}
 
+	/**
+	 * Sets selection path to term with supplied ID 
+	 * returns false if unsuccessful
+	 * @param termID
+	 * 
+	 */
+	public boolean setSelectionToTerm(long termID)
+	{
+		Term t = getTermByID(termID);
+		if (t==null)
+			return false;
+		OntologyTreeModel treeModel = (OntologyTreeModel) ontologyTree.getModel();
+		DefaultMutableTreeNode termNode = treeModel.findNodeWithUserObject(t);
+		TreePath path = new TreePath(treeModel.getPathToRoot(termNode));
+        ontologyTree.setSelectionPath(path);
+        ontologyTree.scrollPathToVisible(path);
+		return true;
+	}
+
 }
