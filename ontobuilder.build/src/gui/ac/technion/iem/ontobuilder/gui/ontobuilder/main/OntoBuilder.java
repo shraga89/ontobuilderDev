@@ -9,21 +9,14 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Line2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -36,7 +29,6 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -66,18 +58,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
-import javax.swing.text.Position;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import org.w3c.dom.Document;
 
 import ac.technion.iem.ontobuilder.core.biztalk.BizTalkUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
-import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.ontology.domain.DomainSimilarity;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelAdapter;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelEvent;
@@ -110,7 +97,6 @@ import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.UpperPanel;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionEvent;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionListener;
-import ac.technion.iem.ontobuilder.gui.ontology.TermGui;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolMetadata;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsException;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsUtilities;
@@ -147,7 +133,6 @@ import ac.technion.iem.ontobuilder.io.utils.dom.DOMNode;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
-import ac.technion.iem.ontobuilder.matching.algorithms.line2.topk.utils.Point;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 
@@ -181,8 +166,6 @@ public final class OntoBuilder extends Application
     protected ArrayList<Process> runningProcesses;
     protected boolean ontologyViewSBS = false; 
 
-    public boolean lines= false; //roee
-	
     public static void main(String args[])
     {
         try
@@ -2112,8 +2095,7 @@ public final class OntoBuilder extends Application
     public void commandPrint()
     {
     }
-    public int[][] line_coordinates={{0,0,0,0}}; //{x_start,y_start,x_end,y_end}
-    public String[] line_writing={""};
+
     /**
      * Add an ontology to the panel
      *
@@ -2132,35 +2114,9 @@ public final class OntoBuilder extends Application
                 Object object = e.getSelectedObject();
                 if (object == null)
                     return;
-                if (object instanceof ObjectWithProperties){
+                if (object instanceof ObjectWithProperties)
                     lowerPanel.propertiesPanel.showProperties(((ObjectWithProperties) object)
                         .getProperties());
-                  /*  if (object instanceof TermGui){
-                    	if (ontologyViewSBS){
-                    		System.out.println(object.toString());
-                    		line_coordinates[0][0]=  mainPanel.getBounds().x + mainPanel.ontologyPanel.getX()+ mainPanel.getMousePosition().x;
-                    		line_coordinates[0][1]=  12+ mainPanel.getBounds().y+ mainPanel.ontologyPanel.getY() + mainPanel.getMousePosition().y;
-                    		line_coordinates[0][2]= mainPanel.getBounds().x + mainPanel.sbsPanel.getX()+ mainPanel.sbsPanel.getWidth();
-                    		line_coordinates[0][3]= mainPanel.getBounds().y + mainPanel.sbsPanel.getY()+ mainPanel.sbsPanel.getHeight();
-                    		System.out.print(line_coordinates[0][0]+" ");
-                    		System.out.println(line_coordinates[0][1]+" ");
-                    		line_writing[0]= object.toString();
-                    		lines=true;
-                    		frame.repaint();
-                    		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
-                    		draw_line(v.get(0).getTerm(2),v.get(1).getTerm(0).getTerm(0),"0.8");
-                    	}
-                    }
-                    else {
-                    	lines=false;
-                    	frame.repaint();
-                    
-                    }*/
-                }
-                
-                    	
-                
-          
                 else
                     lowerPanel.propertiesPanel.showProperties(null);
             }
@@ -2190,17 +2146,7 @@ public final class OntoBuilder extends Application
         	mainPanel.sbsPanel.addOntology(ontologyGui,false);
         }
     }
-	public void paint( Graphics g ){
-    	super.paint(g);
-    	for (int i = 0; i < line_coordinates.length; i++){
-    		Line line = new Line(this.mainPanel.sbsPanel,(Graphics2D) g, line_coordinates[i][0], line_coordinates[i][1], line_coordinates[i][2], line_coordinates[i][3], line_writing[i], true, false);
-    		//line.color=Color.blue;
-        	if (lines){
-            	line.repaint();
-        	}
-    	}
 
-    	}
     /**
      * Execute the "NewOntology" command
      */
@@ -3020,6 +2966,7 @@ public final class OntoBuilder extends Application
     
     public void commandToggleOView()
     {
+    	System.out.println("Toggling Ontology View");
     	if (ontologyViewSBS)
     	{
     		//clear ontologies from sbs panel, return focus to Ontology panel
@@ -3032,74 +2979,17 @@ public final class OntoBuilder extends Application
     		//check if two ontologies are open if not error message
     		if (this.mainPanel.ontologyPanel.getOntologies().size()!=2)
     		{
+    			//TODO error message
     			String msg = "Side by Side View requires two ontologies to be open";
     			System.err.println(msg);
-    			JOptionPane.showMessageDialog(
-                        OntoBuilder.this,
-                        ApplicationUtilities.getResourceString("error") + ": " +
-                            msg,
-                        ApplicationUtilities.getResourceString("error"),
-                        JOptionPane.ERROR_MESSAGE);
-    			
     			return;
     		}
-    		//TODO remove placeholder panels
-    		//TODO label ontology tabs source and target
+    		//TODO create ontologyGui
     		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
     		addOntologyToPanel(v.get(0), PanelOption.ONTOSBS_Source);
     		addOntologyToPanel(v.get(1), PanelOption.ONTOSBS_Target);
     		mainPanel.selectPanel(MainPanel.ONTOLOGY_SBS_TAB);
-
     	}
     	this.ontologyViewSBS = (this.ontologyViewSBS?false:true);
-
     }
-	
-	public void draw_line(Term t1, Term t2, String sim_val){
-		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
-		OntologyGui ontologyGui1 = new OntologyGui(v.get(0));
-		OntologyGui ontologyGui2 = new OntologyGui(v.get(1));
-		JTree tree1= ontologyGui1.get_tree();
-		JTree tree2= ontologyGui2.get_tree();
-		final int position_x_root=mainPanel.getBounds().x + mainPanel.ontologyPanel.getX();
-		final int position_y_root=  mainPanel.getBounds().y + mainPanel.ontologyPanel.getY() + 85;
-		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
-		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
-		final int intervalX_size=28, intervalY_size=16;
-		line_coordinates[0][0]= (int) (position_x_root + ((node1.getPath().length)*intervalX_size)+ 1.5*(t1.toString().length()));
-		line_coordinates[0][1]= position_y_root + (Find_row_for_node(node1)*intervalY_size);
-		DefaultMutableTreeNode root2 = (DefaultMutableTreeNode) tree2.getModel().getRoot();
-		DefaultMutableTreeNode node2= findNode(root2,t2.toString());	
-		line_coordinates[0][2]= 300+ position_x_root+ ((node2.getPath().length)*intervalX_size);
-		line_coordinates[0][3]= position_y_root + (Find_row_for_node(node2)*intervalY_size);
-		line_writing[0]= sim_val;
-		lines=true;
-		frame.repaint();
-	}
-	public DefaultMutableTreeNode findNode( DefaultMutableTreeNode root, String search ) {
-
-	    @SuppressWarnings("rawtypes")
-		Enumeration nodeEnumeration = root.breadthFirstEnumeration();
-	    while( nodeEnumeration.hasMoreElements() ) {
-	        DefaultMutableTreeNode node =
-	            (DefaultMutableTreeNode)nodeEnumeration.nextElement();
-	        String found = node.getUserObject().toString();
-	        if( search.equals( found ) ) {
-	            return node;
-	        }
-	    }
-	    return null;
-	}
-	public int Find_row_for_node(DefaultMutableTreeNode node)
-	{
-		int row=0;
-		while (!node.isRoot()){
-			row+=1+node.getParent().getIndex(node);
-			node=(DefaultMutableTreeNode) node.getParent();
-		}
-		return (1+row);
-			
-		
-	}
-	
 }
