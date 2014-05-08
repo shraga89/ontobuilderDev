@@ -2229,6 +2229,7 @@ public class OntologyGui extends JPanel
                     return;
                 if (object instanceof TermGui)
                 {
+                	//TODO: boolean isTarget = MIPanel.getMIPanel();
                 	TermGui tg = (TermGui)object;
                 	MIPanel.getMIPanel().setTargetTerm(tg.getTerm());;
                 }

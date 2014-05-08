@@ -113,7 +113,7 @@ public final class MIPanel extends JPanel
 
 	public void setMi(OntologyGui candidate, OntologyGui target) {
 		this.candGui = candidate;
-		this.targGui = target;
+		this.setTargGui(target);
 		this.mi = new MatchInformation(candidate.getOntology(),target.getOntology());
 		//TODO make algorithm choice interactive / property based
 		OntoBuilderWrapper obw = new OntoBuilderWrapper();
@@ -205,6 +205,20 @@ public final class MIPanel extends JPanel
 	 */
 	public void setSuggB(SUGG_BEHAVIOR suggB) {
 		this.suggB = suggB;
+	}
+
+	/**
+	 * @return the targGui
+	 */
+	public OntologyGui getTargGui() {
+		return targGui;
+	}
+
+	/**
+	 * @param targGui the targGui to set
+	 */
+	public void setTargGui(OntologyGui targGui) {
+		this.targGui = targGui;
 	}
 
 	static class DecimalFormatRenderer extends DefaultTableCellRenderer {
