@@ -2124,7 +2124,7 @@ public final class OntoBuilder extends Application
     {
         if (ontology == null)
             return;
-        OntologyGui ontologyGui = new OntologyGui(ontology);
+        final OntologyGui ontologyGui = new OntologyGui(ontology);
         ontologyGui.addOntologySelectionListener(new OntologySelectionListener()
         {
             public void valueChanged(OntologySelectionEvent e)
@@ -2135,6 +2135,9 @@ public final class OntoBuilder extends Application
                 if (object instanceof ObjectWithProperties){
                     lowerPanel.propertiesPanel.showProperties(((ObjectWithProperties) object)
                         .getProperties());
+               if (object instanceof TermGui){
+            		Fold_tree(ontologyGui.get_tree());//testing fold tree func
+               }
                   /*  if (object instanceof TermGui){
                     	if (ontologyViewSBS){
                     		System.out.println(object.toString());
@@ -3102,4 +3105,18 @@ public final class OntoBuilder extends Application
 		
 	}
 	
+	public void Fold_tree(JTree tree){
+		int rows = tree.getRowCount();
+		if (rows > 0) {
+			for (int i = 0; i < rows; i++) {
+				tree.collapseRow(i);
+			}
+		}
+	}
+	public void unfold_tree(JTree tree) {
+		int rows = tree.getRowCount();
+		for (int i = 0; i < rows; i++) {
+	         tree.expandRow(i);
+	}
+	}
 }
