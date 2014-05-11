@@ -3023,7 +3023,7 @@ public final class OntoBuilder extends Application
     	if (ontologyViewSBS)
     	{
     		//clear ontologies from sbs panel, return focus to Ontology panel
-    		mainPanel.sbsPanel.closeSourceOntology();
+    		mainPanel.sbsPanel.closeCandidateOntology();
     		mainPanel.sbsPanel.closeTargetOntology();
     		mainPanel.selectPanel(MainPanel.ONTOLOGY_TAB);
     	}

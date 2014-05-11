@@ -79,11 +79,11 @@ public class OntologyPanelSBS extends JPanel
     }
 
     /**
-     * Get the source ontology
+     * Get the candidate ontology
      *
      * @return the {@link Ontology}
      */
-    public Ontology getSourceOntology()
+    public Ontology getCandidateOntology()
     {
         return candidatePanel.getCurrentOntology();
     }
@@ -99,11 +99,10 @@ public class OntologyPanelSBS extends JPanel
     }
 
     /**
-     * Close the source ontology
+     * Close the candidate ontology
      *
-     * @param ontologyGui the {@link Ontology} to close
      */
-    public void closeSourceOntology()
+    public void closeCandidateOntology()
     {
         candidatePanel.closeCurrentOntology();
     }
