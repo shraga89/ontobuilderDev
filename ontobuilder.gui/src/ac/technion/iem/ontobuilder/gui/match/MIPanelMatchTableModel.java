@@ -96,4 +96,5 @@ public class MIPanelMatchTableModel extends DefaultTableModel
 		
 		
 	}
+
 }
