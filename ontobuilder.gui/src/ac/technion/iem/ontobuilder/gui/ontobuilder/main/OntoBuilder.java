@@ -99,6 +99,7 @@ import ac.technion.iem.ontobuilder.gui.application.ObjectWithProperties;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MainPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderMenuBar;
@@ -180,8 +181,6 @@ public final class OntoBuilder extends Application
     protected MainPanel mainPanel;
     protected ArrayList<Process> runningProcesses;
     protected boolean ontologyViewSBS = false; 
-
-    public boolean lines= false; //roee
 	
     public static void main(String args[])
     {
@@ -1317,8 +1316,38 @@ public final class OntoBuilder extends Application
             action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(ApplicationUtilities
                 .getResourceString("action.toggleOView.accelerator")));
             actions.addAction("toggleOView", action);
-        
-        
+            
+        //fold tree
+            
+            action =new AbstractAction(ApplicationUtilities.getResourceString("action.foldtree"),
+                    ApplicationUtilities.getImage("options.gif"))
+            {
+                    private static final long serialVersionUID = 1L;
+
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        fold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
+                    }
+                };
+              action.putValue(Action.SHORT_DESCRIPTION, "Folds the tree for the current ontology" );
+              action.putValue(Action.NAME, "Fold tree");
+              actions.addAction("foldtree", action);
+        //unfold tree
+              
+              action =new AbstractAction(ApplicationUtilities.getResourceString("action.unfoldtree"),
+                      ApplicationUtilities.getImage("options.gif"))
+              {
+                      private static final long serialVersionUID = 1L;
+
+                      public void actionPerformed(ActionEvent e)
+                      {
+                          unfold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
+                      }
+                  };
+                action.putValue(Action.SHORT_DESCRIPTION, "unFolds the tree for the current ontology" );
+                action.putValue(Action.NAME, "unFold tree");
+                actions.addAction("unfoldtree", action);
+                
         // Tools
         ToolMetadata[] tools = ToolsUtilities.getAllToolMetadata();
 
@@ -2112,8 +2141,6 @@ public final class OntoBuilder extends Application
     public void commandPrint()
     {
     }
-    public int[][] line_coordinates={{0,0,0,0}}; //{x_start,y_start,x_end,y_end}
-    public String[] line_writing={""};
     /**
      * Add an ontology to the panel
      *
@@ -2135,8 +2162,11 @@ public final class OntoBuilder extends Application
                 if (object instanceof ObjectWithProperties){
                     lowerPanel.propertiesPanel.showProperties(((ObjectWithProperties) object)
                         .getProperties());
-              /* if (object instanceof TermGui){
-            		Fold_tree(ontologyGui.get_tree());//testing fold tree func
+       /*        if (object instanceof TermGui){
+           	Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
+          	mainPanel.sbsPanel.draw_line(v.get(0).getTerm(2).getTerm(0),v.get(1).getTerm(0).getTerm(0),"0.8");
+            frame.repaint();
+            	//fold_tree(ontologyGui.get_tree());//testing fold tree func
                }*/
                   /*  if (object instanceof TermGui){
                     	if (ontologyViewSBS){
@@ -2193,17 +2223,18 @@ public final class OntoBuilder extends Application
         	mainPanel.sbsPanel.addOntology(ontologyGui,false);
         }
     }
+    
 	public void paint( Graphics g ){
     	super.paint(g);
-    	for (int i = 0; i < line_coordinates.length; i++){
-    		Line line = new Line(this.mainPanel.sbsPanel,(Graphics2D) g, line_coordinates[i][0], line_coordinates[i][1], line_coordinates[i][2], line_coordinates[i][3], line_writing[i], true, false);
-    		//line.color=Color.blue;
-        	if (lines){
+    	for (int i = 0; i < mainPanel.sbsPanel.line_coordinates.length; i++){
+    		Line line = new Line(this.mainPanel.sbsPanel,(Graphics2D) g, mainPanel.sbsPanel.line_coordinates[i][0], mainPanel.sbsPanel.line_coordinates[i][1], mainPanel.sbsPanel.line_coordinates[i][2], mainPanel.sbsPanel.line_coordinates[i][3], mainPanel.sbsPanel.line_writing[i], true, false);
+        	if (mainPanel.sbsPanel.lines){
             	line.repaint();
         	}
     	}
 
     	}
+	
     /**
      * Execute the "NewOntology" command
      */
@@ -3057,66 +3088,44 @@ public final class OntoBuilder extends Application
     	this.ontologyViewSBS = (this.ontologyViewSBS?false:true);
 
     }
-	
-	public void draw_line(Term t1, Term t2, String sim_val){
-		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
-		OntologyGui ontologyGui1 = new OntologyGui(v.get(0));
-		OntologyGui ontologyGui2 = new OntologyGui(v.get(1));
-		JTree tree1= ontologyGui1.get_tree();
-		JTree tree2= ontologyGui2.get_tree();
-		final int position_x_root=mainPanel.getBounds().x + mainPanel.ontologyPanel.getX();
-		final int position_y_root=  mainPanel.getBounds().y + mainPanel.ontologyPanel.getY() + 85;
-		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
-		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
-		final int intervalX_size=28, intervalY_size=16;
-		line_coordinates[0][0]= (int) (position_x_root + ((node1.getPath().length)*intervalX_size)+ 1.5*(t1.toString().length()));
-		line_coordinates[0][1]= position_y_root + (Find_row_for_node(node1)*intervalY_size);
-		DefaultMutableTreeNode root2 = (DefaultMutableTreeNode) tree2.getModel().getRoot();
-		DefaultMutableTreeNode node2= findNode(root2,t2.toString());	
-		line_coordinates[0][2]= 300+ position_x_root+ ((node2.getPath().length)*intervalX_size);
-		line_coordinates[0][3]= position_y_root + (Find_row_for_node(node2)*intervalY_size);
-		line_writing[0]= sim_val;
-		lines=true;
-		frame.repaint();
+    
+    
+	public void fold_tree(JTree tree){
+		TreeNode root = (TreeNode)tree.getModel().getRoot();
+		expandAll(tree, new TreePath(root), false);
 	}
-	public DefaultMutableTreeNode findNode( DefaultMutableTreeNode root, String search ) {
+	
+	public void unfold_tree(JTree tree){
+		TreeNode root = (TreeNode)tree.getModel().getRoot();
+		expandAll(tree, new TreePath(root), true);
+	}
+    
+    @SuppressWarnings("rawtypes")
+	private void expandAll(JTree tree, TreePath parent, boolean expand) {
+        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+                TreeNode n = (TreeNode) e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path, expand);
+            }
+        }
+        if (expand) {
+            tree.expandPath(parent);
+        } else {
+            tree.collapsePath(parent);
+        }
+    }
+    
+    
+    
+    
+    /*
 
-	    @SuppressWarnings("rawtypes")
-		Enumeration nodeEnumeration = root.breadthFirstEnumeration();
-	    while( nodeEnumeration.hasMoreElements() ) {
-	        DefaultMutableTreeNode node =
-	            (DefaultMutableTreeNode)nodeEnumeration.nextElement();
-	        String found = node.getUserObject().toString();
-	        if( search.equals( found ) ) {
-	            return node;
-	        }
-	    }
-	    return null;
-	}
-	public int Find_row_for_node(DefaultMutableTreeNode node)
-	{
-		int row=0;
-		while (!node.isRoot()){
-			row+=1+node.getParent().getIndex(node);
-			node=(DefaultMutableTreeNode) node.getParent();
-		}
-		return (1+row);
-			
-		
-	}
-	
-	public void Fold_tree(JTree tree){
-		int rows = tree.getRowCount();
-		if (rows > 0) {
-			for (int i = 0; i < rows; i++) {
-				tree.collapseRow(i);
-			}
-		}
-	}
 	public void unfold_tree(JTree tree) {
 		int rows = tree.getRowCount();
 		for (int i = 0; i < rows; i++) {
 	         tree.expandRow(i);
 	}
-	}
+	}*/
 }
