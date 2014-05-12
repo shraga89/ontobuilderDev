@@ -2162,38 +2162,7 @@ public final class OntoBuilder extends Application
                 if (object instanceof ObjectWithProperties){
                     lowerPanel.propertiesPanel.showProperties(((ObjectWithProperties) object)
                         .getProperties());
-       /*        if (object instanceof TermGui){
-           	Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
-          	mainPanel.sbsPanel.draw_line(v.get(0).getTerm(2).getTerm(0),v.get(1).getTerm(0).getTerm(0),"0.8");
-            frame.repaint();
-            	//fold_tree(ontologyGui.get_tree());//testing fold tree func
-               }*/
-                  /*  if (object instanceof TermGui){
-                    	if (ontologyViewSBS){
-                    		System.out.println(object.toString());
-                    		line_coordinates[0][0]=  mainPanel.getBounds().x + mainPanel.ontologyPanel.getX()+ mainPanel.getMousePosition().x;
-                    		line_coordinates[0][1]=  12+ mainPanel.getBounds().y+ mainPanel.ontologyPanel.getY() + mainPanel.getMousePosition().y;
-                    		line_coordinates[0][2]= mainPanel.getBounds().x + mainPanel.sbsPanel.getX()+ mainPanel.sbsPanel.getWidth();
-                    		line_coordinates[0][3]= mainPanel.getBounds().y + mainPanel.sbsPanel.getY()+ mainPanel.sbsPanel.getHeight();
-                    		System.out.print(line_coordinates[0][0]+" ");
-                    		System.out.println(line_coordinates[0][1]+" ");
-                    		line_writing[0]= object.toString();
-                    		lines=true;
-                    		frame.repaint();
-                    		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
-                    		draw_line(v.get(0).getTerm(2),v.get(1).getTerm(0).getTerm(0),"0.8");
-                    	}
-                    }
-                    else {
-                    	lines=false;
-                    	frame.repaint();
-                    
-                    }*/
                 }
-                
-                    	
-                
-          
                 else
                     lowerPanel.propertiesPanel.showProperties(null);
             }
@@ -3116,16 +3085,4 @@ public final class OntoBuilder extends Application
             tree.collapsePath(parent);
         }
     }
-    
-    
-    
-    
-    /*
-
-	public void unfold_tree(JTree tree) {
-		int rows = tree.getRowCount();
-		for (int i = 0; i < rows; i++) {
-	         tree.expandRow(i);
-	}
-	}*/
 }

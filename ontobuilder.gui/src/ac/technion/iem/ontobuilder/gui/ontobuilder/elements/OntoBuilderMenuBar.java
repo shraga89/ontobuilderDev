@@ -191,6 +191,7 @@ public class OntoBuilderMenuBar extends MenuBar
        
         //unfoldtree
         addMenuItem(menuView, application.getAction("unfoldtree"));
+        
         // Tools menu
         JMenu menuTools = new JMenu(ApplicationUtilities.getResourceString("menu.tools"));
         menuTools.setMnemonic(ApplicationUtilities.getResourceString("menu.tools.mnemonic").charAt(
