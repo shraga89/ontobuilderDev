@@ -9,8 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,17 +18,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SortOrder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jdesktop.swingx.JXTable;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
@@ -67,8 +65,7 @@ public final class MIPanel extends JPanel
 	private JButton noMatchB;
 	private TextPane suggestCounter;
 	private TextPane limitField;
-	private JTable table; 
-	private TableColumnHider hider;
+	private JXTable table; 
 	private int suggLimit = 30; //TODO make this a property
 	private Logger userActionLog = Logger.getLogger(MIPanel.class);
 	
@@ -98,8 +95,9 @@ public final class MIPanel extends JPanel
     	PropertyConfigurator.configure(OntoBuilderResources.Config.LOG4J_PROPERTIES);
     	
     	//Layout
-    	table = new JTable(30,4);
+    	table = new JXTable(30,4);
     	table.setAutoCreateRowSorter(true);
+    	table.setSortOrderCycle(SortOrder.DESCENDING,SortOrder.ASCENDING,SortOrder.UNSORTED);
         miPane = new JScrollPane(table);
 		JPanel controlPane = new JPanel();
 		controlPane.setLayout(new GridLayout(3,3));
@@ -124,7 +122,6 @@ public final class MIPanel extends JPanel
 		ImageIcon icon = ApplicationUtilities.getImage("lifesaver.gif");
 		//icon =  new ImageIcon(icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
 		suggestB = new JButton(icon);
-		hider = new TableColumnHider(table);
 		suggestB.addActionListener(new ActionListener() {
 			
 			@Override
@@ -132,7 +129,7 @@ public final class MIPanel extends JPanel
 				int used = Integer.parseInt(suggestCounter.getText());
 				if (table.getColumnCount()<4 && used <= suggLimit)
 				{
-					hider.show("Suggestion's Confidence");
+					table.getColumnExt(4).setVisible(true);
 					used++;
 					suggestCounter.setText(Integer.toString(used));
 					userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",showSuggestion,used:" + used + ",of:" + suggLimit);
@@ -201,13 +198,11 @@ public final class MIPanel extends JPanel
 		tm = new MIPanelMatchTableModel(mi,suggestions);
 		table.setModel(tm);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.removeColumn(table.getColumn("termIDs"));
-		table.getColumnModel().getColumn(2).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()) );
-		table.getColumnModel().getColumn(3).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()));
-		hider = new TableColumnHider(table);
-
+		table.getColumnExt(0).setVisible(false);
+		table.getColumnModel().getColumn(3).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()) );
+		table.getColumnModel().getColumn(4).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()));
 		if (!this.suggB.equals(SUGG_BEHAVIOR.ALWAYSSHOW))
-			 hider.hide("Suggestion's Confidence");
+			table.getColumnExt(4).setVisible(false);
 		table.validate();
 		miPane.validate();
 		TableModelListener changeListener = new TableModelListener() {
@@ -266,7 +261,7 @@ public final class MIPanel extends JPanel
 		this.ttt.setText(t.getName());
 		tm.setTerm(t);
 		if ((suggB.equals(SUGG_BEHAVIOR.UPONREQUEST) || suggB.equals(SUGG_BEHAVIOR.LIMITED)) && table.getColumnCount()>3)
-			hider.hide("Suggestion's Confidence");
+			table.getColumnExt(4).setVisible(false); 
 		miPane.validate();
 		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
 		
@@ -335,53 +330,6 @@ public final class MIPanel extends JPanel
 	  }
 	} 
 	
-	/** @see http://stackoverflow.com/questions/6796673 */
-		public static class TableColumnHider {
-
-	    @SuppressWarnings("unused")
-		private JTable myTable;
-	    private TableColumnModel tcm;
-	    private Map<String, IndexedColumn> hidden =
-	        new HashMap<String, IndexedColumn>();
-
-	    public TableColumnHider(JTable table) {
-	        this.myTable = table;
-	        this.tcm = table.getColumnModel();
-	    }
-
-	    public void hide(String columnName) {
-	        int index = tcm.getColumnIndex(columnName);
-	        TableColumn column = tcm.getColumn(index);
-	        IndexedColumn ic = new IndexedColumn(index, column);
-	        if (hidden.put(columnName, ic) != null) {
-	            throw new IllegalArgumentException("Duplicate column name.");
-	        }
-	        tcm.removeColumn(column);
-	    }
-
-	    public void show(String columnName) {
-	        IndexedColumn ic = hidden.remove(columnName);
-	        if (ic != null) {
-	            tcm.addColumn(ic.column);
-	            int lastColumn = tcm.getColumnCount() - 1;
-	            if (ic.index < lastColumn) {
-	                tcm.moveColumn(lastColumn, ic.index);
-	            }
-	        }
-	    }
-
-	    private static class IndexedColumn {
-
-	        private Integer index;
-	        private TableColumn column;
-
-	        public IndexedColumn(Integer index, TableColumn column) {
-	            this.index = index;
-	            this.column = column;
-	        }
-	    }
-		}
-
 	/**
 	 * Set selection in term table to supplied
 	 * candidate term if exists
@@ -392,7 +340,6 @@ public final class MIPanel extends JPanel
 		int row = table.convertRowIndexToView(this.tm.findTerm(termID));
 		if (row != -1)
 			this.table.changeSelection(row, 0, false, false); 
-		//.setRowSelectionInterval(row,row);
 		
 	}
 }

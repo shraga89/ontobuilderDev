@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="lib/jgraph.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom2-2.0.5.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/swingx-core-1.6.5-1.jar" sourcepath="/ontobuilder.core/lib/swingx-core-1.6.5-1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
