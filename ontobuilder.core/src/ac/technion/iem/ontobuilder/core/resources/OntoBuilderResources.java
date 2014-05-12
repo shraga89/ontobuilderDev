@@ -14,6 +14,7 @@ public class OntoBuilderResources
 		public static final String CONFIGURATION_XML = 		CONFIG + File.separator + "configuration.xml";
 		public static final String RESOURCES_PROPERTIES = 	CONFIG + File.separator + "resources.properties";
 		public static final String THESAURUS_XML = 			CONFIG + File.separator + "thesaurus.xml";
+		public static final String LOG4J_PROPERTIES = CONFIG + File.separator + "log4j.properties";
 		
 		public static class Matching
 		{

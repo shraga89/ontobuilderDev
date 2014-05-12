@@ -34,14 +34,14 @@ public class OntologyPanelSBS extends JPanel
         miPanel = MIPanel.getMIPanel();
 		JPanel topPane = new JPanel();
 		JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, miPanel);
-		mainPane.setDividerLocation(0.7);
+		mainPane.setDividerLocation(0.3);
 		topPane.setLayout(new GridLayout(1,2));
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, mainPane);
 		candidatePanel = new OntologyPanel(ontoBuilder);
         targetPanel = new OntologyPanel(ontoBuilder);
         
-        candidatePanel.add(new JLabel("Source"));
+        candidatePanel.add(new JLabel("Candidate"));
         targetPanel.add(new JLabel("Target"));
         topPane.add(candidatePanel);
         topPane.add(targetPanel);
@@ -66,6 +66,7 @@ public class OntologyPanelSBS extends JPanel
     		candidatePanel.addOntology(ontology);
     		if (hasTarget)
     			miPanel.setMi(ontology,targetPanel.getCurrentOntologyGui());
+    		candidatePanel.addTermListener(true);
     	}
     	else 
     	{
@@ -73,7 +74,7 @@ public class OntologyPanelSBS extends JPanel
     		targetPanel.addOntology(ontology);
     		if (hasSource)
     			miPanel.setMi(candidatePanel.getCurrentOntologyGui(),ontology);
-    		targetPanel.addTermListener();
+    		targetPanel.addTermListener(false);
     	}
     	
     }

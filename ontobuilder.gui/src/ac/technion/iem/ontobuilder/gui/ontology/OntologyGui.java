@@ -2218,23 +2218,40 @@ public class OntologyGui extends JPanel
     /**
      * Adds a term selection listener to ontologyPanel that
      * updates the miPanel upon term selection
+     * @param isCandidate 
      */
-    public void addTermListener() {
-    	addOntologySelectionListener(new OntologySelectionListener()
-        {
-            public void valueChanged(OntologySelectionEvent e)
+    public void addTermListener(boolean isCandidate) {
+    	if (!isCandidate)
+	    	addOntologySelectionListener(new OntologySelectionListener()
+	        {
+	            public void valueChanged(OntologySelectionEvent e)
+	            {
+	                Object object = e.getSelectedObject();
+	                if (object == null)
+	                    return;
+	                if (object instanceof TermGui)
+	                {
+	                	TermGui tg = (TermGui)object;
+	                	MIPanel.getMIPanel().setTargetTerm(tg.getTerm());;
+	                }
+	            }
+	        });
+    	else
+    		addOntologySelectionListener(new OntologySelectionListener()
             {
-                Object object = e.getSelectedObject();
-                if (object == null)
-                    return;
-                if (object instanceof TermGui)
+                public void valueChanged(OntologySelectionEvent e)
                 {
-                	//TODO: boolean isTarget = MIPanel.getMIPanel();
-                	TermGui tg = (TermGui)object;
-                	MIPanel.getMIPanel().setTargetTerm(tg.getTerm());;
+                    Object object = e.getSelectedObject();
+                    if (object == null)
+                        return;
+                    if (object instanceof TermGui)
+                    {
+                    	TermGui tg = (TermGui)object;
+                    	MIPanel.getMIPanel().selectCandidateTerm(tg.getTerm());;
+                    }
                 }
-            }
-        });
+            });
+        	
 		
 	}
 
