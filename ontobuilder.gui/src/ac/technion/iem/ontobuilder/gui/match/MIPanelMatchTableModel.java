@@ -1,5 +1,7 @@
 package ac.technion.iem.ontobuilder.gui.match;
 
+import java.util.Vector;
+
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
@@ -89,11 +91,39 @@ public class MIPanelMatchTableModel extends DefaultTableModel
 		for (int i = 1; i <this.getRowCount() ; i++)
 		{
 			Long termID = Long.parseLong((String)this.getValueAt(i, 0));
-			this.setValueAt(Double.toString(mi.getMatrix().getMatchConfidenceByID(termID, t.getId())), i, 3);
+			this.setValueAtNoFire(Double.toString(mi.getMatrix().getMatchConfidenceByID(termID, t.getId())), i, 3);
 			if (smi!=null)
-				this.setValueAt(Double.toString(smi.getMatrix().getMatchConfidenceByID(termID, t.getId())), i, 4);
+				this.setValueAtNoFire(Double.toString(smi.getMatrix().getMatchConfidenceByID(termID, t.getId())), i, 4);
 		}
 		
 		
 	}
+	
+	/**
+	 * Override to skip event firing
+	 */
+	public void setValueAtNoFire(String aValue, int row, int column) {
+        @SuppressWarnings("unchecked")
+		Vector<String> rowVector = (Vector<String>)dataVector.elementAt(row);
+        rowVector.setElementAt(aValue, column);
+    }
+
+	/**
+	 * Finds the model row of a term given the termID
+	 * @return -1 if not found, row number otherwise. 
+	 */
+	public int findTerm(long termID) {
+		
+		
+		for (int i=0; i<this.getRowCount();i++)
+		{
+			@SuppressWarnings("unchecked")
+			Vector<String> row = (Vector<String>)getDataVector().elementAt(i);
+			Long tID = Long.parseLong(row.firstElement());
+			if (tID.equals(termID))
+				return i;
+		}
+		return -1;
+	}
+
 }

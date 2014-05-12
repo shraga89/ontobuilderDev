@@ -13,10 +13,16 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jdom2-2.0.5.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/easywsdl-wsdl-2.1.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-arq-2.10.1.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-core-2.10.1.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-iri-0.9.6.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jena-tdb-0.10.1.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/owlapi-distribution-3.4.5.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/xsom.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/wsdl4j.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jbpt-0.2.393.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/jing.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

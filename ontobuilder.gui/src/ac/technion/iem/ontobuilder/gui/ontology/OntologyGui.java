@@ -92,6 +92,7 @@ import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.PopupListener;
 import ac.technion.iem.ontobuilder.gui.elements.PopupTrigger;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.ButtonINPUTElementGui;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.CheckboxINPUTElementGui;
@@ -2193,6 +2194,65 @@ public class OntologyGui extends JPanel
 		else if (!ontologyCore.equals(other.ontologyCore))
 			return false;
 		return true;
+	}
+
+	/**
+	 * Sets selection path to term with supplied ID 
+	 * returns false if unsuccessful
+	 * @param termID
+	 * 
+	 */
+	public boolean setSelectionToTerm(long termID)
+	{
+		Term t = getTermByID(termID);
+		if (t==null)
+			return false;
+		OntologyTreeModel treeModel = (OntologyTreeModel) ontologyTree.getModel();
+		DefaultMutableTreeNode termNode = treeModel.findNodeWithUserObject(t);
+		TreePath path = new TreePath(treeModel.getPathToRoot(termNode));
+        ontologyTree.setSelectionPath(path);
+        ontologyTree.scrollPathToVisible(path);
+		return true;
+	}
+	
+    /**
+     * Adds a term selection listener to ontologyPanel that
+     * updates the miPanel upon term selection
+     * @param isCandidate 
+     */
+    public void addTermListener(boolean isCandidate) {
+    	if (!isCandidate)
+	    	addOntologySelectionListener(new OntologySelectionListener()
+	        {
+	            public void valueChanged(OntologySelectionEvent e)
+	            {
+	                Object object = e.getSelectedObject();
+	                if (object == null)
+	                    return;
+	                if (object instanceof TermGui)
+	                {
+	                	TermGui tg = (TermGui)object;
+	                	MIPanel.getMIPanel().setTargetTerm(tg.getTerm());;
+	                }
+	            }
+	        });
+    	else
+    		addOntologySelectionListener(new OntologySelectionListener()
+            {
+                public void valueChanged(OntologySelectionEvent e)
+                {
+                    Object object = e.getSelectedObject();
+                    if (object == null)
+                        return;
+                    if (object instanceof TermGui)
+                    {
+                    	TermGui tg = (TermGui)object;
+                    	MIPanel.getMIPanel().selectCandidateTerm(tg.getTerm());;
+                    }
+                }
+            });
+        	
+		
 	}
 
 	//roee
