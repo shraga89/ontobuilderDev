@@ -1,7 +1,9 @@
 package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.elements.MenuBar;
@@ -181,7 +183,14 @@ public class OntoBuilderMenuBar extends MenuBar
         JMenu menuView = new JMenu(ApplicationUtilities.getResourceString("menu.view"));
         menuView.setMnemonic(ApplicationUtilities.getResourceString("menu.view.mnemonic").charAt(0));
         add(menuView);
+        //toggleOView
         addMenuItem(menuView, application.getAction("toggleOView"));
+        
+        //foldtree
+        addMenuItem(menuView, application.getAction("foldtree"));
+       
+        //unfoldtree
+        addMenuItem(menuView, application.getAction("unfoldtree"));
         
         // Tools menu
         JMenu menuTools = new JMenu(ApplicationUtilities.getResourceString("menu.tools"));
