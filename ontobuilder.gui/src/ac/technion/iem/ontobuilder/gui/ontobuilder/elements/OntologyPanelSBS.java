@@ -26,7 +26,7 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 public class OntologyPanelSBS extends JPanel
 {
     private static final long serialVersionUID = 1L;
-    private OntologyPanel sourcePanel;
+    private OntologyPanel candidatePanel;
     private OntologyPanel targetPanel;
     private MIPanel miPanel;
     /**
@@ -36,19 +36,19 @@ public class OntologyPanelSBS extends JPanel
      */
     public OntologyPanelSBS(OntoBuilder ontoBuilder)
     {
-        miPanel = new MIPanel();
+        miPanel = MIPanel.getMIPanel();
 		JPanel topPane = new JPanel();
 		JSplitPane mainPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPane, miPanel);
-		mainPane.setDividerLocation(0.7);
+		mainPane.setDividerLocation(0.3);
 		topPane.setLayout(new GridLayout(1,2));
 		setLayout(new BorderLayout());
 		add(BorderLayout.CENTER, mainPane);
-		sourcePanel = new OntologyPanel(ontoBuilder);
+		candidatePanel = new OntologyPanel(ontoBuilder);
         targetPanel = new OntologyPanel(ontoBuilder);
         
-        sourcePanel.add(new JLabel("Source"));
+        candidatePanel.add(new JLabel("Candidate"));
         targetPanel.add(new JLabel("Target"));
-        topPane.add(sourcePanel);
+        topPane.add(candidatePanel);
         topPane.add(targetPanel);
       
         
@@ -59,37 +59,39 @@ public class OntologyPanelSBS extends JPanel
      * Add an ontology
      *
      * @param ontology the {@link Ontology} to add
-     * @param toLeft if true, adds the ontology to source panel
+     * @param toCandidate if true, adds the ontology to candidate panel
      */
-    public void addOntology(final OntologyGui ontology,final boolean toSource)
+    public void addOntology(final OntologyGui ontology,final boolean toCandidate)
     {
-    	boolean hasSource = sourcePanel.getOntologies().size()>0;
+    	boolean hasSource = candidatePanel.getOntologies().size()>0;
     	boolean hasTarget = targetPanel.getOntologies().size()>0;
     	//TODO remove all arcs
-    	if (toSource){
-   			sourcePanel.remove(0);
-    		sourcePanel.addOntology(ontology);
+    	if (toCandidate){
+   			candidatePanel.remove(0);
+    		candidatePanel.addOntology(ontology);
     		if (hasTarget)
     			miPanel.setMi(ontology,targetPanel.getCurrentOntologyGui());
+    		candidatePanel.addTermListener(true);
     	}
     	else 
     	{
     		targetPanel.remove(0);
     		targetPanel.addOntology(ontology);
     		if (hasSource)
-    			miPanel.setMi(sourcePanel.getCurrentOntologyGui(),ontology);
+    			miPanel.setMi(candidatePanel.getCurrentOntologyGui(),ontology);
+    		targetPanel.addTermListener(false);
     	}
     	
     }
 
     /**
-     * Get the source ontology
+     * Get the candidate ontology
      *
      * @return the {@link Ontology}
      */
-    public Ontology getSourceOntology()
+    public Ontology getCandidateOntology()
     {
-        return sourcePanel.getCurrentOntology();
+        return candidatePanel.getCurrentOntology();
     }
     
     /**
@@ -103,13 +105,12 @@ public class OntologyPanelSBS extends JPanel
     }
 
     /**
-     * Close the source ontology
+     * Close the candidate ontology
      *
-     * @param ontologyGui the {@link Ontology} to close
      */
-    public void closeSourceOntology()
+    public void closeCandidateOntology()
     {
-        sourcePanel.closeCurrentOntology();
+        candidatePanel.closeCurrentOntology();
     }
     
     /**
@@ -128,17 +129,17 @@ public class OntologyPanelSBS extends JPanel
 	public MatchInformation getMi() {
 		return miPanel.getMi();
 	}
-	
+
 	public boolean lines= false; 
     public int[][] line_coordinates={{0,0,0,0}}; //{x_start,y_start,x_end,y_end}
     public String[] line_writing={""};
     //don't forget to use : frame.repaint(); after using draw_line
 	public void draw_line(Term t1, Term t2, String sim_val){
-		OntologyGui ontologyGui1 = sourcePanel.getCurrentOntologyGui();
+		OntologyGui ontologyGui1 = candidatePanel.getCurrentOntologyGui();
 		OntologyGui ontologyGui2 = targetPanel.getCurrentOntologyGui();
 		JTree tree1= ontologyGui1.get_tree();
 		JTree tree2= ontologyGui2.get_tree();
-		final int position_x_root= 345 + sourcePanel.getX();
+		final int position_x_root= 345 + candidatePanel.getX();
 		final int position_y_root= 47+ targetPanel.getY() + 85;
 		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
 		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
