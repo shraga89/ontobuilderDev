@@ -97,7 +97,7 @@ public final class MIPanel extends JPanel
     	//Layout
     	table = new JXTable(30,4);
     	table.setAutoCreateRowSorter(true);
-    	table.setSortOrderCycle(SortOrder.DESCENDING,SortOrder.ASCENDING,SortOrder.UNSORTED);
+    	table.setSortOrderCycle(SortOrder.DESCENDING, SortOrder.ASCENDING, SortOrder.UNSORTED);
         miPane = new JScrollPane(table);
 		JPanel controlPane = new JPanel();
 		controlPane.setLayout(new GridLayout(3,3));
@@ -144,7 +144,7 @@ public final class MIPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",noMatch");
-				//TODO clear any existing matches in the JTable and MatchInformation objects
+				//TODO clear any existing matches in the JTable and MatchInformation objects, mark target term in red
 			}
 		});
 		controlPane.add(tt);
@@ -199,10 +199,11 @@ public final class MIPanel extends JPanel
 		table.setModel(tm);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getColumnExt(0).setVisible(false);
-		table.getColumnModel().getColumn(3).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()) );
-		table.getColumnModel().getColumn(4).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()));
+		table.getColumnModel().getColumn(2).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()) );
+		table.getColumnModel().getColumn(3).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()));
+
 		if (!this.suggB.equals(SUGG_BEHAVIOR.ALWAYSSHOW))
-			table.getColumnExt(4).setVisible(false);
+			 table.getColumnExt(4).setVisible(false);
 		table.validate();
 		miPane.validate();
 		TableModelListener changeListener = new TableModelListener() {
@@ -261,7 +262,7 @@ public final class MIPanel extends JPanel
 		this.ttt.setText(t.getName());
 		tm.setTerm(t);
 		if ((suggB.equals(SUGG_BEHAVIOR.UPONREQUEST) || suggB.equals(SUGG_BEHAVIOR.LIMITED)) && table.getColumnCount()>3)
-			table.getColumnExt(4).setVisible(false); 
+			table.getColumnExt(4).setVisible(false);
 		miPane.validate();
 		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
 		
@@ -340,6 +341,7 @@ public final class MIPanel extends JPanel
 		int row = table.convertRowIndexToView(this.tm.findTerm(termID));
 		if (row != -1)
 			this.table.changeSelection(row, 0, false, false); 
+		//.setRowSelectionInterval(row,row);
 		
 	}
 }

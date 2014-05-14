@@ -45,7 +45,7 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 
 /**
  * <p>Title: OntoBuilderOptions</p>
- * Extends a {@link Options}
+ * Extends a {@link Options} panel. 
  */
 public class OntoBuilderOptions extends Options
 {
@@ -80,6 +80,7 @@ public class OntoBuilderOptions extends Options
     private TextField txtProxyPort;
     private JCheckBox chkUseProxy;
     private JSpinner spnConnectionTimeout;
+    private JSpinner spnSBSMode;
 
     /**
      * Constructs a OntoBuilderOptions
@@ -259,7 +260,7 @@ public class OntoBuilderOptions extends Options
             }
         }
 
-        // View
+        // View TODO: add SBS mode to here!!!
         {
             JPanel view = new JPanel(new GridBagLayout());
             panels.add(ApplicationUtilities.getResourceString("options.panel.view"), view);
