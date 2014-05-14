@@ -3107,8 +3107,6 @@ public final class OntoBuilder extends Application
         	else{
         		this.setToolTipText(null);
         		}}
-        else if ((node.getChildCount()==5) && pIsLeaf && node_name.equals("Subterms")){
-        	setToolTipText("Does not have Subterms");}
         else {
         	this.setToolTipText(null);
         	}
