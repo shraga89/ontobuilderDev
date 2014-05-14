@@ -62,6 +62,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.w3c.dom.Document;
 
@@ -1316,6 +1319,7 @@ public final class OntoBuilder extends Application
                     public void actionPerformed(ActionEvent e)
                     {
                         fold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
+                        
                     }
                 };
               action.putValue(Action.SHORT_DESCRIPTION, "Folds the tree for the current ontology" );
@@ -3051,6 +3055,10 @@ public final class OntoBuilder extends Application
 	public void fold_tree(JTree tree){
 		TreeNode root = (TreeNode)tree.getModel().getRoot();
 		expandAll(tree, new TreePath(root), false);
+        System.out.println("dkasdlkla");
+        System.out.println(tree);
+        System.out.println(tree.getBackground());
+        tree.setBackground(Color.blue);
 	}
 	
 	public void unfold_tree(JTree tree){
