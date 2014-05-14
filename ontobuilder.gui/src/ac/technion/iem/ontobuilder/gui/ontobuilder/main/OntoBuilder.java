@@ -105,6 +105,8 @@ import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.UpperPanel;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionEvent;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionListener;
+import ac.technion.iem.ontobuilder.gui.ontology.OntologyTreeRenderer;
+import ac.technion.iem.ontobuilder.gui.ontology.TermGui;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolMetadata;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsException;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsUtilities;
@@ -2172,6 +2174,7 @@ public final class OntoBuilder extends Application
                     lowerPanel.propertiesPanel.showProperties(null);
             }
         });
+		color_has_subterms(ontologyGui.get_tree());
         if (po.equals(PanelOption.ONTOLOGY_MAIN))
         {
         	mainPanel.ontologyPanel.addOntology(ontologyGui);
@@ -3051,14 +3054,10 @@ public final class OntoBuilder extends Application
 
     }
     
-    
 	public void fold_tree(JTree tree){
 		TreeNode root = (TreeNode)tree.getModel().getRoot();
 		expandAll(tree, new TreePath(root), false);
-        System.out.println("dkasdlkla");
-        System.out.println(tree);
-        System.out.println(tree.getBackground());
-        tree.setBackground(Color.blue);
+
 	}
 	
 	public void unfold_tree(JTree tree){
@@ -3081,5 +3080,41 @@ public final class OntoBuilder extends Application
         } else {
             tree.collapsePath(parent);
         }
+    }
+    
+    @SuppressWarnings("serial")
+	public void color_has_subterms(final JTree tree)
+    {
+        tree.setCellRenderer(new OntologyTreeRenderer()
+        {
+             public Component getTreeCellRendererComponent(JTree pTree,
+                 Object pValue, boolean pIsSelected, boolean pIsExpanded,
+                 boolean pIsLeaf, int pRow, boolean pHasFocus)
+             {
+	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)pValue;
+	    super.getTreeCellRendererComponent(pTree, pValue, pIsSelected,
+                     pIsExpanded, pIsLeaf, pRow, pHasFocus);
+	    String node_name=null;
+	    if (node.getChildCount()==5){
+	    	node_name=node.getChildAt(4).toString();}
+        if (node.isRoot()){
+        	this.setToolTipText(null);
+        }
+        else if ((node.getChildCount()==5) && (node.getChildAt(4).getChildCount() > 0)){
+        	if (node_name.equals("Subterms")){
+            	setToolTipText("has Subterms");
+        	}
+        	else{
+        		this.setToolTipText(null);
+        		}}
+        else if ((node.getChildCount()==5) && pIsLeaf && node_name.equals("Subterms")){
+        	setToolTipText("Does not have Subterms");}
+        else {
+        	this.setToolTipText(null);
+        	}
+        return (this);
+	}
+        });
+    	
     }
 }
