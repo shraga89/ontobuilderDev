@@ -1,9 +1,7 @@
 package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 
-import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.elements.MenuBar;

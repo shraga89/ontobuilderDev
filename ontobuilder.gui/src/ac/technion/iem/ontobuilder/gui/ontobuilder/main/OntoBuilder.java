@@ -62,13 +62,14 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.w3c.dom.Document;
 
 import ac.technion.iem.ontobuilder.core.biztalk.BizTalkUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
-import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.ontology.domain.DomainSimilarity;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelAdapter;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelEvent;
@@ -90,8 +91,8 @@ import ac.technion.iem.ontobuilder.gui.application.ObjectWithProperties;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
-import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MainPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderMenuBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderOptions;
@@ -853,6 +854,10 @@ public final class OntoBuilder extends Application
                 else if (evt.getPropertyName().equals(NetworkUtilitiesPropertiesEnum.CONNECTION_TIMEOUT_PROPERTY))
                 {
                     setConnectionTimeout();
+                }
+                else if (evt.getPropertyName().equals(MIPanel.SUGG_BEHAVIOR_PROPERTY))
+                {
+                	MIPanel.getMIPanel().setSuggB((String)evt.getNewValue());
                 }
             }
         });
