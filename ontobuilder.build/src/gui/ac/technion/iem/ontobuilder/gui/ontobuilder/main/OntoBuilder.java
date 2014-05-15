@@ -9,8 +9,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,7 +29,6 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -62,8 +59,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import org.w3c.dom.Document;
 
@@ -91,9 +86,7 @@ import ac.technion.iem.ontobuilder.gui.application.ObjectWithProperties;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
-import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
-import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MainPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderMenuBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderOptions;
@@ -104,7 +97,6 @@ import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.UpperPanel;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionEvent;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionListener;
-import ac.technion.iem.ontobuilder.gui.ontology.OntologyTreeRenderer;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolMetadata;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsException;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsUtilities;
@@ -173,7 +165,7 @@ public final class OntoBuilder extends Application
     protected MainPanel mainPanel;
     protected ArrayList<Process> runningProcesses;
     protected boolean ontologyViewSBS = false; 
-	
+
     public static void main(String args[])
     {
         try
@@ -857,10 +849,6 @@ public final class OntoBuilder extends Application
                 {
                     setConnectionTimeout();
                 }
-                else if (evt.getPropertyName().equals(MIPanel.SUGG_BEHAVIOR_PROPERTY))
-                {
-                	MIPanel.getMIPanel().setSuggB((String)evt.getNewValue());
-                }
             }
         });
     }
@@ -1312,39 +1300,8 @@ public final class OntoBuilder extends Application
             action.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(ApplicationUtilities
                 .getResourceString("action.toggleOView.accelerator")));
             actions.addAction("toggleOView", action);
-            
-        //fold tree
-            
-            action =new AbstractAction(ApplicationUtilities.getResourceString("action.foldtree"),
-                    ApplicationUtilities.getImage("options.gif"))
-            {
-                    private static final long serialVersionUID = 1L;
-
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        fold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
-                        
-                    }
-                };
-              action.putValue(Action.SHORT_DESCRIPTION, "Folds the tree for the current ontology" );
-              action.putValue(Action.NAME, "Fold tree");
-              actions.addAction("foldtree", action);
-        //unfold tree
-              
-              action =new AbstractAction(ApplicationUtilities.getResourceString("action.unfoldtree"),
-                      ApplicationUtilities.getImage("options.gif"))
-              {
-                      private static final long serialVersionUID = 1L;
-
-                      public void actionPerformed(ActionEvent e)
-                      {
-                          unfold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
-                      }
-                  };
-                action.putValue(Action.SHORT_DESCRIPTION, "unFolds the tree for the current ontology" );
-                action.putValue(Action.NAME, "unFold tree");
-                actions.addAction("unfoldtree", action);
-                
+        
+        
         // Tools
         ToolMetadata[] tools = ToolsUtilities.getAllToolMetadata();
 
@@ -2138,6 +2095,7 @@ public final class OntoBuilder extends Application
     public void commandPrint()
     {
     }
+
     /**
      * Add an ontology to the panel
      *
@@ -2156,10 +2114,9 @@ public final class OntoBuilder extends Application
                 Object object = e.getSelectedObject();
                 if (object == null)
                     return;
-                if (object instanceof ObjectWithProperties){
+                if (object instanceof ObjectWithProperties)
                     lowerPanel.propertiesPanel.showProperties(((ObjectWithProperties) object)
                         .getProperties());
-                }
                 else
                     lowerPanel.propertiesPanel.showProperties(null);
             }
@@ -2176,7 +2133,6 @@ public final class OntoBuilder extends Application
                     lowerPanel.propertiesPanel.showProperties(null);
             }
         });
-		color_has_subterms(ontologyGui.get_tree());
         if (po.equals(PanelOption.ONTOLOGY_MAIN))
         {
         	mainPanel.ontologyPanel.addOntology(ontologyGui);
@@ -2190,18 +2146,7 @@ public final class OntoBuilder extends Application
         	mainPanel.sbsPanel.addOntology(ontologyGui,false);
         }
     }
-    
-	public void paint( Graphics g ){
-    	super.paint(g);
-    	for (int i = 0; i < mainPanel.sbsPanel.line_coordinates.length; i++){
-    		Line line = new Line(this.mainPanel.sbsPanel,(Graphics2D) g, mainPanel.sbsPanel.line_coordinates[i][0], mainPanel.sbsPanel.line_coordinates[i][1], mainPanel.sbsPanel.line_coordinates[i][2], mainPanel.sbsPanel.line_coordinates[i][3], mainPanel.sbsPanel.line_writing[i], true, false);
-        	if (mainPanel.sbsPanel.lines){
-            	line.repaint();
-        	}
-    	}
 
-    	}
-	
     /**
      * Execute the "NewOntology" command
      */
@@ -3021,10 +2966,11 @@ public final class OntoBuilder extends Application
     
     public void commandToggleOView()
     {
+    	System.out.println("Toggling Ontology View");
     	if (ontologyViewSBS)
     	{
     		//clear ontologies from sbs panel, return focus to Ontology panel
-    		mainPanel.sbsPanel.closeCandidateOntology();
+    		mainPanel.sbsPanel.closeSourceOntology();
     		mainPanel.sbsPanel.closeTargetOntology();
     		mainPanel.selectPanel(MainPanel.ONTOLOGY_TAB);
     	}
@@ -3033,94 +2979,17 @@ public final class OntoBuilder extends Application
     		//check if two ontologies are open if not error message
     		if (this.mainPanel.ontologyPanel.getOntologies().size()!=2)
     		{
+    			//TODO error message
     			String msg = "Side by Side View requires two ontologies to be open";
     			System.err.println(msg);
-    			JOptionPane.showMessageDialog(
-                        OntoBuilder.this,
-                        ApplicationUtilities.getResourceString("error") + ": " +
-                            msg,
-                        ApplicationUtilities.getResourceString("error"),
-                        JOptionPane.ERROR_MESSAGE);
-    			
     			return;
     		}
-    		//TODO remove placeholder panels
-    		//TODO label ontology tabs source and target
+    		//TODO create ontologyGui
     		Vector<Ontology> v = mainPanel.ontologyPanel.getOntologies();
     		addOntologyToPanel(v.get(0), PanelOption.ONTOSBS_Source);
     		addOntologyToPanel(v.get(1), PanelOption.ONTOSBS_Target);
     		mainPanel.selectPanel(MainPanel.ONTOLOGY_SBS_TAB);
-
     	}
     	this.ontologyViewSBS = (this.ontologyViewSBS?false:true);
-    }
-    
-	public void fold_tree(JTree tree){
-		TreeNode root = (TreeNode)tree.getModel().getRoot();
-		expandAll(tree, new TreePath(root), false);
-
-	}
-	
-	public void unfold_tree(JTree tree){
-		TreeNode root = (TreeNode)tree.getModel().getRoot();
-		expandAll(tree, new TreePath(root), true);
-	}
-    
-    @SuppressWarnings("rawtypes")
-	private void expandAll(JTree tree, TreePath parent, boolean expand) {
-        TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (node.getChildCount() >= 0) {
-            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
-                TreeNode n = (TreeNode) e.nextElement();
-                TreePath path = parent.pathByAddingChild(n);    
-                if ((n.getParent().toString().equals("Terms")) && expand){
-                	continue;
-                }
-                if ((n.getParent().toString().equals("Classes")) && expand){
-                	continue;
-                }
-                expandAll(tree, path, expand);
-            }
-        }
-        if (expand) {
-            tree.expandPath(parent);
-        } else {
-            tree.collapsePath(parent);
-        }
-    }
-    
-    @SuppressWarnings("serial")
-	public void color_has_subterms(final JTree tree)
-    {
-        tree.setCellRenderer(new OntologyTreeRenderer()
-        {
-             public Component getTreeCellRendererComponent(JTree pTree,
-                 Object pValue, boolean pIsSelected, boolean pIsExpanded,
-                 boolean pIsLeaf, int pRow, boolean pHasFocus)
-             {
-	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)pValue;
-	    super.getTreeCellRendererComponent(pTree, pValue, pIsSelected,
-                     pIsExpanded, pIsLeaf, pRow, pHasFocus);
-	    String node_name=null;
-	    if (node.getChildCount()==5){
-	    	node_name=node.getChildAt(4).toString();}
-        if (node.isRoot()){
-        	setBackgroundNonSelectionColor(null);
-        }
-        else if ((node.getChildCount()==5) && (node.getChildAt(4).getChildCount() > 0)){
-        	if (node_name.equals("Subterms")){
-        		Color light_red= Color.red.brighter();
-            	setBackgroundNonSelectionColor(light_red);
-        	}
-        	else{
-        		setBackgroundNonSelectionColor(null);
-        		}}
-        else {
-        	setBackgroundNonSelectionColor(null);
-        	}
-        return (this);
-	}
-        });
-    	
     }
 }
