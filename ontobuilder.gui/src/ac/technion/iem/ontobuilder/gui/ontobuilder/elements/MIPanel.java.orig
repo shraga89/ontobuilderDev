@@ -29,7 +29,6 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
@@ -60,31 +59,15 @@ public final class MIPanel extends JPanel
 	private Term targetTerm = null;
 	private TextPane ttt; 
 	private static MIPanel instance = null;
-	public static enum SUGG_BEHAVIOR{
-		NONE("No Suggestions"),ALWAYSSHOW("Always Show Suggestions"),UPONREQUEST("Show Suggestions UnLimited"),LIMITED("Show Suggestions Limited");
-	private final String label;
-	SUGG_BEHAVIOR(String lbl)
-	{
-		label = lbl;
-	}
-	
-	public String toString()
-	{
-		return label;
-	}
-	};
-	public static String SUGG_BEHAVIOR_PROPERTY = "suggestionBehavior";
+	public static enum SUGG_BEHAVIOR{NONE,ALWAYSSHOW,UPONREQUEST,LIMITED};
 	private SUGG_BEHAVIOR suggB = SUGG_BEHAVIOR.UPONREQUEST;
-	
 	private JButton suggestB;
 	private JButton noMatchB;
 	private TextPane suggestCounter;
 	private TextPane limitField;
-	private JXTable table;
-	private TableColumnExt suggColumn; 
+	private JXTable table; 
 	private int suggLimit = 30; //TODO make this a property
 	private Logger userActionLog = Logger.getLogger(MIPanel.class);
-	private JLabel outOf;
 	
 	
     /**
@@ -112,10 +95,9 @@ public final class MIPanel extends JPanel
     	PropertyConfigurator.configure(OntoBuilderResources.Config.LOG4J_PROPERTIES);
     	
     	//Layout
-    	table = new JXTable(30,5);
+    	table = new JXTable(30,4);
     	table.setAutoCreateRowSorter(true);
     	table.setSortOrderCycle(SortOrder.DESCENDING, SortOrder.ASCENDING, SortOrder.UNSORTED);
-    	suggColumn = table.getColumnExt(4);
         miPane = new JScrollPane(table);
 		JPanel controlPane = new JPanel();
 		controlPane.setLayout(new GridLayout(3,3));
@@ -134,7 +116,7 @@ public final class MIPanel extends JPanel
 		suggestCounter.setAlignmentX(0.0f);
 		limitField = new TextPane(Integer.toString(suggLimit));
 		limitField.setAlignmentX(0.0f);
-		outOf = new JLabel(" of ");
+		JLabel outOf = new JLabel(" of ");
 		outOf.setVerticalTextPosition(JLabel.TOP);
 		outOf.setVerticalAlignment(JLabel.TOP);
 		ImageIcon icon = ApplicationUtilities.getImage("lifesaver.gif");
@@ -147,7 +129,7 @@ public final class MIPanel extends JPanel
 				int used = Integer.parseInt(suggestCounter.getText());
 				if (table.getColumnCount()<4 && used <= suggLimit)
 				{
-					suggColumn.setVisible(true);
+					table.getColumnExt(4).setVisible(true);
 					used++;
 					suggestCounter.setText(Integer.toString(used));
 					userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",showSuggestion,used:" + used + ",of:" + suggLimit);
@@ -203,8 +185,6 @@ public final class MIPanel extends JPanel
 	}
 
 	public void setMi(OntologyGui candidate, OntologyGui target) {
-		
-		this.suggB = SUGG_BEHAVIOR.ALWAYSSHOW;
 		this.candGui = candidate;
 		this.setTargGui(target);
 		this.mi = new MatchInformation(candidate.getOntology(),target.getOntology());
@@ -217,14 +197,13 @@ public final class MIPanel extends JPanel
 		}
 		tm = new MIPanelMatchTableModel(mi,suggestions);
 		table.setModel(tm);
-		suggColumn = table.getColumnExt(4);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getColumnExt(0).setVisible(false);
 		table.getColumnModel().getColumn(2).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()) );
 		table.getColumnModel().getColumn(3).setCellRenderer(new PercentageRenderer(new DecimalFormatRenderer()));
 
 		if (!this.suggB.equals(SUGG_BEHAVIOR.ALWAYSSHOW))
-			 suggColumn.setVisible(false);
+			 table.getColumnExt(4).setVisible(false);
 		table.validate();
 		miPane.validate();
 		TableModelListener changeListener = new TableModelListener() {
@@ -283,7 +262,7 @@ public final class MIPanel extends JPanel
 		this.ttt.setText(t.getName());
 		tm.setTerm(t);
 		if ((suggB.equals(SUGG_BEHAVIOR.UPONREQUEST) || suggB.equals(SUGG_BEHAVIOR.LIMITED)) && table.getColumnCount()>3)
-			suggColumn.setVisible(false);
+			table.getColumnExt(4).setVisible(false);
 		miPane.validate();
 		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
 		
@@ -297,46 +276,10 @@ public final class MIPanel extends JPanel
 	}
 
 	/**
-	 * @param string the suggB to set
+	 * @param suggB the suggB to set
 	 */
-	public void setSuggB(String label) {
-		for (SUGG_BEHAVIOR sb :SUGG_BEHAVIOR.values())
-			if (sb.toString().equals(label))
-			{
-				this.suggB = sb;
-				break;
-			}
-		switch (this.suggB)
-		{
-		case ALWAYSSHOW:
-			suggColumn.setVisible(true);
-			suggestB.setVisible(false);
-			this.limitField.setVisible(false);
-			this.suggestCounter.setVisible(false);
-			this.outOf.setVisible(false);
-			break;
-		case UPONREQUEST:
-			suggColumn.setVisible(false);
-			suggestB.setVisible(true);
-			this.limitField.setVisible(false);
-			this.suggestCounter.setVisible(true);
-			this.outOf.setVisible(false);
-			break;
-		case LIMITED:
-			suggColumn.setVisible(false);
-			suggestB.setVisible(true);
-			this.limitField.setVisible(true);
-			this.suggestCounter.setVisible(true);
-			this.outOf.setVisible(true);
-			break;
-		case NONE:
-			suggColumn.setVisible(false);
-			suggestB.setVisible(false);
-			this.limitField.setVisible(false);
-			this.suggestCounter.setVisible(false);
-			this.outOf.setVisible(false);
-			break;
-		}
+	public void setSuggB(SUGG_BEHAVIOR suggB) {
+		this.suggB = suggB;
 	}
 
 	/**
@@ -398,6 +341,7 @@ public final class MIPanel extends JPanel
 		int row = table.convertRowIndexToView(this.tm.findTerm(termID));
 		if (row != -1)
 			this.table.changeSelection(row, 0, false, false); 
+		//.setRowSelectionInterval(row,row);
 		
 	}
 }

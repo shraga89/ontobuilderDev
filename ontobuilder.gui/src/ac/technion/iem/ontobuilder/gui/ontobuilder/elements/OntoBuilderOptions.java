@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,6 +34,7 @@ import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.application.Options;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel.SUGG_BEHAVIOR;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.tools.sitemap.SiteMap;
 import ac.technion.iem.ontobuilder.gui.utils.browser.Browser;
@@ -80,8 +82,7 @@ public class OntoBuilderOptions extends Options
     private TextField txtProxyPort;
     private JCheckBox chkUseProxy;
     private JSpinner spnConnectionTimeout;
-    private JSpinner spnSBSMode;
-
+    private JComboBox suggBehavior;
     /**
      * Constructs a OntoBuilderOptions
      * 
@@ -260,7 +261,7 @@ public class OntoBuilderOptions extends Options
             }
         }
 
-        // View TODO: add SBS mode to here!!!
+        // View
         {
             JPanel view = new JPanel(new GridBagLayout());
             panels.add(ApplicationUtilities.getResourceString("options.panel.view"), view);
@@ -431,7 +432,7 @@ public class OntoBuilderOptions extends Options
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.gridy = 1;
                 gbc.fill = GridBagConstraints.HORIZONTAL;
-                gbc.insets = new Insets(5, 5, 5, 5);
+                gbc.insets = new Insets(0, 5, 0, 5);
                 view.add(upperPanel, gbc);
 
                 {// Icon
@@ -516,10 +517,58 @@ public class OntoBuilderOptions extends Options
                     upperPanel.add(selections, gbcl);
                 }
             }
-
-            {// Separator
+            
+            {// Exporters
+                JPanel sbsPanel = new JPanel(new GridBagLayout());
+                sbsPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.black),
+                    ApplicationUtilities.getResourceString("options.view.sbsPanel")));
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.gridy = 2;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.insets = new Insets(5, 5, 5, 5);
+                view.add(sbsPanel, gbc);
+
+                {// Icon
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.gridheight = 2;
+                    gbcl.insets = new Insets(5, 5, 5, 10);
+                    gbcl.anchor = GridBagConstraints.NORTHWEST;
+                    sbsPanel.add(new JLabel(ApplicationUtilities.getImage("icon_edit.gif")),
+                            gbcl);
+                }
+
+                { // Explanation
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.weightx = 1;
+                    gbcl.gridwidth = 2;
+                    gbcl.insets = new Insets(0, 0, 5, 0);
+                    gbcl.fill = GridBagConstraints.HORIZONTAL;
+                    gbcl.anchor = GridBagConstraints.WEST;
+                    sbsPanel.add(
+                            new MultilineLabel(ApplicationUtilities
+                                .getResourceString("options.view.sbsPanel.explanation")), gbcl);
+                }
+
+                {// Suggestion Modes
+                    suggBehavior = new JComboBox(SUGG_BEHAVIOR.values());
+
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.gridy = 1;
+                    gbcl.gridx = 1;
+                    //gbcl.gridx = 2;
+                    gbcl.weightx = 1;
+                    gbcl.weighty = 1;
+                    gbcl.fill = GridBagConstraints.BOTH;
+                    gbcl.insets = new Insets(5, 5, 5, 5);
+                    gbcl.anchor = GridBagConstraints.WEST;
+                    sbsPanel.add(new JScrollPane(suggBehavior), gbcl);
+                }
+            }
+            
+            {// Separator
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridy = 3;
                 gbc.gridheight = GridBagConstraints.REMAINDER;
                 gbc.fill = GridBagConstraints.VERTICAL;
                 gbc.weightx = 1.0;
@@ -1531,6 +1580,8 @@ public class OntoBuilderOptions extends Options
 
         options.setOptionValue(FileUtilities.PREVIEW_PANEL_VISIBLE_PROPERTY, (new Boolean(
             chkFilePreview.isSelected())).toString());
+        
+        options.setOptionValue(MIPanel.SUGG_BEHAVIOR_PROPERTY, suggBehavior.getSelectedItem().toString());
 
         GraphUtilities.setShowPrecedenceLinks(chkGraphPrecedence.isSelected());
         options.setOptionValue(GraphUtilities.SHOW_PRECEDENCE_LINKS_PROPERTY, (new Boolean(
@@ -1561,6 +1612,8 @@ public class OntoBuilderOptions extends Options
 
         options.setOptionValue(NetworkUtilitiesPropertiesEnum.CONNECTION_TIMEOUT_PROPERTY.getValue(), spnConnectionTimeout
             .getValue().toString());
+        
+        
     }
 
     /**

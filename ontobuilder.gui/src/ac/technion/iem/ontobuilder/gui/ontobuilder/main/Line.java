@@ -36,6 +36,10 @@ import java.awt.geom.Line2D;
  * @author Sabine Massmann
  */
 public class Line extends Component {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -726709865352006767L;
 	//----------------------------------------------
 	//	  STATIC FINAL
 	//----------------------------------------------

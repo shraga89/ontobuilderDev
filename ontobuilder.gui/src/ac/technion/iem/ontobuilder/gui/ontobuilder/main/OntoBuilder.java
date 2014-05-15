@@ -95,6 +95,7 @@ import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MainPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderMenuBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderOptions;
@@ -858,6 +859,10 @@ public final class OntoBuilder extends Application
                 else if (evt.getPropertyName().equals(NetworkUtilitiesPropertiesEnum.CONNECTION_TIMEOUT_PROPERTY))
                 {
                     setConnectionTimeout();
+                }
+                else if (evt.getPropertyName().equals(MIPanel.SUGG_BEHAVIOR_PROPERTY))
+                {
+                	MIPanel.getMIPanel().setSuggB((String)evt.getNewValue());
                 }
             }
         });

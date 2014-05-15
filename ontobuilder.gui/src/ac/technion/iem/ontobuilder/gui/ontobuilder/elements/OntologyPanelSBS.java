@@ -3,7 +3,6 @@ package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
