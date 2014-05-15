@@ -3053,7 +3053,6 @@ public final class OntoBuilder extends Application
 
     	}
     	this.ontologyViewSBS = (this.ontologyViewSBS?false:true);
-
     }
     
 	public void fold_tree(JTree tree){
@@ -3124,4 +3123,4 @@ public final class OntoBuilder extends Application
         });
     	
     }
-}
+}}
