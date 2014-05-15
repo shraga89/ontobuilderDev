@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,6 +40,7 @@ import ac.technion.iem.ontobuilder.gui.match.MIPanelMatchTableModel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapperException;
@@ -138,7 +140,6 @@ public final class MIPanel extends JPanel
 		outOf.setVerticalTextPosition(JLabel.TOP);
 		outOf.setVerticalAlignment(JLabel.TOP);
 		ImageIcon icon = ApplicationUtilities.getImage("lifesaver.gif");
-		//icon =  new ImageIcon(icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
 		suggestB = new JButton(icon);
 		suggestB.addActionListener(new ActionListener() {
 			
@@ -237,6 +238,7 @@ public final class MIPanel extends JPanel
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
 				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + "," + termID+ "," + candTerm.getProvenance() + "," + val +",matched");
+				//drawArcs(targetTerm,true);
 			}
 		};
 		ListSelectionListener selectionListener = new ListSelectionListener() {
@@ -286,9 +288,29 @@ public final class MIPanel extends JPanel
 			suggColumn.setVisible(false);
 		miPane.validate();
 		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
+		//drawArcs(t,true);
 		
 	}
 	
+	/**
+	 * Draws arcs according to current match information from supplied term
+	 * @param t Term to draw arcs from
+	 * @param isTargetTerm is the term a target term?
+	 */
+	private void drawArcs(Term t, boolean isTargetTerm) 
+	{
+		OntologyPanelSBS op = OntologyPanelSBS.getInstance();
+		op.clearArcs();
+		List<Match> matches = mi.getMatchesForTerm(t, !isTargetTerm);
+		if (matches==null)
+			return;
+		for (Match m : matches)
+		{
+			Term toTerm = (isTargetTerm ? m.getCandidateTerm() : m.getTargetTerm());
+			OntologyPanelSBS.getInstance().draw_line(t, toTerm, Double.toString(m.getEffectiveness()));
+		}
+	}
+
 	/**
 	 * @return the suggB
 	 */
