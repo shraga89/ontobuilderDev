@@ -62,7 +62,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileView;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -71,7 +70,6 @@ import org.w3c.dom.Document;
 import ac.technion.iem.ontobuilder.core.biztalk.BizTalkUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
-import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.core.ontology.domain.DomainSimilarity;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelAdapter;
 import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelEvent;
@@ -95,6 +93,7 @@ import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MainPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderMenuBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderOptions;
@@ -106,7 +105,6 @@ import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionEvent;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionListener;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyTreeRenderer;
-import ac.technion.iem.ontobuilder.gui.ontology.TermGui;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolMetadata;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsException;
 import ac.technion.iem.ontobuilder.gui.tools.exactmapping.ToolsUtilities;
@@ -858,6 +856,10 @@ public final class OntoBuilder extends Application
                 else if (evt.getPropertyName().equals(NetworkUtilitiesPropertiesEnum.CONNECTION_TIMEOUT_PROPERTY))
                 {
                     setConnectionTimeout();
+                }
+                else if (evt.getPropertyName().equals(MIPanel.SUGG_BEHAVIOR_PROPERTY))
+                {
+                	MIPanel.getMIPanel().setSuggB((String)evt.getNewValue());
                 }
             }
         });
@@ -3071,7 +3073,13 @@ public final class OntoBuilder extends Application
         if (node.getChildCount() >= 0) {
             for (Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
-                TreePath path = parent.pathByAddingChild(n);
+                TreePath path = parent.pathByAddingChild(n);    
+                if ((n.getParent().toString().equals("Terms")) && expand){
+                	continue;
+                }
+                if ((n.getParent().toString().equals("Classes")) && expand){
+                	continue;
+                }
                 expandAll(tree, path, expand);
             }
         }
@@ -3098,17 +3106,18 @@ public final class OntoBuilder extends Application
 	    if (node.getChildCount()==5){
 	    	node_name=node.getChildAt(4).toString();}
         if (node.isRoot()){
-        	this.setToolTipText(null);
+        	setBackgroundNonSelectionColor(null);
         }
         else if ((node.getChildCount()==5) && (node.getChildAt(4).getChildCount() > 0)){
         	if (node_name.equals("Subterms")){
-            	setToolTipText("has Subterms");
+        		Color light_red= Color.red.brighter();
+            	setBackgroundNonSelectionColor(light_red);
         	}
         	else{
-        		this.setToolTipText(null);
+        		setBackgroundNonSelectionColor(null);
         		}}
         else {
-        	this.setToolTipText(null);
+        	setBackgroundNonSelectionColor(null);
         	}
         return (this);
 	}

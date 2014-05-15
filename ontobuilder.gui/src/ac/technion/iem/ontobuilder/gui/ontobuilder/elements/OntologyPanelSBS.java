@@ -2,8 +2,8 @@ package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,6 +29,8 @@ public class OntologyPanelSBS extends JPanel
     private OntologyPanel candidatePanel;
     private OntologyPanel targetPanel;
     private MIPanel miPanel;
+    private ArrayList<Line> arcs = new ArrayList<Line>(); 
+    private  static OntologyPanelSBS instance=null;
     /**
      * Constructs a default OntologyPanel
      * 
@@ -50,7 +52,7 @@ public class OntologyPanelSBS extends JPanel
         targetPanel.add(new JLabel("Target"));
         topPane.add(candidatePanel);
         topPane.add(targetPanel);
-      
+        instance = this;
         
       
     }
@@ -177,6 +179,19 @@ public class OntologyPanelSBS extends JPanel
 		}
 		return (1+row);
 			
+		
+	}
+
+	public static OntologyPanelSBS getInstance() {
+		return instance;
+		
+	}
+
+	/**
+	 * Should delete all arcs
+	 */
+	public void clearArcs() {
+		//TODO
 		
 	}
 }
