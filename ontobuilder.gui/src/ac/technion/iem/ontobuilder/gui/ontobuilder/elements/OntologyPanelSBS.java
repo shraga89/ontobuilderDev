@@ -1,6 +1,8 @@
 package ac.technion.iem.ontobuilder.gui.ontobuilder.elements;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -141,8 +143,8 @@ public class OntologyPanelSBS extends JPanel
 		OntologyGui ontologyGui2 = targetPanel.getCurrentOntologyGui();
 		JTree tree1= ontologyGui1.get_tree();
 		JTree tree2= ontologyGui2.get_tree();
-		final int position_x_root= 345 + candidatePanel.getX();
-		final int position_y_root= 47+ targetPanel.getY() + 85;
+		final int position_x_root= candidatePanel.getX();
+		final int position_y_root=30+ targetPanel.getY();
 		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
 		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
 		final int intervalX_size=28, intervalY_size=16;
@@ -181,7 +183,17 @@ public class OntologyPanelSBS extends JPanel
 			
 		
 	}
+	public void paint( Graphics g ){
+    	super.paint(g);
+    	for (int i = 0; i < line_coordinates.length; i++){
+    		Line line = new Line(this,(Graphics2D) g, line_coordinates[i][0], line_coordinates[i][1], line_coordinates[i][2], line_coordinates[i][3], line_writing[i], true, false);
+        	if (lines){
+            	line.repaint();
+            	this.repaint();
+        	}
+    	}
 
+    	}
 	public static OntologyPanelSBS getInstance() {
 		return instance;
 		

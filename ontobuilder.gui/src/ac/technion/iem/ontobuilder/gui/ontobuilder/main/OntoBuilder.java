@@ -2190,7 +2190,7 @@ public final class OntoBuilder extends Application
         	mainPanel.sbsPanel.addOntology(ontologyGui,false);
         }
     }
-    
+ /*   
 	public void paint( Graphics g ){
     	super.paint(g);
     	for (int i = 0; i < mainPanel.sbsPanel.line_coordinates.length; i++){
@@ -2201,7 +2201,7 @@ public final class OntoBuilder extends Application
     	}
 
     	}
-	
+	*/
     /**
      * Execute the "NewOntology" command
      */
