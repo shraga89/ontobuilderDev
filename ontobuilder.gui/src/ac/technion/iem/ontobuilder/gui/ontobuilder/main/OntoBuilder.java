@@ -100,6 +100,7 @@ import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderOptions;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntoBuilderToolBar;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntologyGraph;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntologyHyperTree;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.OntologyPanelSBS;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.UpperPanel;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologySelectionEvent;
@@ -1323,8 +1324,13 @@ public final class OntoBuilder extends Application
                     public void actionPerformed(ActionEvent e)
                     {
                         fold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
-                        
-                    }
+                        if ((OntologyPanelSBS.getInstance().getCandidateOntologyGui() != null) &&
+                      		  (OntologyPanelSBS.getInstance().getCandidateOntologyGui() != null))
+                        {
+                        fold_tree(mainPanel.sbsPanel.getCandidateOntologyGui().get_tree());
+                        fold_tree(mainPanel.sbsPanel.getTargetOntologyGui().get_tree()); 
+                        }
+                        }
                 };
               action.putValue(Action.SHORT_DESCRIPTION, "Folds the tree for the current ontology" );
               action.putValue(Action.NAME, "Fold tree");
@@ -1339,6 +1345,12 @@ public final class OntoBuilder extends Application
                       public void actionPerformed(ActionEvent e)
                       {
                           unfold_tree(mainPanel.ontologyPanel.getCurrentOntologyGui().get_tree());
+                          if ((OntologyPanelSBS.getInstance().getCandidateOntologyGui() != null) &&
+                        		  (OntologyPanelSBS.getInstance().getCandidateOntologyGui() != null))
+                          {
+                          unfold_tree(mainPanel.sbsPanel.getCandidateOntologyGui().get_tree());
+                          unfold_tree(mainPanel.sbsPanel.getTargetOntologyGui().get_tree());
+                          }
                       }
                   };
                 action.putValue(Action.SHORT_DESCRIPTION, "unFolds the tree for the current ontology" );
@@ -3073,13 +3085,19 @@ public final class OntoBuilder extends Application
             for (Enumeration e=node.children(); e.hasMoreElements(); ) {
                 TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);    
-                if ((n.getParent().toString().equals("Terms")) && expand){
+                if ((n.getChildCount()==5) &&
+                		(n.getChildAt(4).isLeaf()) && 
+                		(n.getChildAt(4).toString().equals("Subterms")) &&
+                		expand){
                 	continue;
                 }
-                if ((n.getParent().toString().equals("Classes")) && expand){
-                	continue;
-                }
+                if (expand){
+                	if (!n.toString().equals("Terms") &&
+                			!n.toString().equals("Subterms") &&
+                			!n.toString().endsWith(")"))
+                		continue;
                 expandAll(tree, path, expand);
+         	  }
             }
         }
         if (expand) {

@@ -133,7 +133,25 @@ public class OntologyPanelSBS extends JPanel
 	public MatchInformation getMi() {
 		return miPanel.getMi();
 	}
-
+    /**
+     * Get the current Candidate ontologyGui
+     *
+     * @return the {@link OntologyGui}
+     */
+	public OntologyGui getCandidateOntologyGui(){
+		if (candidatePanel.getOntologies().isEmpty()) return null;
+		return candidatePanel.getCurrentOntologyGui();
+	}
+    /**
+     * Get the current Target ontologyGui
+     *
+     * @return the {@link OntologyGui}
+     */
+	public OntologyGui getTargetOntologyGui(){
+		if (targetPanel.getOntologies().isEmpty()) return null;
+		return targetPanel.getCurrentOntologyGui();
+	}
+	
 	public boolean lines= false; 
     public int[][] line_coordinates={{0,0,0,0}}; //{x_start,y_start,x_end,y_end}
     public String[] line_writing={""};
