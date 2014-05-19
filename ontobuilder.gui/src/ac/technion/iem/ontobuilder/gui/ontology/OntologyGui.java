@@ -3,6 +3,7 @@ package ac.technion.iem.ontobuilder.gui.ontology;
 import hypertree.HyperTree;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -92,6 +93,7 @@ import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.PopupListener;
 import ac.technion.iem.ontobuilder.gui.elements.PopupTrigger;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorableMutableTreeNode;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.ButtonINPUTElementGui;
@@ -2258,5 +2260,21 @@ public class OntologyGui extends JPanel
 	//roee
 	public JTree get_tree(){
 		return ontologyTree;
+	}
+
+	/**
+	 * Colors the given term with the given color 
+	 * @param term
+	 * @param c
+	 */
+	public void colorTerm(Term term, Color c) {
+		OntologyTreeModel treeModel = (OntologyTreeModel) ontologyTree.getModel();
+		ColorableMutableTreeNode termNode = (ColorableMutableTreeNode)treeModel.findNodeWithUserObject(term);
+		if (termNode!=null)
+			termNode.setBgColor(c);
+		//TODO make cell renderer change cell bg color by this property
+		//TODO make OntologyGui nodes colorable
+		
+		
 	}
 }

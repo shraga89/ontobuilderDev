@@ -91,6 +91,7 @@ import ac.technion.iem.ontobuilder.gui.application.ObjectWithProperties;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.Splash;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorableMutableTreeNode;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.Line;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.LowerPanel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
@@ -3104,20 +3105,32 @@ public final class OntoBuilder extends Application
 	    String node_name=null;
 	    if (node.getChildCount()==5){
 	    	node_name=node.getChildAt(4).toString();}
-        if (node.isRoot()){
-        	setBackgroundNonSelectionColor(null);
-        }
-        else if ((node.getChildCount()==5) && (node.getChildAt(4).getChildCount() > 0)){
-        	if (node_name.equals("Subterms")){
-        		Color light_red= Color.red.brighter();
-            	setBackgroundNonSelectionColor(light_red);
+//        if (node.isRoot()){
+//        	setBackgroundNonSelectionColor(null);
+//        } else 
+	    if ((node.getChildCount()==5) && (node.getChildAt(4).getChildCount() > 0))
+	    {
+        	if (node_name.equals("Subterms")){ //TODO take this code out of here and into tree building
+        		Color light_pink= Color.pink;
+        		ColorableMutableTreeNode cn = (ColorableMutableTreeNode)node;
+        		if (cn.getBgColor()==null)
+        			cn.setBgColor(light_pink);
         	}
-        	else{
-        		setBackgroundNonSelectionColor(null);
-        		}}
-        else {
-        	setBackgroundNonSelectionColor(null);
-        	}
+//        	else{
+//        		setBackgroundNonSelectionColor(null);
+//        		}}
+//        else {
+//        	setBackgroundNonSelectionColor(null);
+       	}
+	    if (ColorableMutableTreeNode.class.isInstance(node))
+	    {
+	    	ColorableMutableTreeNode cn = (ColorableMutableTreeNode)node;
+    		setBackgroundNonSelectionColor(cn.getBgColor());
+	    }
+	    else 
+	    {
+	    	setBackgroundNonSelectionColor(null);
+	    }
         return (this);
 	}
         });

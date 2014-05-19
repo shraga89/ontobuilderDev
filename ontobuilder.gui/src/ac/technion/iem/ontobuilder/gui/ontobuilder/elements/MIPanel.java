@@ -163,7 +163,16 @@ public final class MIPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",noMatch");
-				//TODO clear any existing matches in the JTable and MatchInformation objects, mark target term in red
+				for (int i=0;i<tm.getRowCount();i++)
+				{ 
+					double val = Double.parseDouble((String)tm.getValueAt(i, 3));
+					if (val > 0.0)
+					{
+						tm.setValueAtNoFire("0.0", i, 3);
+						mi.updateMatch(targetTerm, mi.getCandidateOntology().getTermByID(Long.parseLong((String)tm.getValueAt(i, 0))), 0.0);
+					}
+				}
+				targGui.colorTerm(targetTerm, Color.red.brighter());
 			}
 		});
 		controlPane.add(tt);
