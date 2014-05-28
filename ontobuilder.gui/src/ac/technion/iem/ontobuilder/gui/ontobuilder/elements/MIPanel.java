@@ -247,7 +247,7 @@ public final class MIPanel extends JPanel
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
 				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + "," + termID+ "," + candTerm.getProvenance() + "," + val +",matched");
-				//drawArcs(targetTerm,true);
+				drawArcs(targetTerm,true);
 			}
 		};
 		ListSelectionListener selectionListener = new ListSelectionListener() {
@@ -297,7 +297,7 @@ public final class MIPanel extends JPanel
 			suggColumn.setVisible(false);
 		miPane.validate();
 		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
-		//drawArcs(t,true);
+		drawArcs(t,true);
 		
 	}
 	
@@ -316,8 +316,9 @@ public final class MIPanel extends JPanel
 		for (Match m : matches)
 		{
 			Term toTerm = (isTargetTerm ? m.getCandidateTerm() : m.getTargetTerm());
-			OntologyPanelSBS.getInstance().draw_line(t, toTerm, Double.toString(m.getEffectiveness()));
+			OntologyPanelSBS.getInstance().draw_line(toTerm, t, Double.toString(m.getEffectiveness()));
 		}
+		op.repaint();
 	}
 
 	/**

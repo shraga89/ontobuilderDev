@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -11,12 +12,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+//import ilog.views.gantt.swing.IlvJTree;
+
+
+
+
+import org.jdesktop.swingx.JXTreeTable;
+import org.jdesktop.swingx.treetable.TreeTableModel;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
+import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 
 /**
@@ -153,26 +165,28 @@ public class OntologyPanelSBS extends JPanel
 	}
 	
 	public boolean lines= false; 
-    public int[][] line_coordinates={{0,0,0,0}}; //{x_start,y_start,x_end,y_end}
-    public String[] line_writing={""};
     //don't forget to use : frame.repaint(); after using draw_line
 	public void draw_line(Term t1, Term t2, String sim_val){
 		OntologyGui ontologyGui1 = candidatePanel.getCurrentOntologyGui();
 		OntologyGui ontologyGui2 = targetPanel.getCurrentOntologyGui();
 		JTree tree1= ontologyGui1.get_tree();
 		JTree tree2= ontologyGui2.get_tree();
-		final int position_x_root= candidatePanel.getX();
-		final int position_y_root=30+ targetPanel.getY();
+		System.out.println(tree1.getVisibleRowCount());
+		System.out.println(tree1.getRowCount());
+		System.out.println(tree1.getMinSelectionRow());
 		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
 		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
-		final int intervalX_size=28, intervalY_size=16;
-		line_coordinates[0][0]= (int) (position_x_root + ((node1.getPath().length)*intervalX_size)+ 1.5*(t1.toString().length()));
-		line_coordinates[0][1]= position_y_root + (Find_row_for_node(node1)*intervalY_size);
+		TreePath path1 =new TreePath(node1.getPath());
+		int x_start=(int) (candidatePanel.getX()+ tree1.getRowBounds(tree1.getRowForPath(path1)).x+ 3*(t1.toString().length()));
+		int y_start= candidatePanel.getY()+ tree1.getRowBounds(tree1.getRowForPath(path1)).y;
 		DefaultMutableTreeNode root2 = (DefaultMutableTreeNode) tree2.getModel().getRoot();
 		DefaultMutableTreeNode node2= findNode(root2,t2.toString());	
-		line_coordinates[0][2]= 290+ position_x_root+ ((node2.getPath().length)*intervalX_size);
-		line_coordinates[0][3]= position_y_root + (Find_row_for_node(node2)*intervalY_size);
-		line_writing[0]= sim_val;
+		TreePath path2 =new TreePath(node2.getPath());
+		int x_end=(int) (targetPanel.getX()+ tree2.getRowBounds(tree2.getRowForPath(path2)).x);
+		int y_end= targetPanel.getY()+ tree1.getRowBounds(tree2.getRowForPath(path2)).y;
+		Graphics2D g= (Graphics2D) getInstance().getGraphics();
+		Line line = new Line(this, g, x_start ,y_start+45, x_end, y_end+45, sim_val, true, false);
+		arcs.add(line);
 		lines=true;
 	}
 
@@ -190,23 +204,12 @@ public class OntologyPanelSBS extends JPanel
 	    }
 	    return null;
 	}
-	public int Find_row_for_node(DefaultMutableTreeNode node)
-	{
-		int row=0;
-		while (!node.isRoot()){
-			row+=1+node.getParent().getIndex(node);
-			node=(DefaultMutableTreeNode) node.getParent();
-		}
-		return (1+row);
-			
-		
-	}
 	public void paint( Graphics g ){
     	super.paint(g);
-    	for (int i = 0; i < line_coordinates.length; i++){
-    		Line line = new Line(this,(Graphics2D) g, line_coordinates[i][0], line_coordinates[i][1], line_coordinates[i][2], line_coordinates[i][3], line_writing[i], true, false);
+    	for (Line arc : arcs){
         	if (lines){
-            	line.repaint();
+        		arc.graphics=(Graphics2D) g;
+            	arc.repaint();
             	this.repaint();
         	}
     	}

@@ -80,6 +80,7 @@ public class OntoBuilderOptions extends Options
     private JRadioButton rdoEnumerationValue;
     private TextField txtProxyHost;
     private TextField txtProxyPort;
+    private TextField openOntologyFolder;
     private JCheckBox chkUseProxy;
     private JSpinner spnConnectionTimeout;
     private JComboBox suggBehavior;
@@ -999,15 +1000,82 @@ public class OntoBuilderOptions extends Options
 
             {// Separator
                 GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridy = 1;
-                gbc.gridheight = GridBagConstraints.REMAINDER;
+                gbc.gridy = 2;
+                gbc.gridheight=GridBagConstraints.REMAINDER;
                 gbc.fill = GridBagConstraints.VERTICAL;
-                gbc.weightx = 1.0;
-                gbc.weighty = 1.0;
+                gbc.weightx = 1;
+                gbc.weighty = 1;
                 file.add(new JPanel(), gbc);
             }
-        }
+            {// Default "open ontology" folder
 
+                JPanel Defaultfolder = new JPanel(new GridBagLayout());
+                Defaultfolder.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(Color.black),
+                    "Default Open Ontology Folder"));
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridy = 1;
+                gbc.gridx = 0;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.anchor = GridBagConstraints.EAST;
+                gbc.insets = new Insets(5, 5, 5, 5);
+                file.add(Defaultfolder, gbc);
+
+                {// Icon
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.gridheight = 2;
+                    gbcl.insets = new Insets(5, 5, 5, 10);
+                    gbcl.anchor = GridBagConstraints.NORTHWEST;
+                    Defaultfolder.add(new JLabel(ApplicationUtilities.getImage("filepreview.gif")),
+                        gbcl);
+                }
+
+                { // Explanation
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.weightx = 1;
+                    gbcl.gridwidth = 2;
+                    gbcl.insets = new Insets(0, 0, 5, 0);
+                    gbcl.fill = GridBagConstraints.HORIZONTAL;
+                    gbcl.anchor = GridBagConstraints.EAST;
+                    Defaultfolder.add(
+                        new MultilineLabel("Create Default Open ontology folder"),gbcl);
+                }
+
+
+                {// Selections
+                    JPanel selections = new JPanel(new GridLayout(0, 2, 5, 5));
+                    {    // folder label
+                        final JLabel lblfolder = new JLabel(
+                                "folder:",
+                                JLabel.LEFT);
+                        GridBagConstraints gbcl = new GridBagConstraints();
+                        gbcl.gridy = 2;
+                        gbcl.gridx = 0;
+                        gbcl.anchor = GridBagConstraints.EAST;
+                        lblfolder.setLabelFor(openOntologyFolder);
+                        selections.add(lblfolder, gbcl);
+                    }
+                    { // folder textfield
+                    	{ 
+                    openOntologyFolder = new TextField(ApplicationUtilities.getCurrentDirectory(),20);
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.gridx = 1;
+                    gbcl.gridy = 1;
+                    gbcl.weightx = 10;
+                    gbcl.anchor = GridBagConstraints.WEST;
+                    gbcl.insets = new Insets(0, 0, 0, 15);
+                    selections.add(openOntologyFolder,gbcl);
+                    	}
+                    GridBagConstraints gbcl = new GridBagConstraints();
+                    gbcl.gridy = 1;
+                    gbcl.gridwidth = 5;
+                    gbcl.insets = new Insets(5, 5, 5, 15);
+                    gbcl.anchor = GridBagConstraints.WEST;
+                    Defaultfolder.add(selections, gbcl);
+                    }
+                }
+            }
+        }
         // Import/Export
         {
             JPanel impexp = new JPanel(new GridBagLayout());
@@ -1581,6 +1649,10 @@ public class OntoBuilderOptions extends Options
         options.setOptionValue(FileUtilities.PREVIEW_PANEL_VISIBLE_PROPERTY, (new Boolean(
             chkFilePreview.isSelected())).toString());
         
+        ApplicationUtilities.setCurrentDirectory(openOntologyFolder.getText());
+
+        
+ 
         options.setOptionValue(MIPanel.SUGG_BEHAVIOR_PROPERTY, suggBehavior.getSelectedItem().toString());
 
         GraphUtilities.setShowPrecedenceLinks(chkGraphPrecedence.isSelected());
@@ -1612,7 +1684,7 @@ public class OntoBuilderOptions extends Options
 
         options.setOptionValue(NetworkUtilitiesPropertiesEnum.CONNECTION_TIMEOUT_PROPERTY.getValue(), spnConnectionTimeout
             .getValue().toString());
-        
+
         
     }
 
