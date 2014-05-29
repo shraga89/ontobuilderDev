@@ -168,7 +168,7 @@ public final class MIPanel extends JPanel
 					suggColumn.setVisible(true);
 					used++;
 					suggestCounter.setText(Integer.toString(used));
-					userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",showSuggestion,used:" + used + ",of:" + suggLimit);
+					userActionLog.info("|showSuggestion|" + targetTerm.getId() + "|" + targetTerm.toString() + "|used:|" + used + "|of:|" + suggLimit);
 				}
 			}
 		});
@@ -179,7 +179,7 @@ public final class MIPanel extends JPanel
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",noMatch");
+				userActionLog.info("|noMatch|" + targetTerm.getId() + "|" + targetTerm.toString());
 				for (int i=0;i<tm.getRowCount();i++)
 				{ 
 					double val = Double.parseDouble((String)tm.getValueAt(i, 3));
@@ -274,7 +274,7 @@ public final class MIPanel extends JPanel
 				Term candTerm = mi.getMatrix().getTermByID(termID,true);
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
-				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + "," + termID+ "," + candTerm.getProvenance() + "," + val +",matched");
+				userActionLog.info("|matched|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + termID+ "|" + candTerm.getProvenance() + "|" + val);
 				//drawArcs(targetTerm,true);
 			}
 		};
@@ -324,7 +324,7 @@ public final class MIPanel extends JPanel
 		if ((suggB.equals(SUGG_BEHAVIOR.UPONREQUEST) || suggB.equals(SUGG_BEHAVIOR.LIMITED)) && table.getColumnCount()>3)
 			suggColumn.setVisible(false);
 		miPane.validate();
-		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
+		userActionLog.info("|setTargetTerm|" + targetTerm.getId() + "|" + targetTerm.getProvenance());
 		//drawArcs(t,true);
 		
 	}
