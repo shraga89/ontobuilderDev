@@ -40,6 +40,7 @@ import ac.technion.iem.ontobuilder.gui.match.MIPanelMatchTableModel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
+import ac.technion.iem.ontobuilder.matching.algorithms.line2.simple.Max2LM;
 import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
@@ -62,6 +63,7 @@ public final class MIPanel extends JPanel
 	private Term targetTerm = null;
 	private TextPane ttt; 
 	private static MIPanel instance = null;
+	private boolean binSugg = true;//TODO make this a property
 	public static enum SUGG_BEHAVIOR{
 		NONE("No Suggestions"),ALWAYSSHOW("Always Show Suggestions"),UPONREQUEST("Show Suggestions UnLimited"),LIMITED("Show Suggestions Limited");
 	private final String label;
@@ -88,6 +90,21 @@ public final class MIPanel extends JPanel
 	private Logger userActionLog = Logger.getLogger(MIPanel.class);
 	private JLabel outOf;
 	
+	/**
+	 * If true then the MIPanel shows binary suggestions. 
+	 * @return the binSugg
+	 */
+	public boolean isBinSuggestions() {
+		return binSugg;
+	}
+
+	/**
+	 * If true then the MIPanel will show binary suggestions. 
+	 * @param binSugg the binSugg to set
+	 */
+	public void setBinSugg(boolean binSugg) {
+		this.binSugg = binSugg;
+	}
 	
     /**
 	 * @return the suggLimit
@@ -151,7 +168,7 @@ public final class MIPanel extends JPanel
 					suggColumn.setVisible(true);
 					used++;
 					suggestCounter.setText(Integer.toString(used));
-					userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",showSuggestion,used:" + used + ",of:" + suggLimit);
+					userActionLog.info("|showSuggestion|" + targetTerm.getId() + "|" + targetTerm.toString() + "|used:|" + used + "|of:|" + suggLimit);
 				}
 			}
 		});
@@ -162,7 +179,7 @@ public final class MIPanel extends JPanel
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + ",noMatch");
+				userActionLog.info("|noMatch|" + targetTerm.getId() + "|" + targetTerm.toString());
 				for (int i=0;i<tm.getRowCount();i++)
 				{ 
 					double val = Double.parseDouble((String)tm.getValueAt(i, 3));
@@ -221,7 +238,18 @@ public final class MIPanel extends JPanel
 		//TODO make algorithm choice interactive / property based
 		OntoBuilderWrapper obw = new OntoBuilderWrapper();
 		try {
-			this.suggestions = obw.matchOntologies(candidate.getOntology(), target.getOntology(), MatchingAlgorithmsNamesEnum.TERM.getName());
+			MatchInformation flmRes = obw.matchOntologies(candidate.getOntology(), target.getOntology(), MatchingAlgorithmsNamesEnum.TERM.getName());
+			
+			if (binSugg)
+			{
+				Max2LM mxDelta = new Max2LM(0.1d);
+				suggestions = mxDelta.match(flmRes);
+				for (Match m : suggestions.getCopyOfMatches())
+					suggestions.updateMatch(m.getTargetTerm(),m.getCandidateTerm(), 1.0d);
+			} else
+			{
+				suggestions = flmRes;
+			}
 		} catch (OntoBuilderWrapperException e) {
 			e.printStackTrace();
 		}
@@ -246,7 +274,7 @@ public final class MIPanel extends JPanel
 				Term candTerm = mi.getMatrix().getTermByID(termID,true);
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
-				userActionLog.info(targetTerm.getId() + "," + targetTerm.toString() + "," + termID+ "," + candTerm.getProvenance() + "," + val +",matched");
+				userActionLog.info("|matched|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + termID+ "|" + candTerm.getProvenance() + "|" + val);
 				drawArcs(targetTerm,true);
 			}
 		};
@@ -296,7 +324,7 @@ public final class MIPanel extends JPanel
 		if ((suggB.equals(SUGG_BEHAVIOR.UPONREQUEST) || suggB.equals(SUGG_BEHAVIOR.LIMITED)) && table.getColumnCount()>3)
 			suggColumn.setVisible(false);
 		miPane.validate();
-		userActionLog.info(targetTerm.getId() + "," + targetTerm.getProvenance() + ",setTargetTerm");
+		userActionLog.info("|setTargetTerm|" + targetTerm.getId() + "|" + targetTerm.getProvenance());
 		drawArcs(t,true);
 		
 	}

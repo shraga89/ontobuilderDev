@@ -97,14 +97,22 @@ public class XSDImporterUsingXSOM implements Importer
 	private Ontology xsdOntology;
 	private HashMap<String,Term> ctTerms = new HashMap<String,Term>(); //Terms created from declared context types, used when types are referenced inside complex elements
     /**
-     * Imports an ontology from an XSD file
+     * Imports an ontology from an XSD file. Searches for an instance file within the xsd path
      * 
      * @param file the {@link File} to read the ontology from
      * @throws ImportException when the XML Schema import failed
      */
 	public Ontology importFile(File file) throws ImportException
     {
-		return importFile(file,null);
+		String path = file.getParent() + File.separatorChar + file.getName().substring(0, file.getName().length()-4);
+		File instance = new File(path + ".xml");
+		if (!instance.exists())
+			instance = new File(path);
+		
+		if (instance.exists())
+			return importFile(file,instance);
+		else
+			return importFile(file,null);
     }
 	
 	/**
