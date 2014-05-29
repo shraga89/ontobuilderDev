@@ -23,6 +23,7 @@ import javax.swing.text.DefaultEditorKit;
 
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationOptions;
+import ac.technion.iem.ontobuilder.core.utils.properties.OptionException;
 import ac.technion.iem.ontobuilder.core.utils.properties.PropertyException;
 import ac.technion.iem.ontobuilder.core.utils.properties.ResourceException;
 import ac.technion.iem.ontobuilder.gui.application.action.Actions;
@@ -30,6 +31,7 @@ import ac.technion.iem.ontobuilder.gui.elements.About;
 import ac.technion.iem.ontobuilder.gui.elements.MenuBar;
 import ac.technion.iem.ontobuilder.gui.elements.StatusBar;
 import ac.technion.iem.ontobuilder.gui.elements.ToolBar;
+import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 
 /**
  * <p>Title: Application</p>
@@ -161,6 +163,12 @@ public abstract class Application extends JPanel
         initializeGUIComponents();
         // initializeHelp();
         initializeInterface();
+        try {
+        	ApplicationUtilities.setCurrentDirectory(options.getOptionValue(FileUtilities.ONTOLOGY_FOLDER_PROPERTY));
+        } catch (OptionException e)
+        {
+        	
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 public class FileUtilities
 {
     public static final String PREVIEW_PANEL_VISIBLE_PROPERTY = "filepreviewPanelVisible";
+    public static final String ONTOLOGY_FOLDER_PROPERTY = "defaultOntologyFolder";
 
     public static JFileChooser fileChooser = new JFileChooser();
     public static FileViewer fileViewer = new FileViewer();

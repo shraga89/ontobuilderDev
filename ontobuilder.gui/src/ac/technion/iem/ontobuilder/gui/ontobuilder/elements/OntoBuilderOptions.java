@@ -30,6 +30,7 @@ import ac.technion.iem.ontobuilder.core.biztalk.BizTalkUtilities;
 import ac.technion.iem.ontobuilder.core.utils.dom.DOMUtilities;
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkUtilitiesPropertiesEnum;
 import ac.technion.iem.ontobuilder.core.utils.properties.ApplicationOptions;
+import ac.technion.iem.ontobuilder.core.utils.properties.OptionException;
 import ac.technion.iem.ontobuilder.gui.application.ApplicationUtilities;
 import ac.technion.iem.ontobuilder.gui.application.Options;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
@@ -1057,14 +1058,22 @@ public class OntoBuilderOptions extends Options
                     }
                     { // folder textfield
                     	{ 
-                    openOntologyFolder = new TextField(ApplicationUtilities.getCurrentDirectory(),20);
-                    GridBagConstraints gbcl = new GridBagConstraints();
-                    gbcl.gridx = 1;
-                    gbcl.gridy = 1;
-                    gbcl.weightx = 10;
-                    gbcl.anchor = GridBagConstraints.WEST;
-                    gbcl.insets = new Insets(0, 0, 0, 15);
-                    selections.add(openOntologyFolder,gbcl);
+                    		String path = ApplicationUtilities.getCurrentDirectory();
+                    		try
+                    		{
+                    			path = options.getOptionValue("defaultOntologyFolder");
+                    		} catch (OptionException e)
+                    		{
+                    			
+                    		}
+		                    openOntologyFolder = new TextField(path,20);
+		                    GridBagConstraints gbcl = new GridBagConstraints();
+		                    gbcl.gridx = 1;
+		                    gbcl.gridy = 1;
+		                    gbcl.weightx = 10;
+		                    gbcl.anchor = GridBagConstraints.WEST;
+		                    gbcl.insets = new Insets(0, 0, 0, 15);
+		                    selections.add(openOntologyFolder,gbcl);
                     	}
                     GridBagConstraints gbcl = new GridBagConstraints();
                     gbcl.gridy = 1;
@@ -1649,8 +1658,8 @@ public class OntoBuilderOptions extends Options
         options.setOptionValue(FileUtilities.PREVIEW_PANEL_VISIBLE_PROPERTY, (new Boolean(
             chkFilePreview.isSelected())).toString());
         
+        options.setOptionValue(FileUtilities.ONTOLOGY_FOLDER_PROPERTY,openOntologyFolder.getText());
         ApplicationUtilities.setCurrentDirectory(openOntologyFolder.getText());
-
         
  
         options.setOptionValue(MIPanel.SUGG_BEHAVIOR_PROPERTY, suggBehavior.getSelectedItem().toString());
@@ -1787,6 +1796,13 @@ public class OntoBuilderOptions extends Options
         }
         catch (NumberFormatException e)
         {
+        }
+        
+        try {
+        	openOntologyFolder.setText((String)options.getOptionDefault("defaultOntologyFolder"));
+        } catch (OptionException e)
+        {
+        	openOntologyFolder.setText(ApplicationUtilities.getCurrentDirectory());
         }
     }
 }
