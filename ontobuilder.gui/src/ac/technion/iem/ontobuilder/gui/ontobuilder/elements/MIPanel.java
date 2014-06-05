@@ -275,7 +275,7 @@ public final class MIPanel extends JPanel
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
 				userActionLog.info("|matched|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + termID+ "|" + candTerm.getProvenance() + "|" + val);
-				drawArcs(targetTerm,true);
+				//drawArcs(targetTerm,true);
 			}
 		};
 		ListSelectionListener selectionListener = new ListSelectionListener() {
@@ -325,7 +325,7 @@ public final class MIPanel extends JPanel
 			suggColumn.setVisible(false);
 		miPane.validate();
 		userActionLog.info("|setTargetTerm|" + targetTerm.getId() + "|" + targetTerm.getProvenance());
-		drawArcs(t,true);
+		//drawArcs(t,true);
 		
 	}
 	
