@@ -93,7 +93,7 @@ import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.PopupListener;
 import ac.technion.iem.ontobuilder.gui.elements.PopupTrigger;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
-import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorableMutableTreeNode;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorStatusEnabledTreeNode;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.MIPanel;
 import ac.technion.iem.ontobuilder.gui.utils.files.common.FileUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.files.html.ButtonINPUTElementGui;
@@ -146,6 +146,7 @@ public class OntologyGui extends JPanel
     protected OntologyTreeCellEditor ontologyCellEditor;
 
     protected Object actionObject;
+    public static enum TERM_MATCH_STATUS{MATCHED,UNMATCHED,UNDECIDED};
 
     /**
      * Constructs a default Ontology
@@ -2263,18 +2264,80 @@ public class OntologyGui extends JPanel
 	}
 
 	/**
-	 * Colors the given term with the given color 
+	 * Colors the given term according to the match status.
+	 * Undecided leaf = no bg; Undecided inner node = grey;
+	 * Matched leaf = light green; 
+	 * Matched inner node with all it's subtree matched / unmatched = green;
+	 * Partially decided subtree root = yellow
+	 * Unmatched leaf = light red
+	 * Unmatched subtree root with all leaves matched / unmatched = red 
 	 * @param term
-	 * @param c
+	 * @param s
 	 */
-	public void colorTerm(Term term, Color c) {
+	public void colorTerm(Term term, TERM_MATCH_STATUS s) {
+		boolean isLeaf = (term.getTermsCount()==0);
+		boolean isRoot = (term.getParent()==null);
+		Color c = Color.WHITE;
+		
 		OntologyTreeModel treeModel = (OntologyTreeModel) ontologyTree.getModel();
-		ColorableMutableTreeNode termNode = (ColorableMutableTreeNode)treeModel.findNodeWithUserObject(term);
-		if (termNode!=null)
-			termNode.setBgColor(c);
-		//TODO make cell renderer change cell bg color by this property
-		//TODO make OntologyGui nodes colorable
+		ColorStatusEnabledTreeNode termNode = (ColorStatusEnabledTreeNode)treeModel.findNodeWithUserObject(term);
 		
+//		if (termNode.getStatus().equals(s)) 
+//			return; //no change
 		
+		if (isLeaf)
+		{
+			switch (s)
+			{
+			case MATCHED:
+				c = Color.GREEN.brighter();
+				break;
+			case UNMATCHED:
+				c = Color.red.brighter();
+				break;
+			case UNDECIDED:
+				break; //stays white
+			}
+		} else //color depends on children
+		{
+			boolean someDecided = false;
+			boolean allDecided = true;
+			for (Term child : term.getAllChildren())
+			{
+				ColorStatusEnabledTreeNode childTermNode = (ColorStatusEnabledTreeNode)treeModel.findNodeWithUserObject(child);
+				if (!childTermNode.getStatus().equals(TERM_MATCH_STATUS.UNDECIDED))
+					someDecided = true;
+				else 
+					allDecided = false;
+			}
+			if (s.equals(TERM_MATCH_STATUS.UNDECIDED) && (someDecided==false))
+				c = Color.GRAY;
+			else if (allDecided)
+			{
+				if (s.equals(TERM_MATCH_STATUS.MATCHED))
+					c = Color.GREEN;
+				else if (s.equals(TERM_MATCH_STATUS.UNMATCHED))
+					c = Color.pink;
+				else 
+					c = Color.GRAY;
+			} else //some decided in the subtree (incl. term itself) and some not
+			{
+				//if (s.equals(TERM_MATCH_STATUS.UNMATCHED))
+					c = Color.GRAY; //unmatched inner node
+				//else
+					//c = Color.YELLOW; //some are undecided  in the subtree
+			}
+		}
+		
+		termNode.setBgColor(c);
+		termNode.setStatus(s);
+		
+		if (!isRoot)
+		{
+			//propagate upwards
+			Term p = term.getParent();
+			TERM_MATCH_STATUS sp = ((ColorStatusEnabledTreeNode)treeModel.findNodeWithUserObject(p)).getStatus();
+			colorTerm(p, sp);
+		}
 	}
 }

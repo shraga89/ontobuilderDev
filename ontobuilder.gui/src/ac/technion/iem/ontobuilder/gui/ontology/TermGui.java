@@ -50,7 +50,7 @@ import ac.technion.iem.ontobuilder.gui.application.PropertiesTableModel;
 import ac.technion.iem.ontobuilder.gui.elements.ComboBox;
 import ac.technion.iem.ontobuilder.gui.elements.MultilineLabel;
 import ac.technion.iem.ontobuilder.gui.elements.TextField;
-import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorableMutableTreeNode;
+import ac.technion.iem.ontobuilder.gui.ontobuilder.elements.ColorStatusEnabledTreeNode;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.GraphUtilities;
 import ac.technion.iem.ontobuilder.gui.utils.graphs.OrderedDefaultPort;
 import ac.technion.iem.ontobuilder.gui.utils.hypertree.NodeHyperTree;
@@ -106,7 +106,7 @@ public class TermGui extends OntologyObjectGui
     
     public DefaultMutableTreeNode getTreeBranch()
     {
-    	ColorableMutableTreeNode root = new ColorableMutableTreeNode(this);
+    	ColorStatusEnabledTreeNode root = new ColorStatusEnabledTreeNode(this);
 
         DomainGui domainGui = new DomainGui(term.getDomain());
         root.add(domainGui.getTreeBranch());

@@ -122,6 +122,7 @@ public class MappingMatchImporter implements MatchImporter {
 				readbuffer.readLine(); //skip first 8 lines
 			strRead=readbuffer.readLine();
 			while (!strRead.substring(0, 2).equals(" +")){
+				//System.err.println(strRead);
 				String resArray[] = new String[3];
 				splitArray = strRead.split(" <-> ");
 				resArray[0] = splitArray[0].substring(3);

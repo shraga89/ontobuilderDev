@@ -543,6 +543,7 @@ public class Term extends OntologyClass
         term.setDomain((Domain) domain.clone());
         term.superClass = superClass;
         term.parent = parent;
+//      term.id = id;
         for (Iterator<?> i = axioms.iterator(); i.hasNext();)
             term.addAxiom((Axiom) ((Axiom) i.next()).clone());
         for (Iterator<?> i = attributes.iterator(); i.hasNext();)

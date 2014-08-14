@@ -1626,7 +1626,7 @@ public class OntoBuilderOptions extends Options
         ApplicationUtilities.setCurrentDirectory(openOntologyFolder.getCurrentDirectory().toString());
 
  
-        //options.setOptionValue(MIPanel.SUGG_BEHAVIOR_PROPERTY, suggBehavior.getSelectedItem().toString());
+        options.setOptionValue(MIPanel.SUGG_BEHAVIOR_PROPERTY, suggBehavior.getSelectedItem().toString());
 
         GraphUtilities.setShowPrecedenceLinks(chkGraphPrecedence.isSelected());
         options.setOptionValue(GraphUtilities.SHOW_PRECEDENCE_LINKS_PROPERTY, (new Boolean(

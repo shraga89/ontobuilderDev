@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE algorithms SYSTEM "dtds/algorithms.dtd">
-<algorithms>
+<!DOCTYPE algorithms SYSTEM "dtds/algorithms.dtd"><algorithms>
     <preprocessing>
         <parameters>
             <parameter>
@@ -37,6 +36,10 @@
                 <value>true</value>
                 <default>true</default>
             </parameter>
+            <parameter>
+            	<name>useAverage</name>
+            	<value>0.0</value><default>0.0</default>
+            	</parameter>
             <parameter>
                 <name>useSoundex</name>
                 <value>true</value>
@@ -399,4 +402,3 @@
         </parameters>
         </algorithm>
 </algorithms>
-

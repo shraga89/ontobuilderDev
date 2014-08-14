@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.term;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
     protected double stringLabelWeight;
     protected double wordNameWeight;
     protected double stringNameWeight;
+    protected double useAverage;
+    //TODO add global parameter indicating if the MAX or AVG aggregation strategy is chosen
 
     protected double maxCommonSubStringWeight;
     protected double nGramWeight;
@@ -57,6 +60,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         algorithm.maxCommonSubStringWeight = maxCommonSubStringWeight;
         algorithm.nGramWeight = nGramWeight;
         algorithm.jaroWinklerWeight = jaroWinklerWeight;
+        algorithm.useAverage = useAverage;
         return algorithm;
     }
 
@@ -85,6 +89,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             originalTargetTerms = OntologyUtilities.getTermsOfClass(targetOntology, "input");
             originalTargetTerms = OntologyUtilities.filterTermListRemovingTermsOfClass(
                 originalTargetTerms, "hidden");
+            
         }
         else
         {
@@ -134,6 +139,53 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             // changed haggai - 6/12/03
             MatchMatrix matchMatrix = MatchOntologyHandler.createMatchMatrix(originalTargetTerms,
                 targetTerms, originalCandidateTerms, candidateTerms, this);
+            
+            if (useAverage==2)
+            {
+            	useAverage=1.0;
+	            for (int i=0; i< originalCandidateTerms.size(); i++)
+	            { 
+	            	int index=0;
+	            	double maxEffectiveness=0;
+	            	int j=0;
+	            	
+	            	for (j=0 ; j< originalTargetTerms.size(); j++)
+	            	{
+	            		
+	            		
+		            		double val = matchMatrix.getMatchConfidence(originalCandidateTerms.get(i) , originalTargetTerms.get(j));
+		            	if (maxEffectiveness < val)
+		            		{
+		            			maxEffectiveness = val;
+		            			index=j;
+		            		}	
+		            }
+	           
+	            	
+	            	
+	            	for (j=0 ; j< originalTargetTerms.size(); j++)
+	            	{	
+	            		double val = matchMatrix.getMatchConfidence(originalCandidateTerms.get(i) , originalTargetTerms.get(j));
+		            	if (maxEffectiveness == val && index != j)
+		            		{
+		            		Term target1=originalTargetTerms.get(index);
+		                	Term candidat1=originalCandidateTerms.get(i);
+		                	
+		                	Term target2=originalTargetTerms.get(j);
+		                	//Term candidat2=(Term)matchTable[k][0];
+		                	
+		            		compare(candidat1 ,target1);
+		            		matchMatrix.setMatchConfidence(candidat1 ,target1 ,effectiveness);
+		                     
+		                     compare(candidat1 ,target2);
+		                     matchMatrix.setMatchConfidence(candidat1 ,target2 ,effectiveness);
+		            		}	
+	            	}
+	            }
+	            useAverage=2;
+            }
+
+           
             mode = FLM_ONLY;
             matchInformation = buildMatchInformation(matchMatrix.transpose(),candidateOntology, targetOntology);
 //            matchInformation.setTargetOntologyTermsTotal(originalTargetTerms.size());
@@ -235,6 +287,15 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
     }
     
     /**
+     * Set the useAverage
+     * 
+     * @param useAverage 
+     */
+    public void setuseAverage(double useAverage)
+    {
+        this.useAverage = useAverage;
+    }
+    /**
      * Get the stringNameWeight
      * 
      * @return the stringNameWeight
@@ -285,6 +346,16 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
     }
     
     /**
+     * Get the useAverage
+     * 
+     * @return the useAverage
+     */
+    public double getuseAverage()
+    {
+        return useAverage;
+    }
+    
+    /**
      * Set the nGramWeight
      * 
      * @param nGramWeight the weight
@@ -321,6 +392,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
      */
     public void configure(Element element)
     {
+    	//TODO set the global parameter about aggregation strategy
         Element parametersElement = element.getChild("parameters");
         if (parametersElement == null)
             return;
@@ -365,6 +437,13 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
                 int value = Integer.parseInt(parameterElement.getChild("value").getText());
                 if (name.equals("nGram"))
                     nGram = value;
+            }
+            
+            else if (name.equals("useAverage"))
+            {
+                double value = Double.parseDouble(parameterElement.getChild("value").getText());
+                if (name.equals("useAverage"))
+                    useAverage = value;
             }
         }
     }
@@ -470,29 +549,45 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
 
         double stringMatchingEffectiveness_label = (jaroWinklerDistance_label*jaroWinklerWeight+ commonEffectiveness_label*maxCommonSubStringWeight+nGramEffectiveness_label*nGramWeight)/(maxCommonSubStringWeight+nGramWeight+jaroWinklerWeight);
 		double stringMatchingEffectiveness_name = (jaroWinklerDistance_name*jaroWinklerWeight+ commonEffectiveness_name*maxCommonSubStringWeight+nGramEffectiveness_name*nGramWeight)/(maxCommonSubStringWeight+nGramWeight+jaroWinklerWeight);
-
-        if (isUsingNames)
-            effectiveness = (wordEffectiveness_label * wordLabelWeight +
-                stringMatchingEffectiveness_label * stringLabelWeight + wordEffectiveness_name *
-                wordNameWeight + stringMatchingEffectiveness_name * stringNameWeight) /
-                (wordLabelWeight + stringLabelWeight + wordNameWeight + stringNameWeight);
-        else
-            effectiveness = (wordEffectiveness_label * wordLabelWeight + stringMatchingEffectiveness_label *
-                stringLabelWeight) /
-                (wordLabelWeight + stringLabelWeight);
-
+		
+	/*	if (wordEffectiveness_label==0 && stringMatchingEffectiveness_name<0.2)
+			stringMatchingEffectiveness_name=0; */
+		
+		
+        if (useAverage==0 || useAverage==2)
+        {
+		if (isUsingNames)
+	            effectiveness = (Math.max(wordEffectiveness_label,
+	            		Math.max(stringMatchingEffectiveness_label , Math.max(wordEffectiveness_name, stringMatchingEffectiveness_name))));
+	              
+			else
+	            effectiveness = (Math.max(wordEffectiveness_label, stringMatchingEffectiveness_label));
+		
+        }
+        if (useAverage==1)
+        {
+			 if (isUsingNames)
+	            effectiveness = (wordEffectiveness_label * wordLabelWeight +
+	            		stringMatchingEffectiveness_label * stringLabelWeight + wordEffectiveness_name *
+	                wordNameWeight + stringMatchingEffectiveness_name * stringNameWeight) /
+	                (wordLabelWeight +  stringLabelWeight + wordNameWeight + stringNameWeight);
+	        else
+	            effectiveness = (wordEffectiveness_label * wordLabelWeight + stringMatchingEffectiveness_label *
+	                stringLabelWeight) /
+	                (wordLabelWeight + stringLabelWeight);
+        }
         // Determine overall with voting
         /*
          * double wordLabelWeightAux=wordLabelWeight; double stringLabelWeightAux=stringLabelWeight;
          * double wordNameWeightAux=wordLabelWeight; double stringNameWeightAux=stringLabelWeight;
          * int methods=0; if(wordEffectiveness_label>=threshold) methods++;
          * if(commonEffectiveness_label>=threshold) methods++; if(isUsingNames &&
-         * wordEffectiveness_name>=threshold) methods++; if(isUsingNames &&
+         * wordEffectiveness_name>=thretAux=0; stringLabelWeightAux=0; wordNameWeightAux=0;
+         * stringNameWeightAux=0; } else if((isUsingNames && methods>2) || (!isUsingNames &&
+         * methods>1)) { if(wordEffectiveneshold) methods++; if(isUsingNames &&
          * commonEffectiveness_name>=threshold) methods++; if(!isUsingNames) wordNameWeightAux=0;
          * if(!isUsingNames) stringNameWeightAux=0; if((isUsingNames && methods<2) || (!isUsingNames
-         * && methods<1)) { wordLabelWeightAux=0; stringLabelWeightAux=0; wordNameWeightAux=0;
-         * stringNameWeightAux=0; } else if((isUsingNames && methods>2) || (!isUsingNames &&
-         * methods>1)) { if(wordEffectiveness_label<threshold) wordLabelWeightAux=0;
+         * && methods<1)) { wordLabelWeighss_label<threshold) wordLabelWeightAux=0;
          * if(commonEffectiveness_label<threshold) stringLabelWeightAux=0; if(!isUsingNames ||
          * wordEffectiveness_name<threshold) wordNameWeightAux=0; if(!isUsingNames ||
          * commonEffectiveness_name<threshold) stringNameWeightAux=0; }

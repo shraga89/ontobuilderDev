@@ -24,5 +24,7 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/wsdl4j.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jbpt-0.2.393.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jing.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/datafile.jar"/>
+	<classpathentry kind="lib" path="/ontobuilder.core/lib/opencsv-2.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

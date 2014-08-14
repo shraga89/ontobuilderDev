@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -15,6 +16,10 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
+
+import com.infomata.data.CSVFormat;
+import com.infomata.data.DataFile;
+import com.infomata.data.DataRow;
 
 import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
 
@@ -233,5 +238,32 @@ public class ExportUtilities
         }
         return types;
     }
+    
+    /**
+	 * Takes header and data and outputs to CSV file
+	 * @param header
+	 * @param data
+	 * @param f
+	 */
+	public static void outputAsCSV(String[] header, ArrayList<String[]> data, File f) 
+	{
+		DataFile write = DataFile.createWriter("8859_1", false);
+		write.setDataFormat(new CSVFormat());			
+		try {
+			write.open(f);
+		
+		DataRow row = write.next();
+		for (int i=0;i<header.length;i++) row.add(header[i]);
+		for (int i=0;i<data.size();i++)
+		{
+			row = write.next();
+			String rRow[] = data.get(i);
+			for (int j=0;j<rRow.length;j++) row.add(rRow[j]);
+		}
+		write.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

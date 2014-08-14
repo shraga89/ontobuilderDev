@@ -7,13 +7,16 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -39,6 +42,8 @@ import ac.technion.iem.ontobuilder.gui.elements.TextPane;
 import ac.technion.iem.ontobuilder.gui.match.MIPanelMatchTableModel;
 import ac.technion.iem.ontobuilder.gui.ontobuilder.main.OntoBuilder;
 import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui;
+import ac.technion.iem.ontobuilder.gui.ontology.OntologyGui.TERM_MATCH_STATUS;
+import ac.technion.iem.ontobuilder.io.exports.ExportUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.MatchingAlgorithmsNamesEnum;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.simple.Max2LM;
 import ac.technion.iem.ontobuilder.matching.match.Match;
@@ -82,6 +87,7 @@ public final class MIPanel extends JPanel
 	
 	private JButton suggestB;
 	private JButton noMatchB;
+	private TextPane noMatchConfidence;
 	private TextPane suggestCounter;
 	private TextPane limitField;
 	private JXTable table;
@@ -137,7 +143,7 @@ public final class MIPanel extends JPanel
     	suggColumn = table.getColumnExt(4);
         miPane = new JScrollPane(table);
 		JPanel controlPane = new JPanel();
-		controlPane.setLayout(new GridLayout(3,3));
+		controlPane.setLayout(new GridLayout(4,3));
 		JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, miPane, controlPane);
 		mainPane.setDividerLocation(0.2);
 		setLayout(new BorderLayout());
@@ -173,34 +179,75 @@ public final class MIPanel extends JPanel
 			}
 		});
 		
+		noMatchConfidence = new TextPane("");
+		noMatchConfidence.setBackground(Color.white);
+		noMatchConfidence.setAlignmentX(0.0f);
 		noMatchB = new JButton("No Match!");
 		noMatchB.setBackground(Color.red);
 		noMatchB.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userActionLog.info("|noMatch|" + targetTerm.getId() + "|" + targetTerm.toString());
+				Double noMatchConf = -1.0d;
+				try
+				{
+					noMatchConf = Double.parseDouble(noMatchConfidence.getText());
+				} catch (NumberFormatException nfe)
+				{
+					userActionLog.error("No Match Confidence in wrong format");
+					JOptionPane.showMessageDialog(MIPanel.getMIPanel(), "No Match Confidence in wrong format");
+				}
+				if (noMatchConf == -1.0)
+				{
+					JOptionPane.showMessageDialog(MIPanel.getMIPanel(), "Please set no-match confidence first");
+					return;
+				}
+				if (!(noMatchConf >= 0.0d && noMatchConf <=1.0d))
+				{
+					JOptionPane.showMessageDialog(MIPanel.getMIPanel(), "Please enter a no-match confidence value between 0 and 1");
+					return;
+				}
+				
+				targGui.colorTerm(targetTerm, TERM_MATCH_STATUS.UNMATCHED);
+				userActionLog.info("|noMatch|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + noMatchConf);
 				for (int i=0;i<tm.getRowCount();i++)
 				{ 
 					double val = Double.parseDouble((String)tm.getValueAt(i, 3));
 					if (val > 0.0)
 					{
-						tm.setValueAtNoFire("0.0", i, 3);
+						tm.setValueAtNoFire(Double.toString(1.0d- noMatchConf), i, 3);
 						mi.updateMatch(targetTerm, mi.getCandidateOntology().getTermByID(Long.parseLong((String)tm.getValueAt(i, 0))), 0.0);
 					}
 				}
-				targGui.colorTerm(targetTerm, Color.red.brighter());
+				
 			}
 		});
+		
+		JButton dumpB = new JButton("Dump Result");
+		dumpB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dump(mi,"userMatches.csv");
+				dump(suggestions,"systemSuggestions.csv");
+			}
+		});
+		//row 1
 		controlPane.add(tt);
 		controlPane.add(ttt);
-		controlPane.add(noMatchB);
+		controlPane.add(dumpB);
+		//row 2		
 		controlPane.add(suggestB);
 		controlPane.add(new JLabel(""));
 		controlPane.add(new JLabel(""));
+		//row 3
 		controlPane.add(suggestCounter);
 		controlPane.add(outOf);
 		controlPane.add(limitField);
+		//row 4
+		controlPane.add(new JLabel("No Match Confidence:"));
+		controlPane.add(noMatchConfidence);
+		controlPane.add(noMatchB);
 		
 		if (suggB.equals(SUGG_BEHAVIOR.NONE))
 		{
@@ -212,6 +259,30 @@ public final class MIPanel extends JPanel
     }
 
     /**
+     * dumps supplied match information object to a file name with the name supplied
+     * @param mi2
+     * @param fileName
+     */
+    protected void dump(MatchInformation mi2, String fileName) {
+		String[] header = new String[]{"candID","candProvenance","candName","targID","targProvenance","confidence"};
+		ArrayList<String[]> data = new ArrayList<String[]>();
+		File f = new File(fileName);
+		
+		for (Match m : mi2.getCopyOfMatches())
+		{
+			Term c = m.getCandidateTerm();
+			Term t = m.getTargetTerm();
+			data.add(new String[]{Long.toString(c.getId()),c.getProvenance()
+					,c.getName(),Long.toString(t.getId()),t.getProvenance() 
+					,t.getName(), Double.toString(m.getEffectiveness())});
+		}
+			
+		
+		ExportUtilities.outputAsCSV(header, data, f );
+		
+	}
+
+	/**
      * Use instead of constructor (singleton)
      * @return
      */
@@ -274,6 +345,15 @@ public final class MIPanel extends JPanel
 				Term candTerm = mi.getMatrix().getTermByID(termID,true);
 				Double val = Double.parseDouble((String)tm.getValueAt(e.getFirstRow(), 3));
 				mi.updateMatch(targetTerm, candTerm,val);
+				boolean hasMatches = false;
+				ArrayList<Match> termMatches = mi.getMatchesForTerm(targetTerm,false);
+				if (termMatches !=null)
+					for (Match m : termMatches)
+						if (m.getEffectiveness()>0.0d)
+							hasMatches = true;
+				TERM_MATCH_STATUS s = (hasMatches ? TERM_MATCH_STATUS.MATCHED : TERM_MATCH_STATUS.UNDECIDED);
+				targGui.colorTerm(targetTerm, s);
+				targGui.repaint();
 				userActionLog.info("|matched|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + termID+ "|" + candTerm.getProvenance() + "|" + val);
 				//drawArcs(targetTerm,true);
 			}
@@ -302,6 +382,7 @@ public final class MIPanel extends JPanel
 		table.getSelectionModel().addListSelectionListener(selectionListener ); 
 		tm.addTableModelListener(changeListener);
 	}
+
 
 	/**
 	 * Resets match information object by clearing all match data recorded.  
