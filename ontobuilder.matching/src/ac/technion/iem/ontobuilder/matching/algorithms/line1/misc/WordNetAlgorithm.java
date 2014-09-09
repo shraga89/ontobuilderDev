@@ -168,7 +168,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 				Double someSimilarity = (Double) iterator.next();
 				similarity = Math.max(similarity, someSimilarity);
 			}
-			mi.updateMatch(target, candidate, similarity);
+			if (similarity>0.0)
+				mi.updateMatch(target, candidate, similarity);
 		}
 	}
 
@@ -271,7 +272,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		ArrayList<Term> result = new ArrayList<Term>();
 		for (int i = 0; i < terms.size(); i++)
 		{
-			result.add(i, terms.get(i).clone());
+			result.add(i, terms.get(i).copy());
 		}
 		return result;
 	}
