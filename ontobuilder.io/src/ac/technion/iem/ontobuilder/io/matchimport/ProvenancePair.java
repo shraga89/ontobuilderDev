@@ -12,7 +12,28 @@ public class ProvenancePair {
 
 		private String leftP;
 		private String rightP;
-		private double conf;
+		private double conf = 1.0;
+		private double elapsed =-1.0;
+		private double diff = -1.0;
+		/**
+		 * @return the diff
+		 */
+		public double getDiff() {
+			return diff;
+		}
+		/**
+		 * @param diff the diff to set
+		 */
+		public void setDiff(double diff) {
+			this.diff = diff;
+		}
+		/**
+		 * @return the elapsed
+		 */
+		public double getElapsed() {
+			return elapsed;
+		}
+		
 
 		/**
 		 * @param leftP
@@ -59,6 +80,9 @@ public class ProvenancePair {
 		 */
 		public void setConf(double conf) {
 			this.conf = conf;
+		}
+		public void setElapsed(double elapsed) {
+			this.elapsed  = elapsed;
 		}
 
 

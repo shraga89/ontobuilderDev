@@ -1,5 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.match;
 
+import java.util.Properties;
+
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 
 /**
@@ -10,6 +12,7 @@ public class Match
     protected Term targetTerm;
     protected Term candidateTerm;
     protected double effectiveness;
+    protected Properties props = null;
 
     /**
      * Constructs a Match
@@ -109,6 +112,29 @@ public class Match
     {
     	return candidateTerm.hashCode() ^ targetTerm.hashCode();
     }
+
+    /**
+     * Sets Properties according to those supplied
+     * @param prop
+     */
+	public void setProperties(Properties prop) {
+		this.props = prop;
+		
+	}
+
+	/**
+	 * @return the props
+	 */
+	public Properties getProps() {
+		return props;
+	}
+	
+	public Match clone(){
+		Match m = new Match(this.targetTerm,this.candidateTerm,this.effectiveness);
+		if (props!=null)
+			m.setProperties((Properties)props.clone());
+		return m;
+	}
     
     
 }

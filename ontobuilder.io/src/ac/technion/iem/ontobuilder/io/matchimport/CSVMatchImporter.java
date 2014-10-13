@@ -6,6 +6,7 @@ package ac.technion.iem.ontobuilder.io.matchimport;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
@@ -14,7 +15,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * @author Tomer Sagi
- * Importer for simple csv mapping  
+ * Importer for simple csv mapping
+ * Minimal format: 
  */
 public class CSVMatchImporter implements MatchImporter {
 	
@@ -34,18 +36,28 @@ public class CSVMatchImporter implements MatchImporter {
 			ArrayList<ProvenancePair> list = readMappingFile(file);
 			for (ProvenancePair p : list)
 			{
-//				System.err.println(p.getLeftP() + "," + p.getRightP());
 				Term c = candidate.getTermByProvenance(p.getLeftP());
 				if (c==null)
-					{System.err.println("Attribute with provenenance:" + p.getLeftP() + "not found in " + candidate.getName());
-					continue;}
+				{
+					System.err.println("Attribute with provenenance:" + p.getLeftP() + "not found in " + candidate.getName());
+					continue;
+				}
 				Term t = target.getTermByProvenance(p.getRightP());
 				if (t==null)
 				{
 					System.err.println("Attribute with provenenance:" + p.getRightP() + "not found in " + target.getName());
 					continue;
 				}
-				res.updateMatch(t,c,p.getConf());
+				if (p.getElapsed()==-1.0)
+					res.updateMatch(t,c,p.getConf());
+				else
+				{
+					Properties props = new Properties();
+					props.put("elapsed", p.getElapsed());
+					props.put("diff", p.getDiff());
+					res.updateMatch(t, c, p.getConf(), props);
+				}
+					
 			}
 			
 			return res;
@@ -68,30 +80,22 @@ public class CSVMatchImporter implements MatchImporter {
 		
 	    String [] nextLine;
 	    while ((nextLine = reader.readNext()) != null)
-	        // nextLine[] is an array of values from the line
-	    	list.add( new ProvenancePair(nextLine[0],nextLine[1],Double.parseDouble(nextLine[2])));
+	    {    // nextLine[] is an array of values from the line
+	    	ProvenancePair p;
+	    	p = new ProvenancePair(nextLine[0],nextLine[1],Double.parseDouble(nextLine[2]));
+	    	if (nextLine.length==5) //extended match information
+	    	{
+	    		p.setElapsed(Double.parseDouble(nextLine[3]));
+	    		p.setDiff(Double.parseDouble(nextLine[4]));
+	    	}
+	    
+	    	list.add( p);
+	    }
+	    
 	    reader.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-//		try {
-//			readbuffer = new BufferedReader(new FileReader(file.getPath()));
-//			while (readbuffer.ready()){
-//				strRead=readbuffer.readLine();
-//				splitArray = strRead.split(",");
-//				if (splitArray.length==3)
-//					{
-//						double d = Double.parseDouble(splitArray[2].);
-//						list.add( new ProvenancePair(splitArray[0],splitArray[1],d));
-//					}
-//				}
-//			readbuffer.close();
-//		} catch (FileNotFoundException e1) {
-//			e1.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 		return list ;
 	}
 

@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -201,6 +202,21 @@ public class MatchInformation implements Comparable<MatchInformation>
 			matchedTermMap.put(t,termMatches);
 	}
 
+	/**
+	 * 
+	 * @param targetTerm
+	 * @param candidateTerm
+	 * @param confidence
+	 * @param prop Additional properties to be saved in the match object
+	 */
+	public void updateMatch(Term targetTerm, Term candidateTerm, double confidence,Properties prop)
+	{
+		Match m = new Match(targetTerm, candidateTerm, confidence);
+		m.setProperties(prop);
+		updateMatch(m);
+		
+	}
+	
     /**
      * If effectiveness is 0, removes the match from the list, updates 
      *  the matrix and checks if the mismatch list needs updating. 
@@ -327,7 +343,7 @@ public class MatchInformation implements Comparable<MatchInformation>
     {
     	ArrayList<Match> res = new ArrayList<Match>();
     	for (Match m : matches)
-    		res.add(new Match(m.targetTerm, m.candidateTerm, m.effectiveness));
+    		res.add(m.clone());
         return res;
     }
     
