@@ -2,6 +2,7 @@ package ac.technion.iem.ontobuilder.matching.algorithms.line2.simple;
 
 import java.util.Properties;
 
+import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line2.common.SecondLineAlgorithm;
 import ac.technion.iem.ontobuilder.matching.match.Match;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
@@ -32,10 +33,13 @@ public class Max2LM implements SecondLineAlgorithm {
 		MatchMatrix mm = mi.getMatrix();
 		for (Match m : mi.getCopyOfMatches())
 		{
-			double maxC = mm.getMaxConfidence(m.getCandidateTerm(), true)-delta;
-			double maxT = mm.getMaxConfidence(m.getTargetTerm(), false)-delta;
-			if (m.getEffectiveness()>= Math.min(maxC, maxT))
-					res.updateMatch(m.getTargetTerm(),m.getCandidateTerm(),m.getEffectiveness());
+			//Max delta % from max-avg(nonZero)
+//			double maxC = mm.getMaxConfidence(m.getCandidateTerm(), true) + (mm.getMaxConfidence(m.getCandidateTerm(), true)-mm.getAvgConfidence(m.getCandidateTerm(), true)) * delta;
+			Term t = m.getTargetTerm();
+			double maxT = mm.getMaxConfidence(t, false);
+			double minT = maxT - (maxT-mm.getAvgConfidence(t, false))*delta;
+			if (m.getEffectiveness()>= minT)
+					res.updateMatch(t,m.getCandidateTerm(),m.getEffectiveness());
 		}
 		return res;
 	}

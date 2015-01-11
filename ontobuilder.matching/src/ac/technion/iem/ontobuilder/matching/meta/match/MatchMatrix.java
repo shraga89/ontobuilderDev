@@ -35,6 +35,10 @@ public class MatchMatrix
     //supports getting max confidence for a term in O(1) filled when first used (O(n^2) for first invocation of getMaxConfidence)
     private HashMap<Term,Double> candidateTermMaxConf = new HashMap<Term,Double>();
     private HashMap<Term,Double> targetTermMaxConf = new HashMap<Term,Double>();
+    
+    private HashMap<Term,Double> candidateTermAvgConf = new HashMap<Term,Double>();
+    private HashMap<Term,Double> targetTermAvgConf = new HashMap<Term,Double>();
+
 	protected double[][] confidenceMatrix;
     
     private static int printIndex = 0;
@@ -702,6 +706,63 @@ public class MatchMatrix
     }
 
     /**
+     * Gets avg confidence for a term in O(1)
+     * Except when first used (O(n^2) for first invocation of getAvgConfidence in a matrix)
+     * @param t Term to get avg confidence for
+     * @param isCandidate
+     * @return
+     */
+    public double getAvgConfidence(Term t, boolean isCandidate)
+    {
+    	if (t==null) return 0.0;
+    	if (candidateTermAvgConf.isEmpty() || targetTermAvgConf.isEmpty())
+    		this.fillAvgConfidence();
+    	Double res = (isCandidate?candidateTermAvgConf.get(t):targetTermAvgConf.get(t));
+    	if (res==null) res=0.0;
+		return res ;
+    	
+    }
+    
+    /**
+     * Fills the avg confidence for all terms
+     */
+    private void fillAvgConfidence() {
+    	
+    	for (Term candidate : this.candidateTerms)
+		{
+			Double sumConf = 0.0;
+			int cntNZ = 0;
+			int col = getTermIndex(candidateTerms, candidate, true);
+			for (int i = 0; i<confidenceMatrix.length;i++)
+			{
+				sumConf += confidenceMatrix[i][col];
+				cntNZ += (confidenceMatrix[i][col]>0.0 ? 1 : 0);
+			}
+			double avgConf = (cntNZ==0?0:sumConf/((double)cntNZ));
+			candidateTermAvgConf.put(candidate, avgConf);
+		}
+		
+		for (Term target : this.targetTerms)
+		{
+			Double sumConf = 0.0;
+			int cntNZ = 0;
+			
+			int row = getTermIndex(targetTerms, target, false);
+			for (int j = 0; j<this.getColCount();j++)
+			{
+				sumConf += confidenceMatrix[row][j];
+				cntNZ += (confidenceMatrix[row][j]>0.0 ? 1 : 0);
+			}
+			double avgConf = (cntNZ==0?0:sumConf/((double)cntNZ));
+			targetTermAvgConf.put(target, avgConf);
+		}
+	
+
+		
+		
+	}
+
+	/**
      * Fills the max confidence hash for all terms
      */
 	private void fillMaxConfidence() 
