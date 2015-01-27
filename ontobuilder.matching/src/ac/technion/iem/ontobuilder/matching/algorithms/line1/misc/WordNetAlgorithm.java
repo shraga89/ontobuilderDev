@@ -33,6 +33,7 @@ import edu.cmu.lti.jawjaw.pobj.POS;
 import edu.cmu.lti.ws4j.WS4J;
 
 public class WordNetAlgorithm extends AbstractAlgorithm {
+	Map<String,Map<String,Double>> simCache = new HashMap<String,Map<String,Double>>();
 
 	public WordNetAlgorithm(){
 
@@ -77,6 +78,13 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @return a MatchInformation with updated similarity for each two terms
 	 */
 	private void match(MatchInformation mi) {
+		long start = System.currentTimeMillis();
+		long tokenTime = 0;
+		long abbrExpandTime = 0;
+		long calcSimTime = 0;
+		long calcSimStoreTime = 0;
+		long updateMatchTime = 0;
+		
 		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<Term, TermTokenized>();
 		HashMap<Term, TermTokenized> targetTermsTokenizedMap = new HashMap<Term, TermTokenized>();
 		HashMap<Term, TermSimilarity> termsSimilarityMap = new HashMap<Term, TermSimilarity>();
@@ -86,23 +94,31 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		TokenizedWordAlgorithmFactory factory = new TokenizedWordAlgorithmFactory();
 
 		ArrayList<TokenizedWordAlgorithm> tokenizedWordAlgorithms = factory.build();
-
 		AbbrExpand ae = new AbbrExpand();
+		
+		long endSU = System.currentTimeMillis();
+		Long endSUtime = endSU-start;
+		System.err.println("Wordnet setup time:" + endSUtime);
+		
+		
 		for (int i = 0; i < targs.size(); i++) {
 			for (int j = 0; j < cands.size(); j++) {
 				Term currentCandidate = cands.get(j);
 				Term currentTarget = targs.get(i);
 				//Extract words by all algorithms
+				long startTK = System.currentTimeMillis();
 				for (TokenizedWordAlgorithm tokenizedAlgorithm : tokenizedWordAlgorithms) {
 					this.tokenizeTermByAlgorithm( candidateTermsTokenizedMap, currentCandidate, tokenizedAlgorithm );
 					this.tokenizeTermByAlgorithm( targetTermsTokenizedMap, currentTarget, tokenizedAlgorithm );
 				}
 				TermTokenized candidateTokenized = candidateTermsTokenizedMap.get(currentCandidate);
 				TermTokenized targetTokenized = targetTermsTokenizedMap.get(currentTarget);
-
+				tokenTime+=(System.currentTimeMillis()-startTK);
 				//calc similarity between candidate and target terms 
 				List<TokenizedAlgorithmType> algorithms = candidateTokenized.getDoneAlgorithms();
+				
 				for (TokenizedAlgorithmType algorithmType : algorithms) {
+					long startABR = System.currentTimeMillis();
 					List<String> candidateTokens = candidateTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
 					List<String> targetTokens = targetTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
 
@@ -114,8 +130,11 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 					for (String targStr: targetTokens) {
 						targTokenAbbred.add(ae.expandAbbreviation(targStr));
 					}
+					abbrExpandTime+=(System.currentTimeMillis()-startABR);
+					long startSim = System.currentTimeMillis();
 					Double similarity = calcSimilarity(candTokenAbbred, targTokenAbbred);
-
+					calcSimTime+=(System.currentTimeMillis()-startSim);
+					long startSimStore = System.currentTimeMillis();
 					//current candidate term already has an entry in termsSimilarityMap
 					if (termsSimilarityMap.containsKey(currentCandidate)) {
 						termsSimilarityMap.get(currentCandidate).addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
@@ -125,13 +144,23 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 						termSimilarity.addSimilarityByAlgorithm(currentTarget, algorithmType, similarity);
 						termsSimilarityMap.put(currentCandidate, termSimilarity);
 					}
-
+					calcSimStoreTime+=(System.currentTimeMillis()-startSimStore);
 				}
 				/*	ResultsWriter resultsWriter = new ResultsWriter();
 				resultsWriter.writeResults(termsSimilarityMap);*/
+				long startUpdate = System.currentTimeMillis();
 				this.updateMatchSimilarity( termsSimilarityMap, currentCandidate, currentTarget, WordNetStrategy.BEST, mi);
+				updateMatchTime+=(System.currentTimeMillis()-startUpdate);
 			}
 		}
+		Long end = System.currentTimeMillis()-start;
+		System.err.println("Wordnet tokenization:" + tokenTime);
+		System.err.println("Wordnet abbreveation expansion:" + abbrExpandTime);
+		System.err.println("Wordnet similarity calculation:" + calcSimTime);
+		System.err.println("Wordnet similarity storage:" + calcSimStoreTime);
+		System.err.println("Wordnet match update time:" + updateMatchTime);
+		System.err.println("Wordnet total runtime:" + end);
+		
 	}
 
 	/**
@@ -153,7 +182,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 			Double similarity = termSimilarity.getSimilarity(target, algorithmType);
 			mi.updateMatch(target, candidate, similarity);
 		}
-		//choose maximum similarrity
+		//choose maximum similarity
 		else {
 			final Collection<Double> similarities = termsSimilarityMap.get(candidate).getAllSimilaritiesByTerm(target);
 			Double similarity = (double) 0;
@@ -195,34 +224,36 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		double avgSim = 0.0;
 		int validCandidateWords = 0;
 		for (String candidateWord : candidateWords) {
+			Map<String,Double> candSimCache = (simCache.containsKey(candidateWord) ? simCache.get(candidateWord) : new HashMap<String,Double>());
 			//get the Singularize form of a word so it will be found in the Diction
-			candidateWord = StringUtilities.getSingularize(candidateWord);
-			if ( StringUtilities.isWordInDiction(candidateWord) ) {
+			String singCandidateWord = StringUtilities.getSingularize(candidateWord);
+			if ( StringUtilities.isWordInDiction(singCandidateWord) ) {
 				validCandidateWords++;
 				double maxSim = 0.0;
 				//for each word in the candidate list of words check similarity
-				//against all works in target.
+				//against all words in target.
 				//choose the biggest similarity
 				for (String targetWord : targetWords) {
-					targetWord = StringUtilities.getSingularize(targetWord);
-					if ( StringUtilities.isWordInDiction(targetWord) ) {
-						double jiangConrathDistsace = WS4J.runJCN(candidateWord,targetWord);
-						double jiangConrathSimilarity = 0;
-						/*if (jiangConrathDistsace !=0) {
-							jiangConrathSimilarity = -1/jiangConrathDistsace;
-						}*/
-						jiangConrathSimilarity = jiangConrathDistsace;
-						maxSim = Math.max(maxSim, jiangConrathSimilarity);
-						maxSim = Math.min(maxSim, 1.0);
+					double sim=0.0d;
+					if (candSimCache.containsKey(targetWord))
+						sim = candSimCache.get(targetWord);
+					else
+					{
+						
+						String singTargetWord = StringUtilities.getSingularize(targetWord);
+						if ( StringUtilities.isWordInDiction(singTargetWord) ) {
+							sim = WS4J.runJCN(singCandidateWord,singTargetWord);
+						}
+						candSimCache.put(targetWord, sim);
 					}
+					maxSim = Math.max(maxSim, sim);
+					maxSim = Math.min(maxSim, 1.0);
 				}
+				simCache.put(candidateWord, candSimCache);
 				avgSim += maxSim;
 			}
 		}
-		if (validCandidateWords != 0) {
-			avgSim /= validCandidateWords;
-		}
-		return avgSim;
+		return (validCandidateWords ==0 ? 0.0d : avgSim / validCandidateWords);
 	}
 	/**
 	 * The method add words that were tokenized from some {@link Term} by some {@link TokenizedWordAlgorithm} 
