@@ -148,7 +148,6 @@ public class XSDImporterUsingXSOM implements Importer
         
         //create classes and terms from result
         createOntology(result);
-        
         //mine domain from instances
         if (instances!=null) 
         {

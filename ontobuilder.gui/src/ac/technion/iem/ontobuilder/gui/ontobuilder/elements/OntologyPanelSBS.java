@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -17,6 +18,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 //import ilog.views.gantt.swing.IlvJTree;
+
+
+
 
 
 
@@ -171,21 +175,23 @@ public class OntologyPanelSBS extends JPanel
 		OntologyGui ontologyGui2 = targetPanel.getCurrentOntologyGui();
 		JTree tree1= ontologyGui1.get_tree();
 		JTree tree2= ontologyGui2.get_tree();
-		System.out.println(tree1.getVisibleRowCount());
-		System.out.println(tree1.getRowCount());
-		System.out.println(tree1.getMinSelectionRow());
 		DefaultMutableTreeNode root1 = (DefaultMutableTreeNode) tree1.getModel().getRoot();
 		DefaultMutableTreeNode node1= findNode(root1,t1.toString());
 		TreePath path1 =new TreePath(node1.getPath());
+		Rectangle r1= tree1.getPathBounds(path1);
 		int x_start=(int) (candidatePanel.getX()+ tree1.getRowBounds(tree1.getRowForPath(path1)).x+ 3*(t1.toString().length()));
 		int y_start= candidatePanel.getY()+ tree1.getRowBounds(tree1.getRowForPath(path1)).y;
 		DefaultMutableTreeNode root2 = (DefaultMutableTreeNode) tree2.getModel().getRoot();
 		DefaultMutableTreeNode node2= findNode(root2,t2.toString());	
 		TreePath path2 =new TreePath(node2.getPath());
+		Rectangle r2=tree2.getPathBounds(path2);
+		System.out.println(tree1.getVisibleRowCount());
+		System.out.println(tree2);
 		int x_end=(int) (targetPanel.getX()+ tree2.getRowBounds(tree2.getRowForPath(path2)).x);
-		int y_end= targetPanel.getY()+ tree1.getRowBounds(tree2.getRowForPath(path2)).y;
+		int y_end= targetPanel.getY()+ tree2.getRowBounds(tree2.getRowForPath(path2)).y;
 		Graphics2D g= (Graphics2D) getInstance().getGraphics();
-		Line line = new Line(this, g, x_start ,y_start+45, x_end, y_end+45, sim_val, true, false);
+		//Line line = new Line(this, g, x_start ,y_start+45, x_end, y_end+45, sim_val, true, false);
+		Line line = new Line(this, g, (int) r1.x+r1.width ,r1.y+r1.height+45, r2.x+r2.width, r2.y+r2.height, sim_val, true, false);
 		arcs.add(line);
 		lines=true;
 	}

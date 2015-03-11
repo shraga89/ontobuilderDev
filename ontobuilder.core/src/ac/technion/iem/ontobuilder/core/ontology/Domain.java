@@ -25,7 +25,18 @@ public class Domain extends OntologyObject
         "ontology.domain.text", "ontology.domain.number", "ontology.domain.boolean",
         "ontology.domain.date", "ontology.domain.time", "ontology.domain.float",
         "ontology.domain.integer", "ontology.domain.pinteger", "ontology.domain.ninteger",
-        "ontology.domain.choice", "ontology.domain.url", "ontology.domain.email"
+        "ontology.domain.choice", "ontology.domain.url", "ontology.domain.email","ontology.domain.primaryKey", "ontology.domain.primaryKeyComposed",
+        "ontology.domain.unique", "ontology.domain.uniqueComposed",
+        "ontology.domain.notNull", "ontology.domain.notNullComposed", 
+        "ontology.domain.foreignKey","ontology.domain.foreignKeyOnDeletecascade","ontology.domain.foreignKeyOnDeleterestrict",
+        "ontology.domain.foreignKeyOnDeletesetdefault","ontology.domain.foreignKeyOnDeletesetnull","ontology.domain.foreignKeyOnDeletenoaction",
+        "ontology.domain.foreignKeyOnUpdatecascade","ontology.domain.foreignKeyOnUpdaterestrict",
+        "ontology.domain.foreignKeyOnUpdatesetdefault","ontology.domain.foreignKeyOnUpdatesetnull","ontology.domain.foreignKeyOnUpdatenoaction",
+        "ontology.domain.foreignKeyComposed","ontology.domain.foreignKeyComposedOnDeletecascade","ontology.domain.foreignKeyComposedOnDeleterestrict",
+        "ontology.domain.foreignKeyComposedOnDeletesetdefault","ontology.domain.foreignKeyComposedOnDeletesetnull","ontology.domain.foreignKeyComposedOnDeletenoaction",
+        "ontology.domain.foreignKeyComposedOnUpdatecascade","ontology.domain.foreignKeyComposedOnUpdaterestrict",
+        "ontology.domain.foreignKeyComposedOnUpdatesetdefault","ontology.domain.foreignKeyComposedOnUpdatesetnull","ontology.domain.foreignKeyComposedOnUpdatenoaction",
+        "ontology.domain.checkConstr"
     };
 
     protected ArrayList<DomainEntry> entries;

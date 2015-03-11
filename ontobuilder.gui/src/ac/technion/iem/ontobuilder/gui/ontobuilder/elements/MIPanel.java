@@ -355,7 +355,7 @@ public final class MIPanel extends JPanel
 				targGui.colorTerm(targetTerm, s);
 				targGui.repaint();
 				userActionLog.info("|matched|" + targetTerm.getId() + "|" + targetTerm.toString() + "|" + termID+ "|" + candTerm.getProvenance() + "|" + val);
-				//drawArcs(targetTerm,true);
+				drawArcs(targetTerm,true);
 			}
 		};
 		ListSelectionListener selectionListener = new ListSelectionListener() {
