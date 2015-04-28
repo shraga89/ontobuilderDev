@@ -125,9 +125,9 @@ public class MappingMatchImporter implements MatchImporter {
 				//System.err.println(strRead);
 				String resArray[] = new String[3];
 				splitArray = strRead.split(" <-> ");
-				resArray[0] = splitArray[0].substring(3);
-				resArray[1] = splitArray[1].substring(0,splitArray[1].length()-5);
-				resArray[2] = splitArray[1].substring(splitArray[1].lastIndexOf(":")+1);
+				resArray[0] = splitArray[0].substring(3).trim();
+				resArray[1] = splitArray[1].substring(0,splitArray[1].lastIndexOf(":")).trim();
+				resArray[2] = splitArray[1].substring(splitArray[1].lastIndexOf(":")+1).trim();
 				list.add( new ProvenancePair(resArray[0],resArray[1],Double.parseDouble(resArray[2])));
 	    		strRead=readbuffer.readLine();
 				}
