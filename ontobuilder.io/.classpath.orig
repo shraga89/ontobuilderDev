@@ -8,7 +8,11 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontobuilder.matching"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+<<<<<<< local
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+=======
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+>>>>>>> other
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
@@ -24,5 +28,8 @@
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/wsdl4j.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jbpt-0.2.393.jar"/>
 	<classpathentry kind="lib" path="/ontobuilder.core/lib/jing.jar"/>
+	<classpathentry kind="lib" path="C:/technion/work/ontobuilderdev/ontobuilder.core/lib/datafile.jar"/>
+	<classpathentry kind="lib" path="C:/technion/work/ontobuilderdev/ontobuilder.core/lib/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="/OntobuilderResearchEnvironment/lib/jsqlparser.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
