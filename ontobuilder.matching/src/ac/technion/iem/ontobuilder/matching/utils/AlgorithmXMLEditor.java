@@ -29,7 +29,7 @@ import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
 public class AlgorithmXMLEditor {
 
 	public static void updateAlgorithmParams(String algorithmName,
-			HashMap<String, Double> parameterValues) throws Exception {
+			HashMap<String, Object> parameterValues) throws Exception {
 		File file = new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
 		BufferedReader reader = new BufferedReader(new FileReader(file));
         SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);

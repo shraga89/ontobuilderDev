@@ -32,9 +32,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
     protected double stringLabelWeight;
     protected double wordNameWeight;
     protected double stringNameWeight;
-    protected double useAverage;
-    //TODO add global parameter indicating if the MAX or AVG aggregation strategy is chosen
-
+    protected int useAverage;
     protected double maxCommonSubStringWeight;
     protected double nGramWeight;
     protected double jaroWinklerWeight;
@@ -141,7 +139,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             
             if (useAverage==2)
             {
-            	useAverage=1.0;
+            	useAverage=1;
 	            for (int i=0; i< originalCandidateTerms.size(); i++)
 	            { 
 	            	int index=0;
@@ -290,7 +288,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
      * 
      * @param useAverage 
      */
-    public void setuseAverage(double useAverage)
+    public void setuseAverage(int useAverage)
     {
         this.useAverage = useAverage;
     }
@@ -401,7 +399,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             Element parameterElement = (Element) i.next();
             String name = parameterElement.getChild("name").getText();
             if (name.equals("symmetric") || name.equals("useThesaurus") ||
-                name.equals("useSoundex"))
+                name.equals("useSoundex") || name.equals("useAverage"))
             {
                 boolean value = Boolean.valueOf(parameterElement.getChild("value").getText())
                     .booleanValue();
@@ -431,19 +429,15 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
 					jaroWinklerWeight=value;
             }
 
-            else if (name.equals("nGram"))
+            else if (name.equals("nGram") || name.equals("useAverage"))
             {
                 int value = Integer.parseInt(parameterElement.getChild("value").getText());
                 if (name.equals("nGram"))
                     nGram = value;
+                if (name.equals("useAverage"))
+                	useAverage = value;
             }
             
-            else if (name.equals("useAverage"))
-            {
-                double value = Double.parseDouble(parameterElement.getChild("value").getText());
-                if (name.equals("useAverage"))
-                    useAverage = value;
-            }
         }
     }
 

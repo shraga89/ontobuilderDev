@@ -13,7 +13,8 @@ public enum TermAlgorithmFlagsEnum
 {
     SYMMETRIC_FLAG(1),
     USE_THESAURUS_FLAG(2),
-    USE_SOUNDEX_FLAG(4);
+    USE_SOUNDEX_FLAG(4),
+    USE_AVERAGE_FLAG(8);
     
     private int _id;
     
