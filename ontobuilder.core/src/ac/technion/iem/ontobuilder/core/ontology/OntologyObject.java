@@ -25,6 +25,7 @@ public abstract class OntologyObject implements Comparator<Object>,
     {
         if (id == -1)
             id = Math.abs(idGenerator.nextLong());
+    	//todo: only for Ontologys!!
     }
 
     /**
