@@ -1,7 +1,5 @@
-# use regexp syntax.
-syntax: regexp
-/*.class
-/*.gif
+*.class
+*.gif
 
 syntax: glob
 ontobuilder.core/bin/ac/technion/iem/ontobuilder/core/ontology/DummyTerm.class
