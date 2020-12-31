@@ -22,71 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33903445-3404-4d6a-aab8-db75f063a6c4" name="Default Changelist" comment="everything compiles and installs from mvn">
-      <change afterPath="$PROJECT_DIR$/ontobuilder.matching/src/test/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilderWrapperTest.java" afterDir="false" />
+    <list default="true" id="33903445-3404-4d6a-aab8-db75f063a6c4" name="Default Changelist" comment="basic schema matching test works">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/HermiT.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/cm-0.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/commons-codec-1.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/datafile.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/easywsdl-2.1-with-dependencies.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/easywsdl-schema-2.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/easywsdl-wsdl-2.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/httpclient-4.2.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/httpcore-4.2.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jbpt-0.2.393.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jcl-over-slf4j-1.6.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jdom2-2.0.5.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jena-arq-2.10.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jena-core-2.10.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jena-iri-0.9.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jena-tdb-0.10.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jing.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jsqlparser.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/jtidy-4aug2000r7-dev.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/licenses/Jena_LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/licenses/README.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/licenses/Tidy.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/licenses/jdom.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/licenses/wsdl4j.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/log4j-1.2.16.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/opencsv-2.3.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/owlapi-distribution-3.4.5.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/slf4j-api-1.6.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/slf4j-log4j12-1.6.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/swingx-all-1.6.5-1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/swingx-core-1.6.5-1-sources.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/ws4j-1.0.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/wsdl4j.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/xercesImpl-2.11.0.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/xml-apis-1.4.01.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/lib/xsom.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/resources/config/tidyconfig.PROPERTIES" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/resources/tidyconfig.PROPERTIES" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/resources/OntoBuilderResources.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/resources/OntoBuilderResources.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/thesaurus/Thesaurus.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/thesaurus/Thesaurus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/ApplicationOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/ApplicationOptions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/PropertiesHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/PropertiesHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/cbeans.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/cobra.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/cutils.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/hypertree.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/jcommon-0.5.6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/jfreechart-0.7.4.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/jgraph.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/jhall.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/cbean.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/cobra.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/hypertree.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/jcommon-0.5.6.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/jfreechart-0.7.4.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/lib/licenses/jgraph.jar.LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.io/.classpath" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.io/.classpath.orig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/.classpath" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/algorithms/line1/misc/AlgorithmUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/algorithms/line1/misc/AlgorithmUtilities.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/algorithms/line1/ted/TED.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/algorithms/line1/ted/TED.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilderWrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.matching/src/main/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilderWrapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/config/io/importers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.gui/config/io/importers.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/NativeImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/NativeImporter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/XSDImporter.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +104,7 @@
       <recent name="C:\Users\OT48ZK\Documents\ontobuilderDev\ontobuilder.matching\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.OntoBuilderWrapperTest">
+  <component name="RunManager" selected="Maven.ontobuilder.matching [test]">
     <configuration name="OntoBuilderWrapperTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ontobuilder.matching" />
       <extension name="coverage">
@@ -302,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609428009475</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="basic schema matching test works">
+      <created>1609441183689</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1609441183689</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -328,7 +275,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="added intellij project and fixed ignore file" />
     <MESSAGE value="everything compiles and installs from mvn" />
-    <option name="LAST_COMMIT_MESSAGE" value="everything compiles and installs from mvn" />
+    <MESSAGE value="basic schema matching test works" />
+    <option name="LAST_COMMIT_MESSAGE" value="basic schema matching test works" />
   </component>
   <component name="WindowStateProjectService">
     <state x="-1189" y="-343" key="#Auto_Import" timestamp="1609439305278">
@@ -351,46 +299,46 @@
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
     <state x="-1181" y="-71" key="FileChooserDialogImpl/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609425840648" />
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1609441148753">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
+    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1609441148752">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
+    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1609441148752">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
+    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1609441148752">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1609441148753">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1609441148753">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1609441148753">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1609440528153">
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1609441148753">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440528153" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
     <state x="-1480" y="-261" key="SettingsEditor" timestamp="1609427624336">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
     <state x="-1480" y="-261" key="SettingsEditor/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609427624336" />
-    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2" timestamp="1609428012830">
+    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2" timestamp="1609441200212">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609428012830" />
+    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441200212" />
     <state x="-1227" y="-145" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1609428122408">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>

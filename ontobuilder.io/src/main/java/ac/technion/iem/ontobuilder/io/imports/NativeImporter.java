@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ac.technion.iem.ontobuilder.io.imports;
 
 import java.io.File;
@@ -34,7 +31,7 @@ public class NativeImporter implements Importer {
 
 	@Override
 	public Ontology importFile(File schemaFile, File instanceFile)
-			throws ImportException, UnsupportedOperationException {
+			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Native Importer doesn't support instances");
 	}
 
