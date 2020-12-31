@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ac.technion.iem.ontobuilder.io.matchimport;
 
 import java.io.File;
@@ -69,12 +66,12 @@ public class CSVMatchImporter implements MatchImporter {
 
 	/**
 	 * Receives .csv file and returns the correspondences in a ProvenancePair array list
-	 * @param file
-	 * @return
+	 * @param file to read
+	 * @return correspondences as an arraylist
 	 */
 	private ArrayList<ProvenancePair> readMappingFile(File file) {
-		ArrayList<ProvenancePair> list = new ArrayList<ProvenancePair>();
-		CSVReader reader = null;
+		ArrayList<ProvenancePair> list = new ArrayList<>();
+		CSVReader reader;
 		try {
 			reader = new CSVReader(new FileReader(file));
 		

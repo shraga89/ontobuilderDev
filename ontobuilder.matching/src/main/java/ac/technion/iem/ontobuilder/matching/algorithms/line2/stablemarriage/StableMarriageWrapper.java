@@ -18,7 +18,7 @@ import ac.technion.iem.ontobuilder.matching.wrapper.OntoBuilderWrapper;
  */
 public class StableMarriageWrapper implements SecondLineAlgorithm
 {
-    private OntoBuilderWrapper m_OntoBuilderWrapper;
+    private final OntoBuilderWrapper m_OntoBuilderWrapper;
 
     private Ontology m_CandidateOntology;
     private Ontology m_TargetOntology;
