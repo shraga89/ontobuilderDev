@@ -1,11 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -61,12 +57,10 @@ public class AlgorithmUtilities
             Document doc = builder.build(stream);
             return loadFromDocument(doc);
         }
-        catch (JDOMException e)
+        catch (JDOMException | IOException e)
         {
             throw new AlgorithmException(e.getMessage());
-        } catch (IOException e) {
-            throw new AlgorithmException(e.getMessage());
-		}
+        }
     }
 
     /**
@@ -76,44 +70,37 @@ public class AlgorithmUtilities
      * @return a vector of {@link AbstractAlgorithm}
      * @throws AlgorithmException when cannot load from document
      */
-    public static Vector<AbstractAlgorithm> getAlgorithmsInstances(File file)
+    public static Vector<AbstractAlgorithm> getAlgorithmsInstances(InputStream file)
         throws AlgorithmException
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             return loadFromDocument(doc);
-        }
-        catch (FileNotFoundException e)
+        } catch (JDOMException | IOException e)
         {
             throw new AlgorithmException(e.getMessage());
         }
-        catch (JDOMException e)
-        {
-            throw new AlgorithmException(e.getMessage());
-        } catch (IOException e) {
-            throw new AlgorithmException(e.getMessage());
-		}
     }
 
     // added haggai 7/12/03
     /**
      * Get the algorithm instances from a file
      * 
-     * @param file the {@link File} to read from
+     * @param file the algorithm file as an input stream
      * @param algoritmPluginName algorithm plugin to match to
      * @return a vector of algorithms
      * @throws AlgorithmException
      */
-    public static Algorithm getAlgorithmsInstance(File file, String algoritmPluginName)
+    public static Algorithm getAlgorithmsInstance(InputStream file, String algoritmPluginName)
         throws AlgorithmException
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             // second parameter added for topK . amir 10/2004

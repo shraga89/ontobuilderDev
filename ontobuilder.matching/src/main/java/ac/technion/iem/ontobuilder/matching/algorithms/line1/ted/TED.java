@@ -66,7 +66,7 @@ public class TED extends AbstractAlgorithm {
 			Ontology candidateOntology) {
 		Algorithm stepOne = null;
 		try{
-			stepOne = AlgorithmUtilities.getAlgorithmsInstance(new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML), stepOneAlgorithm);
+			stepOne = AlgorithmUtilities.getAlgorithmsInstance(getClass().getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML), stepOneAlgorithm);
     	}catch(Exception e){
     		System.err.println(e.getMessage());
     		System.exit(0);

@@ -1,13 +1,7 @@
 package ac.technion.iem.ontobuilder.core.thesaurus;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +57,7 @@ public class Thesaurus extends ThesaurusModelAdapter
      * @param file the file to load the Thesaurus from
      * @throws ThesaurusException
      */
-    public Thesaurus(File file) throws ThesaurusException
+    public Thesaurus(InputStream file) throws ThesaurusException
     {
         this();
         loadThesaurus(file);
@@ -209,26 +203,19 @@ public class Thesaurus extends ThesaurusModelAdapter
      * @param file the file to load from
      * @throws ThesaurusException
      */
-    public void loadThesaurus(File file) throws ThesaurusException
+    public void loadThesaurus(InputStream file) throws ThesaurusException
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
             SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
             builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             loadFromDocument(doc);
-        }
-        catch (FileNotFoundException e)
+        } catch (JDOMException | IOException e)
         {
             throw new ThesaurusException(e.getMessage());
         }
-        catch (JDOMException e)
-        {
-            throw new ThesaurusException(e.getMessage());
-        } catch (IOException e) {
-            throw new ThesaurusException(e.getMessage());
-		}
     }
 
     /**

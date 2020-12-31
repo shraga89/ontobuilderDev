@@ -1,7 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.wrapper;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
@@ -290,8 +292,10 @@ public final class OntoBuilderWrapper extends OntoBuilder
         }
     }
     
-    private File getAlgorithmsFile()
+    private InputStream getAlgorithmsFile()
     {
-    	return new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream resource = classLoader.getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
+        return resource;
     }
 }

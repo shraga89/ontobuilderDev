@@ -10,18 +10,16 @@ public class OntoBuilderResources
 		
 		private static final String CONFIG = "config";
 		
-		public static final String APPLICATION_PROPERTIES = CONFIG + File.separator + "application.properties";
-		public static final String CONFIGURATION_XML = 		CONFIG + File.separator + "configuration.xml";
-		public static final String RESOURCES_PROPERTIES = 	CONFIG + File.separator + "resources.properties";
-		public static final String THESAURUS_XML = 			CONFIG + File.separator + "thesaurus.xml";
-		public static final String LOG4J_PROPERTIES = CONFIG + File.separator + "log4j.properties";
+		public static final String APPLICATION_PROPERTIES = "application.properties";
+		public static final String CONFIGURATION_XML = 		"configuration.xml";
+		public static final String RESOURCES_PROPERTIES = 	"resources.properties";
+		public static final String THESAURUS_XML = 			"thesaurus.xml";
+		public static final String LOG4J_PROPERTIES = "log4j.properties";
 		
 		public static class Matching
 		{
-			
-			private static final String MATCHING = CONFIG + File.separator + "matching";
-			
-			public static final String ALGORITHMS_XML = MATCHING + File.separator + "algorithms.xml";
+
+			public static final String ALGORITHMS_XML = "algorithms.xml";
 			
 		}
 		

@@ -1,6 +1,9 @@
 package ac.technion.iem.ontobuilder.matching.wrapper;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
@@ -121,10 +124,13 @@ class OntoBuilder
     {
         try
         {
-//            File thesaurusFile = new File(PropertiesHandler.getCurrentDirectory() +
-//                File.separator + PropertiesHandler.getStringProperty("thesaurus.file"));
-            File thesaurusFile = new File(OntoBuilderResources.Config.THESAURUS_XML);
-            thesaurus = new Thesaurus(thesaurusFile);
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream resource = classLoader.getResourceAsStream(OntoBuilderResources.Config.THESAURUS_XML);
+            if (resource == null) {
+                throw new IllegalArgumentException("file not found! " + OntoBuilderResources.Config.THESAURUS_XML);
+            } else {
+                thesaurus = new Thesaurus(resource);
+            }
         }
         catch (ThesaurusException e)
         {
@@ -135,7 +141,7 @@ class OntoBuilder
     /**
      * Get the Thesaurus
      * 
-     * @return the {@link Thesaurus_}
+     * @return the {@link Thesaurus}
      */
     public Thesaurus getThesaurus()
     {
@@ -148,8 +154,18 @@ class OntoBuilder
     private void initializeOptions()
     {
         options = new ApplicationOptions();
-        File optionFile = new File(OntoBuilderResources.Config.CONFIGURATION_XML);
-        options.loadOptions(optionFile);
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream resource = classLoader.getResourceAsStream(OntoBuilderResources.Config.CONFIGURATION_XML);
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found! " + OntoBuilderResources.Config.CONFIGURATION_XML);
+        } else {
+
+            // failed if files have whitespaces or special characters
+            //return new File(resource.getFile());
+
+            options.loadOptions(resource);
+        }
+
     }
 
     /**
@@ -159,13 +175,9 @@ class OntoBuilder
     {
         try
         {
-//            File algorithmsFile = new File(PropertiesHandler.getCurrentDirectory() +
-//                PropertiesHandler.getStringProperty("algorithms.file"));
-            File algorithmsFile = new File(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
-            if (algorithmsFile.exists())
-                algorithms = AlgorithmUtilities.getAlgorithmsInstances(algorithmsFile);
-            if (algorithms == null)
-                return;
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream resource = classLoader.getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
+            algorithms = AlgorithmUtilities.getAlgorithmsInstances(resource);
             double threshold = Double.parseDouble((String) options
                 .getOptionValue(Algorithm.MATCH_THRESHOLD_PROPERTY));
             for (Iterator<AbstractAlgorithm> i = algorithms.iterator(); i.hasNext();)
@@ -206,7 +218,6 @@ class OntoBuilder
         catch (ResourceException e)
         {
             e.printStackTrace();
-            return;
         }
     }
 }

@@ -2,14 +2,8 @@ package ac.technion.iem.ontobuilder.core.utils.properties;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -47,14 +41,15 @@ public class ApplicationOptions
     /**
      * Load the options according to an options file
 
-     * @param optionFile the options file
+     * @param optionFile the options file as an input stream
      * @throws OptionException
      */
-    public void loadOptions(File optionFile) throws OptionException
+    public void loadOptions(InputStream optionFile) throws OptionException
     {
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(optionFile));
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(optionFile, StandardCharsets.UTF_8));
             // if(reader==null)
             // {
             // String params[]={optionFile.getAbsolutePath()};

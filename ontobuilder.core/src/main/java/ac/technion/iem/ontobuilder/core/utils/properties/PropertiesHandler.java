@@ -1,8 +1,11 @@
 package ac.technion.iem.ontobuilder.core.utils.properties;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,23 +32,25 @@ public class PropertiesHandler
     /**
      * Initialises the properties according to a properties file
      * 
-     * @param propertiesFile the name of the properties file
+     * @param propertiesFileName the name of the properties file
      */
-    public static void initializeProperties(String propertiesFile) throws PropertyException
+    public static void initializeProperties(String propertiesFileName) throws PropertyException
     {
         try
         {
-            InputStream propertiesStream = new FileInputStream(propertiesFile);
-//            if (propertiesStream == null)
-//                throw new PropertyException("The property file '" + propertiesFile +
-//                    "' doesn't exists.");
-            properties = new java.util.Properties();
-            properties.load(propertiesStream);
+            ClassLoader classLoader = PropertiesHandler.class.getClassLoader();
+            InputStream propertiesStream = classLoader.getResourceAsStream(propertiesFileName);
+            if (propertiesStream == null) {
+                throw new IllegalArgumentException("file not found! " + propertiesFileName);
+            } else {
+                properties = new java.util.Properties();
+                properties.load(propertiesStream);
+            }
         }
         catch (IOException e)
         {
             throw new PropertyException("There was an error trying to read properties from '" +
-                propertiesFile + "'. cause: " + e.getMessage());
+                    propertiesFileName + "'. cause: " + e.getMessage());
         }
     }
 
@@ -138,32 +143,24 @@ public class PropertiesHandler
     /**
      * Initialises the resources according to the resource file
      * 
-     * @param resourceFile the resource file
+     * @param resourceFileName the resource file
      */
-    public static void initializeResources(String resourceFile, Locale locale)
+    public static void initializeResources(String resourceFileName, Locale locale)
         throws ResourceException
     {
-        // try
-        // {
-        // bundle = ResourceBundle.getBundle(resourceFile,locale);
-        // }
-        // catch(MissingResourceException e)
-        // {
-        // throw new ResourceException("The resource '" + resourceFile + "' cannot be found.");
-        // }
-        try
-        {
-            InputStream propertiesStream;// =PropertiesHandler.class.getResourceAsStream(propertiesFile);
-            propertiesStream = new FileInputStream(resourceFile);
-//            propertiesStream = PropertiesHandler.class.getResourceAsStream(resourceFile);
 
-            resources = new java.util.Properties();
-            resources.load(propertiesStream);
-        }
-        catch (IOException e)
-        {
-            throw new ResourceException("The resource '" + resourceFile + "' cannot be found.");
-        }
+            ClassLoader classLoader = PropertiesHandler.class.getClassLoader();
+            InputStream propertiesStream = classLoader.getResourceAsStream(resourceFileName);
+            if (propertiesStream == null) {
+                throw new IllegalArgumentException("file not found! " + resourceFileName);
+            } else {
+                try {
+                    resources = new java.util.Properties();
+                    resources.load(propertiesStream);
+                } catch (IOException e) {
+                    throw new ResourceException("The resource '" + resourceFileName + "' cannot be found.");
+                }
+            }
     }
 
     /**
