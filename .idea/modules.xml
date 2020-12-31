@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ontobuilderDev.iml" filepath="$PROJECT_DIR$/.idea/ontobuilderDev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ontobuilder.core/ontobuilder.core.iml" filepath="$PROJECT_DIR$/ontobuilder.core/ontobuilder.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ontobuilder.extraction.webform/ontobuilder.extraction.webform.iml" filepath="$PROJECT_DIR$/ontobuilder.extraction.webform/ontobuilder.extraction.webform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ontobuilder.gui/ontobuilder.gui.iml" filepath="$PROJECT_DIR$/ontobuilder.gui/ontobuilder.gui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ontobuilder.io/ontobuilder.io.iml" filepath="$PROJECT_DIR$/ontobuilder.io/ontobuilder.io.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ontobuilder.matching/ontobuilder.matching.iml" filepath="$PROJECT_DIR$/ontobuilder.matching/ontobuilder.matching.iml" />
     </modules>
   </component>
 </project>
