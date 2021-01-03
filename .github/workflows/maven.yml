@@ -23,9 +23,9 @@ jobs:
     - name: Build core with Maven
       run: mvn -B install --file ontobuilder.core/pom.xml
     - name: Build matching with Maven
-      run: mvn -B package --file ontobuilder.matching/pom.xml
+      run: mvn -B install --file ontobuilder.matching/pom.xml
     - name: Build io with Maven
-      run: mvn -B package --file ontobuilder.io/pom.xml
+      run: mvn -B install --file ontobuilder.io/pom.xml
     - name: Publish package core
       run: mvn --batch-mode deploy --file ontobuilder.core/pom.xml
       env:
