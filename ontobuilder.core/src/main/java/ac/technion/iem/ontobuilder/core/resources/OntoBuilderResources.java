@@ -25,20 +25,14 @@ public class OntoBuilderResources
 		
 		public static class IO
 		{
-			
-			private static final String IO = CONFIG + File.separator + "io";
-
-			public static final String EXPORTERS_XML = IO + File.separator + "exporters.xml";			
-			public static final String IMPORTERS_XML = IO + File.separator + "importers.xml";
+			public static final String EXPORTERS_XML = "exporters.xml";
+			public static final String IMPORTERS_XML = "importers.xml";
 			
 		}
 		
 		public static class GUI
 		{
-			
-			private static final String GUI = CONFIG + File.separator + "gui";
-
-			public static final String BROWSER_HISTORY = GUI + File.separator + "browser.history";
+			public static final String BROWSER_HISTORY = "browser.history";
 			
 		}
 		

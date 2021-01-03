@@ -208,8 +208,8 @@ public class Thesaurus extends ThesaurusModelAdapter
         try
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
-            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
-            builder.setEntityResolver(new NetworkEntityResolver());
+            SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
+//            builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             loadFromDocument(doc);
         } catch (JDOMException | IOException e)

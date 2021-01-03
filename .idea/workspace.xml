@@ -22,11 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33903445-3404-4d6a-aab8-db75f063a6c4" name="Default Changelist" comment="basic schema matching test works">
+    <list default="true" id="33903445-3404-4d6a-aab8-db75f063a6c4" name="Default Changelist" comment="cleanup">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.gui/config/io/importers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.gui/config/io/importers.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/NativeImporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/NativeImporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ontobuilder.io/src/main/java/ac/technion/iem/ontobuilder/io/imports/XSDImporter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/resources/OntoBuilderResources.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/resources/OntoBuilderResources.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/ApplicationOptions.java" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/properties/ApplicationOptions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.core/src/main/resources/configuration.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.core/src/main/resources/configuration.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ontobuilder.matching/src/main/resources/algorithms.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ontobuilder.matching/src/main/resources/algorithms.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +105,7 @@
       <recent name="C:\Users\OT48ZK\Documents\ontobuilderDev\ontobuilder.matching\src\main\java" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.ontobuilder.matching [test]">
+  <component name="RunManager" selected="JUnit.OntoBuilderWrapperTest">
     <configuration name="OntoBuilderWrapperTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ontobuilder.matching" />
       <extension name="coverage">
@@ -249,7 +250,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609441183689</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="cleanup">
+      <created>1609442372598</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1609442372598</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -276,7 +284,8 @@
     <MESSAGE value="added intellij project and fixed ignore file" />
     <MESSAGE value="everything compiles and installs from mvn" />
     <MESSAGE value="basic schema matching test works" />
-    <option name="LAST_COMMIT_MESSAGE" value="basic schema matching test works" />
+    <MESSAGE value="cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleanup" />
   </component>
   <component name="WindowStateProjectService">
     <state x="-1189" y="-343" key="#Auto_Import" timestamp="1609439305278">
@@ -299,46 +308,50 @@
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
     <state x="-1181" y="-71" key="FileChooserDialogImpl/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609425840648" />
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1609441148753">
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
-    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1609441148752">
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
-    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1609441148752">
+    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
-    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1609441148752">
+    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148752" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1609441148753">
+    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1609656968467">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1609441148753">
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968467" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1609441148753">
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1609441148753">
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1609656968466">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441148753" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609656968466" />
     <state x="-1480" y="-261" key="SettingsEditor" timestamp="1609427624336">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
     <state x="-1480" y="-261" key="SettingsEditor/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609427624336" />
-    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2" timestamp="1609441200212">
+    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2" timestamp="1609442374114">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609441200212" />
+    <state x="-1368" y="-115" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609442374114" />
+    <state x="-1143" y="79" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1609443436229">
+      <screen x="-1920" y="-355" width="1920" height="1040" />
+    </state>
+    <state x="-1143" y="79" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609443436229" />
     <state x="-1227" y="-145" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1609428122408">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
@@ -347,10 +360,10 @@
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
     <state x="-1578" y="-215" key="new project wizard/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609422607359" />
-    <state x="-1297" y="-130" width="672" height="678" key="search.everywhere.popup" timestamp="1609440315593">
+    <state x="-1297" y="-130" width="672" height="678" key="search.everywhere.popup" timestamp="1609443605128">
       <screen x="-1920" y="-355" width="1920" height="1040" />
     </state>
-    <state x="-1297" y="-130" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609440315593" />
+    <state x="-1297" y="-130" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/-1920.-355.1920.1040@-1920.-355.1920.1040" timestamp="1609443605128" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -359,6 +372,11 @@
           <url>file://$PROJECT_DIR$/ontobuilder.matching/src/test/java/ac/technion/iem/ontobuilder/matching/wrapper/OntoBuilderWrapperTest.java</url>
           <line>18</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ontobuilder.core/src/main/java/ac/technion/iem/ontobuilder/core/utils/network/NetworkEntityResolver.java</url>
+          <line>40</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -76,8 +76,8 @@ public class AlgorithmUtilities
         try
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
-            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
-            builder.setEntityResolver(new NetworkEntityResolver());
+            SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
+//            builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             return loadFromDocument(doc);
         } catch (JDOMException | IOException e)
@@ -101,31 +101,22 @@ public class AlgorithmUtilities
         try
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
-            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
-            builder.setEntityResolver(new NetworkEntityResolver());
+            SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
+//            builder.setEntityResolver(new NetworkEntityResolver());
             // second parameter added for topK . amir 10/2004
             Document doc;
             doc = builder.build(reader);
             Vector<AbstractAlgorithm> algorithms = loadFromDocument(doc);
-            Iterator<AbstractAlgorithm> algorithmsIterator = algorithms.iterator();
-            while (algorithmsIterator.hasNext())
-            {
-                Algorithm algorithm = (Algorithm) algorithmsIterator.next();
+            for (AbstractAlgorithm abstractAlgorithm : algorithms) {
+                Algorithm algorithm = (Algorithm) abstractAlgorithm;
                 if (algorithm.getPluginName().equalsIgnoreCase(algoritmPluginName))
                     return algorithm;
             }
             return null;
-        }
-        catch (FileNotFoundException e)
+        } catch (JDOMException | IOException e)
         {
             throw new AlgorithmException(e.getMessage());
         }
-        catch (JDOMException e)
-        {
-            throw new AlgorithmException(e.getMessage());
-        } catch (IOException e) {
-            throw new AlgorithmException(e.getMessage());
-		}
     }
 
     /**

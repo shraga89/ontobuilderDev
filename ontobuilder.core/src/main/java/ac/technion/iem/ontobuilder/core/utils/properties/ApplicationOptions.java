@@ -50,29 +50,16 @@ public class ApplicationOptions
         {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(optionFile, StandardCharsets.UTF_8));
-            // if(reader==null)
-            // {
-            // String params[]={optionFile.getAbsolutePath()};
-            // throw new
-            // OptionException(StringUtilities.getReplacedString(ApplicationUtilities.getResourceString("error.options.file"),params));
-            // }
-            SAXBuilder builder = new SAXBuilder(XMLReaders.DTDVALIDATING);
-            builder.setEntityResolver(new NetworkEntityResolver());
+            SAXBuilder builder = new SAXBuilder(XMLReaders.NONVALIDATING);
+//            builder.setEntityResolver(new NetworkEntityResolver());
             Document doc = builder.build(reader);
             loadOptionsFromDocument(doc);
         }
-        catch (FileNotFoundException e)
+        //e.printStackTrace();
+        catch (JDOMException | IOException e)
         {
             throw new OptionException(e.getMessage());
         }
-        catch (JDOMException e)
-        {
-            //e.printStackTrace();
-            //
-            throw new OptionException(e.getMessage());
-        } catch (IOException e) {
-            throw new OptionException(e.getMessage());
-		}
     }
 
     /**
@@ -86,7 +73,7 @@ public class ApplicationOptions
         InputStream configStream = getClass().getResourceAsStream(optionFile);
         if (configStream == null)
         {
-            String params[] =
+            String[] params =
             {
                 optionFile
             };
@@ -101,12 +88,10 @@ public class ApplicationOptions
             Document doc = builder.build(configStream);
             loadOptionsFromDocument(doc);
         }
-        catch (JDOMException e)
+        catch (JDOMException | IOException e)
         {
             throw new OptionException(e.getMessage());
-        } catch (IOException e) {
-            throw new OptionException(e.getMessage());
-		}
+        }
     }
 
     /**

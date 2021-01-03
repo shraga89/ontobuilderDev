@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE algorithms SYSTEM
-        "C:\Users\OT48ZK\Documents\ontobuilderDev\ontobuilder.core\src\main\resources\algorithms.dtd"><algorithms>
+        "https://raw.githubusercontent.com/shraga89/ontobuilderDev/master/ontobuilder.core/dtds/algorithms.dtd"><algorithms>
     <preprocessing>
         <parameters>
             <parameter>
