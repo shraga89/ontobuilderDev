@@ -24,9 +24,7 @@ jobs:
       run: mvn -B install --file ontobuilder.core/pom.xml
     - name: Build matching with Maven
       run: mvn -B package --file ontobuilder.matching/pom.xml
-    - name: prepare package 2
-      run: mkdir staging && cp ontobuilder.core/target/*.jar staging/ && cp ontobuilder.matching/target/*.jar staging/
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Package
-        path: staging
+    - name: Publish package
+      run: mvn --batch-mode deploy
+      env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
