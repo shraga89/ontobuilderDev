@@ -2,12 +2,14 @@ package ac.technion.iem.ontobuilder.io.imports;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.utils.files.XmlFileHandler;
+import ac.technion.iem.ontobuilder.io.exports.Exporter;
+import ac.technion.iem.ontobuilder.io.exports.XmlOntologyExporter;
 import junit.framework.TestCase;
 
 import java.io.*;
 
 
-public class NativeImporterTest extends TestCase {
+public class NativeImportExportTest extends TestCase {
 
     XmlFileHandler xfh;
 
@@ -17,7 +19,8 @@ public class NativeImporterTest extends TestCase {
         xfh= new XmlFileHandler();
     }
 
-    public void testImportFile() throws IOException, ImportException {
+    public void testImportExportNativeFile() throws IOException, ImportException {
+        //Test Import
         String dirname = "linesmaker.com.xml_www.youbet.com.xml_EXACT/";
         String fname = "linesmaker.com.xml";
         InputStream toLoad = getClass().getClassLoader().getResourceAsStream(dirname + fname);
@@ -31,5 +34,14 @@ public class NativeImporterTest extends TestCase {
         NativeImporter ni = new NativeImporter();
         Ontology o = ni.importFile(testFile);
         assertEquals(28,o.getAllTermsCount());
+
+        // Test export
+        File testExportFile = new File(strTmp,"exported.xml");
+        if (testExportFile.exists())
+            testExportFile.delete();
+        o.save(testExportFile);
+        assertTrue(testExportFile.exists());
+
     }
+
 }

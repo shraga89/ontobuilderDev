@@ -18,7 +18,7 @@ public class XmlOntologyExporter implements Exporter
      * 
      * @param params the parameters to export
      * @param file the file to save the result to
-     * @throws ExportException when cannot save the match to an XML
+     * @throws ExportException when cannot save the ontology to an XML
      */
     public void export(HashMap<?, ?> params, File file) throws ExportException
     {
