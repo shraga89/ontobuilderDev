@@ -24,11 +24,17 @@ jobs:
       run: mvn -B install --file ontobuilder.core/pom.xml
     - name: Build matching with Maven
       run: mvn -B package --file ontobuilder.matching/pom.xml
+    - name: Build io with Maven
+      run: mvn -B package --file ontobuilder.io/pom.xml
     - name: Publish package core
       run: mvn --batch-mode deploy --file ontobuilder.core/pom.xml
       env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish package matching
       run: mvn --batch-mode deploy --file ontobuilder.matching/pom.xml
+      env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish package io
+      run: mvn --batch-mode deploy --file ontobuilder.io/pom.xml
       env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
