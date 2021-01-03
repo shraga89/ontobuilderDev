@@ -15,8 +15,8 @@ public class XmlFileHandler
     /**
      * Constructs a default XmlFileHandler
      */
-    public XmlFileHandler()
-    { 
+    public XmlFileHandler()     {
+
     }
     
     /**

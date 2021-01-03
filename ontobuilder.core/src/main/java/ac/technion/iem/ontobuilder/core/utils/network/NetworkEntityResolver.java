@@ -1,14 +1,13 @@
 package ac.technion.iem.ontobuilder.core.utils.network;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * <p>Title: NetworkEntityResolver</p>
@@ -36,14 +35,10 @@ public class NetworkEntityResolver implements EntityResolver
 //        InputStream entityStream = getClass().getResourceAsStream(filtered);
 //        InputStream entityStream = new FileInputStream(filtered);
         InputStream entityStream;
-		try
-		{
-			entityStream = new FileInputStream(new File(new URI(systemId)));
-		}
-		catch (URISyntaxException e)
-		{
-			throw new IOException(e);
-		}
-        return new InputSource(entityStream);
+//        String[] arr = systemId.split(File.separator);
+//		String file = arr[arr.length-1];
+		String file = systemId.substring(systemId.lastIndexOf('/')+1);
+		entityStream = getClass().getClassLoader().getResourceAsStream(file);
+		return new InputSource(entityStream);
     }
 }

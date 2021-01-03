@@ -1,11 +1,9 @@
 package ac.technion.iem.ontobuilder.core.utils.properties;
 
-import java.io.File;
-import java.io.FileInputStream;
+import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -173,20 +171,8 @@ public class PropertiesHandler
      */
     public static String getResourceString(String key) throws ResourceException
     {
-        // if(bundle==null)
-        // throw new ResourceException("The resource bundle file has not been specified.");
-        // try
-        // {
-        // String value=bundle.getString(key);
-        // return value;
-        // }
-        // catch(MissingResourceException e)
-        // {
-        // throw new ResourceException("The key '" + key +
-        // "' was not found in the current resource bundle.");
-        // }
         if (resources == null)
-            throw new ResourceException("The resource bundle file has not been specified.");
+            initializeResources(OntoBuilderResources.Config.RESOURCES_PROPERTIES,  Locale.getDefault());
         try
         {
             String value = resources.getProperty(key);

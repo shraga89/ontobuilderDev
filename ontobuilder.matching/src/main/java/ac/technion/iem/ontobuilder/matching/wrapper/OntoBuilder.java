@@ -1,13 +1,5 @@
 package ac.technion.iem.ontobuilder.matching.wrapper;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Vector;
-
 import ac.technion.iem.ontobuilder.core.ontology.domain.DomainSimilarity;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
 import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
@@ -22,6 +14,11 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgo
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmException;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Vector;
 
 /**
  * <p>Title: OntoBuilder</p>
