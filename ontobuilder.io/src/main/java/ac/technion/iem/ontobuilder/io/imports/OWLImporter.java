@@ -243,7 +243,6 @@ public class OWLImporter implements Importer {
 	 * @param o Ontology to be filled
 	 * @param parent OWl ontology class parent
 	 * @param tParent term parent
-	 * @param reasoner
 	 */
 	private void recFillTerms(Ontology o, Node<OWLClass> parent,Term tParent) {
 		// We don't want to print out the bottom node (containing owl:Nothing
@@ -288,8 +287,8 @@ public class OWLImporter implements Importer {
 	}
 
 	/**
-	 * @param cls
-	 * @return
+	 * @param cls an OWLEntity
+	 * @return an Ontobuilder term
 	 */
 	private Term makeTerm(OWLEntity cls) {
 		String label = q.getShortForm(cls);

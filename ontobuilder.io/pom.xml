@@ -8,10 +8,6 @@
     </properties>
     <repositories>
         <repository>
-            <id>EBI</id>
-            <url>https://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
-        </repository>
-        <repository>
             <id>Talan</id>
             <url>https://nexus.talanlabs.com/content/repositories/releases/</url>
         </repository>
@@ -62,9 +58,9 @@
             <version>0.8.0</version>
         </dependency>
         <dependency>
-            <groupId>org.semanticweb.owlapi</groupId>
-            <artifactId>owlapi</artifactId>
-            <version>3.2.4</version>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-distribution</artifactId>
+            <version>3.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.easywsdl</groupId>
@@ -81,12 +77,6 @@
             <artifactId>commons-rdf-jena</artifactId>
             <version>0.5.0</version>
         </dependency>
-
-        <!--        <dependency>-->
-<!--            <groupId>com.hp.hpl.jena</groupId>-->
-<!--            <artifactId>jena</artifactId>-->
-<!--            <version>2.6.4</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.jbpt</groupId>
             <artifactId>jbpt-petri</artifactId>
@@ -98,9 +88,9 @@
             <version>4.6</version>
         </dependency>
         <dependency>
-            <groupId>com.informata.data</groupId>
-            <artifactId>datafile</artifactId>
-            <version>1.4</version>
+            <groupId>com.github.gyulalaszlo</groupId>
+            <artifactId>informata-datafile</artifactId>
+            <version>1.4.1</version>
         </dependency>
     </dependencies>
 </project>

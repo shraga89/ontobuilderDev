@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import com.infomata.data.DataFileWriter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -247,7 +248,7 @@ public class ExportUtilities
 	 */
 	public static void outputAsCSV(String[] header, ArrayList<String[]> data, File f) 
 	{
-		DataFile write = DataFile.createWriter("8859_1", false);
+		DataFile write = new DataFileWriter("8859_1");
 		write.setDataFormat(new CSVFormat());			
 		try {
 			write.open(f);
