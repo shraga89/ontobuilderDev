@@ -10,7 +10,7 @@
                 <icon>wsdl.gif</icon>
         </importer>
 	<importer>
-                <classpath>ac.technion.iem.ontobuilder.io.imports.XSDImporterUsingXSOM</classpath>
+                <classpath>ac.technion.iem.ontobuilder.io.imports.XSDImporterUsingXerces</classpath>
                 <type>XML Schema</type>
                 <extension>xsd</extension>
 		<shortDescription>XML Schema</shortDescription>

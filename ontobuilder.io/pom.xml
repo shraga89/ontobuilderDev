@@ -91,10 +91,5 @@
             <artifactId>datafile</artifactId>
             <version>1.4</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun.xsom</groupId>
-            <artifactId>xsom</artifactId>
-            <version>20140925</version>
-        </dependency>
     </dependencies>
 </project>

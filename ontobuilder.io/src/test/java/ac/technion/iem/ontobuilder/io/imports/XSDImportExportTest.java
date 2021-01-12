@@ -29,7 +29,7 @@ public class XSDImportExportTest extends TestCase {
         File testFile = new File(strTmp,fname);
         OutputStream outStream = new FileOutputStream(testFile);
         outStream.write(buffer);
-        XSDImporterUsingXSOM importer = new XSDImporterUsingXSOM();
+        XSDImporterUsingXerces importer = new XSDImporterUsingXerces();
         Ontology o = importer.importFile(testFile);
         assertEquals(144,o.getAllTermsCount());
 
