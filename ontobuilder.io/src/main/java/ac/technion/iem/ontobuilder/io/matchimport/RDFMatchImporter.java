@@ -4,13 +4,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.FileManager;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.FileManager;
 
 /**
  * RDF match importer to be used with OAEI standard

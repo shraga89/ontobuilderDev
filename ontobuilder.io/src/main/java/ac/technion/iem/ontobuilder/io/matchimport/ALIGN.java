@@ -1,6 +1,7 @@
 package ac.technion.iem.ontobuilder.io.matchimport;
 
-import com.hp.hpl.jena.rdf.model.*;
+import org.apache.jena.rdf.model.*;
+
 
 /** VCARD vocabulary class for namespace http://knowledgeweb.semanticweb.org/heterogeneity/alignment#
  */

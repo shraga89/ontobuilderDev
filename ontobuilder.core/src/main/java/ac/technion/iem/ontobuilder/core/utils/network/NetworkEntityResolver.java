@@ -3,11 +3,8 @@ package ac.technion.iem.ontobuilder.core.utils.network;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * <p>Title: NetworkEntityResolver</p>

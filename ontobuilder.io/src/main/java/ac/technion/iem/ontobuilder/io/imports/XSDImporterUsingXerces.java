@@ -1,13 +1,12 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import ac.technion.iem.ontobuilder.core.ontology.*;
-import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
-import com.sun.org.apache.xerces.internal.impl.dv.XSSimpleType;
-import com.sun.org.apache.xerces.internal.impl.xs.XSComplexTypeDecl;
-import com.sun.org.apache.xerces.internal.impl.xs.XSElementDecl;
-import com.sun.org.apache.xerces.internal.impl.xs.XSModelGroupImpl;
 import com.sun.org.apache.xerces.internal.util.DraconianErrorHandler;
-import com.sun.org.apache.xerces.internal.xs.*;
+import org.apache.xerces.impl.dv.XSSimpleType;
+import org.apache.xerces.impl.xs.XSComplexTypeDecl;
+import org.apache.xerces.impl.xs.XSElementDecl;
+import org.apache.xerces.impl.xs.XSModelGroupImpl;
+import org.apache.xerces.xs.*;
 import org.w3c.dom.*;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.xml.sax.SAXException;
@@ -140,8 +139,7 @@ public class XSDImporterUsingXerces implements Importer
 		// set validation feature
 		config.setParameter("validate", Boolean.TRUE);
 		// parse document
-		config.setParameter("error-handler", errorHandler);
-		config.setParameter("http://apache.org/xml/properties/internal/entity-resolver", new NetworkEntityResolver());
+//		config.setParameter("http://apache.org/xml/properties/internal/entity-resolver", new CatalogResolver());
 		XSModel model = schemaLoader.loadURI(file.getAbsolutePath());
 		if (model == null) {
 			return null;
@@ -301,18 +299,17 @@ public class XSDImporterUsingXerces implements Importer
 		//Make OntologyClass object for each simple type
 		XSNamedMap simpleTypes = result.getComponents(XSTypeDefinition.SIMPLE_TYPE);
 		OntologyClass ontologyClass;
-		for (XSObject type : simpleTypes.values()) {
-			XSSimpleType newType = (XSSimpleType)type;
+		for (int i=0; i<simpleTypes.getLength() ;i++) {
+			XSSimpleType newType = (XSSimpleType)simpleTypes.item(i);
 			xsdOntology.addClass(createOntologyClass(xsdOntology,newType));
 		}
 		
 		//Add ontology class for each complex type
 		HashMap<OntologyClass,ArrayList<OntologyClass>> relationships = new HashMap<>();
 		XSNamedMap complexTypes = result.getComponents(COMPLEX_TYPE);
-		for (XSObject type : complexTypes.values())
+		for (int i=0; i<complexTypes.getLength();i++)
 		{
-
-			XSComplexTypeDefinition newType = (XSComplexTypeDefinition)type;
+			XSComplexTypeDefinition newType = (XSComplexTypeDefinition)complexTypes.item(i);
 			//Make ontology class
 			ontologyClass = createOntologyClass(xsdOntology,newType);
 			//Record parent child relationships to later create them in classes
@@ -333,12 +330,12 @@ public class XSDImporterUsingXerces implements Importer
 			}
 			xsdOntology.addClass(ontologyClass);
 		}
-		
 
-		for (XSObject type : complexTypes.values())
+
+		for (int i=0; i<complexTypes.getLength();i++)
 		{ 
 			
-			XSTypeDefinition newType = (XSTypeDefinition)type;
+			XSTypeDefinition newType = (XSTypeDefinition)complexTypes.item(i);
 			//make Term and collect, Will be used to create terms in complex elements using this complex type
 			Term classT;
 			try {
@@ -361,9 +358,10 @@ public class XSDImporterUsingXerces implements Importer
 		 * 		2. replacing extension markers with terms from the referenced type
 		 * */
 		//Make all terms
-		for (XSObject o : result.getComponents(ELEMENT_DECLARATION).values())
+		XSNamedMap elementDecls = result.getComponents(ELEMENT_DECLARATION);
+		for (int i=0; i<elementDecls.getLength();i++)
 		{
-			Term t = makeTermFromElement(null,(XSElementDecl)o);
+			Term t = makeTermFromElement(null,(XSElementDecl)elementDecls.item(i));
 			xsdOntology.addTerm(t);
 		}
 	}
@@ -435,17 +433,18 @@ public class XSDImporterUsingXerces implements Importer
 		else
 		if(!(ct.getContentType()==XSComplexTypeDefinition.CONTENTTYPE_EMPTY))//if it is anonymous skip the type and make terms from the type's elements
 		{
-			if (ct.getContentType()==XSComplexTypeDefinition.CONTENTTYPE_SIMPLE) //simple content extension
+			if (!(ct.getContentType()==XSComplexTypeDefinition.CONTENTTYPE_SIMPLE)) //simple content extension
 			{
 				XSTerm xst = ct.getParticle().getTerm();
 				XSModelGroup g =  (XSModelGroup)xst;
-				for (XSObject o : g.getParticles())
+				for (int i=0; i<g.getParticles().getLength(); i++)
 				{
-					XSParticle p = (XSParticle)o;
+					XSParticle p = (XSParticle)g.getParticles().item(i);
 					if(p.getTerm().getClass().equals(XSModelGroupImpl.class)) //extension
 					{
-						for (XSObject o1 : ((XSModelGroupImpl)p.getTerm()).getParticles()) {
-							XSParticle p1 = (XSParticle)o1;
+						XSObjectList particles = ((XSModelGroupImpl)p.getTerm()).getParticles();
+						for (int j=0;j<particles.getLength();j++) {
+							XSParticle p1 = (XSParticle)particles.item(j);
 							t.addTerm(makeTermFromElement(t,(XSElementDecl)p1.getTerm()));
 						}
 
@@ -519,7 +518,7 @@ public class XSDImporterUsingXerces implements Importer
 	private Term makeTermFromSimpleElement(Term parent,XSElementDecl e, boolean forceComplex) throws Exception
 	{
 		if (!forceComplex)
-			if (e.getType()!=SIMPLE_TYPE) throw new Exception("Expected simple element, received complex element");
+			if (e.getTypeDefinition().getTypeCategory()!=SIMPLE_TYPE) throw new Exception("Expected simple element, received complex element");
 		return makeTerm(parent,e);
 	}
 	
@@ -558,11 +557,11 @@ public class XSDImporterUsingXerces implements Importer
 		Term term = new Term(ct.getName());
 		term.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("name",ct.getName()));
 		XSObjectList annotations = ((XSComplexTypeDecl)ct).getAnnotations();
-		if (!annotations.isEmpty())
+		if (annotations!=null && !(annotations.getLength()==0))
 		{
 			StringBuilder annotation_str = new StringBuilder();
-			for (XSObject o : annotations)
-				annotation_str.append(((XSAnnotation) o).getAnnotationString());
+			for (int i=0;i<annotations.getLength();i++)
+				annotation_str.append(((XSAnnotation) annotations.item(i)).getAnnotationString());
 			term.addAttribute(new ac.technion.iem.ontobuilder.core.ontology.Attribute("annotation", annotation_str.toString()));
 		}
 
@@ -589,23 +588,27 @@ public class XSDImporterUsingXerces implements Importer
 		{
 			XSTerm xst = ctd.getParticle().getTerm();
 			XSModelGroup g =  (XSModelGroup) xst;
-			for (XSObject o : g.getParticles())
+			XSObjectList particles =g.getParticles();
+			for (int i=0;i<particles.getLength();i++)
 			{
-				XSParticle p = (XSParticle)o;
+				XSParticle p = (XSParticle)particles.item(i);
 				if (p.getTerm().getClass().equals(XSElementDecl.class)) //simple sequence
 					term.addTerm(makeTermFromElement(term,(XSElementDecl)p.getTerm()));
 				else if (p.getTerm().getClass().equals(XSModelGroupImpl.class)) //sequence within a choice
 				{
-					for (XSObject o1 : ((XSModelGroupImpl)p.getTerm()).getParticles())
+					XSObjectList particles1 = ((XSModelGroupImpl)p.getTerm()).getParticles();
+					for (int j=0;j<particles1.getLength();j++)
 					{
-						XSParticle p1 = (XSParticle)o1;
+						XSParticle p1 = (XSParticle)particles1.item(j);
 						if (p1.getTerm().getClass().equals(XSElementDecl.class)) //simple sequence
 							term.addTerm(makeTermFromElement(term,(XSElementDecl)p1.getTerm()));
-						else if (p1.getTerm().getClass().equals(XSModelGroupImpl.class))
-							for (XSObject o2 : ((XSModelGroupImpl)p.getTerm()).getParticles()) {
-								XSParticle p2 = (XSParticle) o2;
-								term.addTerm(makeTermFromElement(term, (XSElementDecl) p2.getTerm()));
-							}
+						else if (p1.getTerm().getClass().equals(XSModelGroupImpl.class)) {
+							XSObjectList particles2 = ((XSModelGroupImpl) p1.getTerm()).getParticles();
+							for (int k = 0; k < particles2.getLength(); k++) {
+									XSParticle p2 = (XSParticle) particles2.item(k);
+									term.addTerm(makeTermFromElement(term, (XSElementDecl) p2.getTerm()));
+								}
+						}
 					}
 				}
 			}
@@ -616,9 +619,9 @@ public class XSDImporterUsingXerces implements Importer
 	private static Collection<? extends XSAttributeUse> getComplexAttributes(XSComplexTypeDecl xsComplexType) {
 	    List<XSAttributeUse> c = new ArrayList<>();
 		XSObjectList l = xsComplexType.getAttributeUses();
-	    for (XSObject o : l) {
+	    for (int i=0;i< l.getLength();i++) {
 	       // i.next is attributeUse
-	       XSAttributeUse attUse = (XSAttributeUse)o;
+	       XSAttributeUse attUse = (XSAttributeUse)l.item(i);
 	       //System.out.println("Attributes for ComplexType:"+ xsComplexType.getName());
 
 	       //parseAttribute(attUse); //for debug
@@ -639,6 +642,6 @@ public class XSDImporterUsingXerces implements Importer
 	        System.out.println("Use: Required");
 	    else
 	        System.out.println("Use: Optional");
-	    System.out.println("Normalized value: " + attributeDecl.getValueConstraintValue().getNormalizedValue());
+	    System.out.println("Actual value: " + attributeDecl.getActualVC());
 	}
 }
