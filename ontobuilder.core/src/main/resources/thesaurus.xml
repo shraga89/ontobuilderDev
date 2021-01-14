@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE thesaurus SYSTEM "C:\Users\OT48ZK\Documents\ontobuilderDev\ontobuilder.core\src\main\resources\thesaurus.dtd">
+<!DOCTYPE thesaurus>
 <thesaurus>
     <entry>
         <word>return</word>
