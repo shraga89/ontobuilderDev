@@ -1,9 +1,6 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -315,7 +312,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	private class AbbrExpand {
 
 		// CONFIGURATION
-		public String WORD_LIST_PATH = "./data/alist.txt";
+		public String WORD_LIST_PATH = "data/alist.txt";
 		private String[] wordList;
 		private HashMap<String, String> abbrCache;
 
@@ -529,13 +526,11 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		 * load a file
 		 */
 		private String[] loadFile(String path) {
+			InputStream stream = this.getClass().getClassLoader().getResourceAsStream(path);
 			BufferedReader br = null;
-			ArrayList<String> lines_arr = new ArrayList<String>();
-			try {
-				br = new BufferedReader(new FileReader(path));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			ArrayList<String> lines_arr = new ArrayList<>();
+			assert stream != null;
+			br = new BufferedReader(new InputStreamReader(stream));
 			try {
 				String line = br.readLine();
 				while (line != null) {
