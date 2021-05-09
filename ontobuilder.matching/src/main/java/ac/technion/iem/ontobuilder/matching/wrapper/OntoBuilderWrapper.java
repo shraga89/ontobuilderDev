@@ -176,11 +176,18 @@ public final class OntoBuilderWrapper extends OntoBuilder
     	//Change this to work with the enum instead of the string
         try
         {
-            algorithm = AlgorithmUtilities.getAlgorithmsInstance(getAlgorithmsFile(),
+            InputStream resource = getAlgorithmsFile();
+            if (resource == null) {
+                System.err.println("Could not load algorithm file when trying to match ");
+                return null;
+            }
+            algorithm = AlgorithmUtilities.getAlgorithmsInstance(resource,
                 algorithmToUse);
             if (algorithm == null)
             {
+                System.err.printf("While looking for %s in the algorithm file, could not find it. ", algorithmToUse);
                 return null;
+
             }
             long runTime = System.currentTimeMillis();
             System.out.println("matching process starts...uses algorithm:" + algorithm.getName());
