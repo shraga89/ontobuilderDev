@@ -1,11 +1,5 @@
 package ac.technion.iem.ontobuilder.matching.wrapper;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.resources.OntoBuilderResources;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
@@ -15,6 +9,10 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmExcep
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.AlgorithmUtilities;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
+
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * <p>Title: OntoBuilderWrapper</p>
@@ -185,7 +183,9 @@ public final class OntoBuilderWrapper extends OntoBuilder
                 algorithmToUse);
             if (algorithm == null)
             {
-                System.err.printf("While looking for %s in the algorithm file, could not find it. ", algorithmToUse);
+                System.err.printf("While looking for %s in the algorithm file, could not find it. These are the loaded algorithms: \n", algorithmToUse);
+                for (AbstractAlgorithm a : algorithms)
+                    System.err.printf("%s \n ", a.getPluginName());
                 return null;
 
             }
@@ -302,7 +302,6 @@ public final class OntoBuilderWrapper extends OntoBuilder
     private InputStream getAlgorithmsFile()
     {
         ClassLoader classLoader = getClass().getClassLoader();
-        InputStream resource = classLoader.getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
-        return resource;
+        return classLoader.getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
     }
 }

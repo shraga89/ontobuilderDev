@@ -93,7 +93,7 @@ public class AlgorithmUtilities
      * @param file the algorithm file as an input stream
      * @param algoritmPluginName algorithm plugin to match to
      * @return a vector of algorithms
-     * @throws AlgorithmException
+     * @throws AlgorithmException if cannot parse algorithm file
      */
     public static Algorithm getAlgorithmsInstance(InputStream file, String algoritmPluginName)
         throws AlgorithmException
@@ -108,9 +108,8 @@ public class AlgorithmUtilities
             doc = builder.build(reader);
             Vector<AbstractAlgorithm> algorithms = loadFromDocument(doc);
             for (AbstractAlgorithm abstractAlgorithm : algorithms) {
-                Algorithm algorithm = (Algorithm) abstractAlgorithm;
-                if (algorithm.getPluginName().equalsIgnoreCase(algoritmPluginName))
-                    return algorithm;
+                if (abstractAlgorithm.getPluginName().equalsIgnoreCase(algoritmPluginName))
+                    return abstractAlgorithm;
             }
             return null;
         } catch (JDOMException | IOException e)
@@ -127,7 +126,7 @@ public class AlgorithmUtilities
      */
     protected static Vector<AbstractAlgorithm> loadFromDocument(Document doc)
     {
-        algorithms = new Vector<AbstractAlgorithm>();
+        algorithms = new Vector<>();
         Element algorithmsElement = doc.getRootElement();
 
         // Create the preprocessor first
@@ -157,6 +156,7 @@ public class AlgorithmUtilities
             }
         }
         Collections.reverse(algorithms);
+        System.out.printf("Scanning algorthim file, found %d algorithms \n", algorithms.size());
         return algorithms;
     }
 
