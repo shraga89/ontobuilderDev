@@ -150,6 +150,7 @@ public class AlgorithmUtilities
                 algorithms.add(algorithm);
             } catch (Exception e) {
                 System.err.printf("Exception in algorithm loading process: %s", e.getMessage());
+                e.printStackTrace();
             }
         }
         Collections.reverse(algorithms);
