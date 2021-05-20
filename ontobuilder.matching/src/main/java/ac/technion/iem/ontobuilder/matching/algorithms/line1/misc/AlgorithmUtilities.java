@@ -142,8 +142,8 @@ public class AlgorithmUtilities
         for (Element algorithmElement : algorithmsList) {
             String algorithmClass = algorithmElement.getChild("class").getText();
             try {
-                AbstractAlgorithm algorithm = (AbstractAlgorithm) ClassLoader
-                        .getSystemClassLoader().loadClass(algorithmClass).newInstance();
+                AbstractAlgorithm algorithm = (AbstractAlgorithm) doc.getClass().getClassLoader().loadClass(algorithmClass).newInstance();
+                        // ClassLoader.getSystemClassLoader().loadClass(algorithmClass).newInstance();
                 algorithm.setPluginName(algorithmElement.getAttributeValue("name"));
                 algorithm.setTermPreprocessor(termPreprocessor);
                 algorithm.configure(algorithmElement);
