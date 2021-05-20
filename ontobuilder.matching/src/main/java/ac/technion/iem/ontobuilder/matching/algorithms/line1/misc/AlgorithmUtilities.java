@@ -106,6 +106,7 @@ public class AlgorithmUtilities
             // second parameter added for topK . amir 10/2004
             Document doc;
             doc = builder.build(reader);
+            System.out.println("built algo doc");
             Vector<AbstractAlgorithm> algorithms = loadFromDocument(doc);
             for (AbstractAlgorithm abstractAlgorithm : algorithms) {
                 if (abstractAlgorithm.getPluginName().equalsIgnoreCase(algoritmPluginName))
@@ -126,6 +127,7 @@ public class AlgorithmUtilities
      */
     protected static Vector<AbstractAlgorithm> loadFromDocument(Document doc)
     {
+        System.out.printf("Loading algorithms from %s", doc.toString());
         algorithms = new Vector<>();
         Element algorithmsElement = doc.getRootElement();
 
@@ -137,22 +139,17 @@ public class AlgorithmUtilities
 
         // Now create the list of algorithms
         List<Element> algorithmsList = algorithmsElement.getChildren("algorithm");
-        for (Iterator<Element> i = algorithmsList.iterator(); i.hasNext();)
-        {
-            Element algorithmElement = i.next();
+        for (Element algorithmElement : algorithmsList) {
             String algorithmClass = algorithmElement.getChild("class").getText();
-            try
-            {
+            try {
                 AbstractAlgorithm algorithm = (AbstractAlgorithm) ClassLoader
-                    .getSystemClassLoader().loadClass(algorithmClass).newInstance();
+                        .getSystemClassLoader().loadClass(algorithmClass).newInstance();
                 algorithm.setPluginName(algorithmElement.getAttributeValue("name"));
                 algorithm.setTermPreprocessor(termPreprocessor);
                 algorithm.configure(algorithmElement);
                 algorithms.add(algorithm);
-            }
-            catch (Exception e)
-            {
-                continue;
+            } catch (Exception e) {
+                System.err.printf("Exception in algorithm loading process: %s", e.getMessage());
             }
         }
         Collections.reverse(algorithms);
@@ -171,7 +168,7 @@ public class AlgorithmUtilities
         for (Iterator<AbstractAlgorithm> i = algorithms.iterator(); i.hasNext();)
         {
             Algorithm a = i.next();
-            if (a.getName().equalsIgnoreCase(name))
+            if (a.getName().equalsIgnoreCase(name)||a.getPluginName().equalsIgnoreCase(name))
                 return (AbstractAlgorithm) a.makeCopy();
         }
         return null;

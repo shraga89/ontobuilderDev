@@ -171,16 +171,18 @@ public final class OntoBuilderWrapper extends OntoBuilder
     public MatchInformation matchOntologies(Ontology candidateOntology, Ontology targetOntology,
         String algorithmToUse) throws OntoBuilderWrapperException
     {
-    	//Change this to work with the enum instead of the string
+    	//TODO Change this to work with the enum instead of the string
+
         try
         {
-            InputStream resource = getAlgorithmsFile();
-            if (resource == null) {
-                System.err.println("Could not load algorithm file when trying to match ");
-                return null;
+            if (algorithms == null) {
+                InputStream resource = getAlgorithmsFile();
+                if (resource == null) {
+                    System.err.println("Could not load algorithm file when trying to match ");
+                    return null;
+                }
             }
-            algorithm = AlgorithmUtilities.getAlgorithmsInstance(resource,
-                algorithmToUse);
+            algorithm = AlgorithmUtilities.getAlgorithm(algorithmToUse);
             if (algorithm == null)
             {
                 System.err.printf("While looking for %s in the algorithm file, could not find it. These are the loaded algorithms: \n", algorithmToUse);
@@ -302,6 +304,7 @@ public final class OntoBuilderWrapper extends OntoBuilder
     private InputStream getAlgorithmsFile()
     {
         ClassLoader classLoader = getClass().getClassLoader();
+        System.out.printf("Loading %s",OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
         return classLoader.getResourceAsStream(OntoBuilderResources.Config.Matching.ALGORITHMS_XML);
     }
 }
