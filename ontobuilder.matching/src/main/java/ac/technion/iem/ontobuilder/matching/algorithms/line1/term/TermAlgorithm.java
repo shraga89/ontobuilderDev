@@ -1,11 +1,5 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.term;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.jdom2.Element;
-
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.OntologyUtilities;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
@@ -18,6 +12,10 @@ import ac.technion.iem.ontobuilder.matching.match.MatchComparator;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
 import ac.technion.iem.ontobuilder.matching.match.MatchOntologyHandler;
 import ac.technion.iem.ontobuilder.matching.meta.match.MatchMatrix;
+import org.jdom2.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Title: TermAlgorithm</p>
@@ -90,7 +88,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         }
         else
         {
-            originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
+            originalTargetTerms = new ArrayList<>(targetOntology.getTerms(true));
         }
 
         if (!candidateOntology.isLight())
@@ -101,7 +99,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         }
         else
         {
-            originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
+            originalCandidateTerms = new ArrayList<>(candidateOntology.getTerms(true));
         }
 
     }
@@ -140,45 +138,38 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
             if (useAverage==2)
             {
             	useAverage=1;
-	            for (int i=0; i< originalCandidateTerms.size(); i++)
-	            { 
-	            	int index=0;
-	            	double maxEffectiveness=0;
-	            	int j=0;
-	            	
-	            	for (j=0 ; j< originalTargetTerms.size(); j++)
-	            	{
-	            		
-	            		
-		            		double val = matchMatrix.getMatchConfidence(originalCandidateTerms.get(i) , originalTargetTerms.get(j));
-		            	if (maxEffectiveness < val)
-		            		{
-		            			maxEffectiveness = val;
-		            			index=j;
-		            		}	
-		            }
-	           
-	            	
-	            	
-	            	for (j=0 ; j< originalTargetTerms.size(); j++)
-	            	{	
-	            		double val = matchMatrix.getMatchConfidence(originalCandidateTerms.get(i) , originalTargetTerms.get(j));
-		            	if (maxEffectiveness == val && index != j)
-		            		{
-		            		Term target1=originalTargetTerms.get(index);
-		                	Term candidat1=originalCandidateTerms.get(i);
-		                	
-		                	Term target2=originalTargetTerms.get(j);
-		                	//Term candidat2=(Term)matchTable[k][0];
-		                	
-		            		compare(candidat1 ,target1);
-		            		matchMatrix.setMatchConfidence(candidat1 ,target1 ,effectiveness);
-		                     
-		                     compare(candidat1 ,target2);
-		                     matchMatrix.setMatchConfidence(candidat1 ,target2 ,effectiveness);
-		            		}	
-	            	}
-	            }
+                for (Term originalCandidateTerm : originalCandidateTerms) {
+                    int index = 0;
+                    double maxEffectiveness = 0;
+                    int j = 0;
+
+                    for (j = 0; j < originalTargetTerms.size(); j++) {
+
+
+                        double val = matchMatrix.getMatchConfidence(originalCandidateTerm, originalTargetTerms.get(j));
+                        if (maxEffectiveness < val) {
+                            maxEffectiveness = val;
+                            index = j;
+                        }
+                    }
+
+
+                    for (j = 0; j < originalTargetTerms.size(); j++) {
+                        double val = matchMatrix.getMatchConfidence(originalCandidateTerm, originalTargetTerms.get(j));
+                        if (maxEffectiveness == val && index != j) {
+                            Term target1 = originalTargetTerms.get(index);
+
+                            Term target2 = originalTargetTerms.get(j);
+                            //Term candidat2=(Term)matchTable[k][0];
+
+                            compare(originalCandidateTerm, target1);
+                            matchMatrix.setMatchConfidence(originalCandidateTerm, target1, effectiveness);
+
+                            compare(originalCandidateTerm, target2);
+                            matchMatrix.setMatchConfidence(originalCandidateTerm, target2, effectiveness);
+                        }
+                    }
+                }
 	            useAverage=2;
             }
 
@@ -394,50 +385,62 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
         if (parametersElement == null)
             return;
         List<?> parametersList = parametersElement.getChildren("parameter");
-        for (Iterator<?> i = parametersList.iterator(); i.hasNext();)
-        {
-            Element parameterElement = (Element) i.next();
+        for (Object o : parametersList) {
+            Element parameterElement = (Element) o;
             String name = parameterElement.getChild("name").getText();
-            if (name.equals("symmetric") || name.equals("useThesaurus") ||
-                name.equals("useSoundex") || name.equals("useAverage"))
-            {
-                boolean value = Boolean.valueOf(parameterElement.getChild("value").getText())
-                    .booleanValue();
-                if (name.equals("symmetric") && value)
-                    mode += TermAlgorithmFlagsEnum.SYMMETRIC_FLAG.getValue();
-                else if (name.equals("useThesaurus") && value)
-                    mode += TermAlgorithmFlagsEnum.USE_THESAURUS_FLAG.getValue();
-                else if (name.equals("useSoundex") && value)
-                    mode += TermAlgorithmFlagsEnum.USE_SOUNDEX_FLAG.getValue();
-            }
-            else if(name.equals("wordLabelWeight") || name.equals("stringLabelWeight") || name.equals("wordNameWeight") || name.equals("stringNameWeight") || name.equals("maxCommonSubStringWeight") || name.equals("nGramWeight") || name.equals("jaroWinklerWeight"))
-            {
-                double value = Double.parseDouble(parameterElement.getChild("value").getText());
-                if (name.equals("wordLabelWeight"))
-                    wordLabelWeight = value;
-                else if (name.equals("stringLabelWeight"))
-                    stringLabelWeight = value;
-                else if (name.equals("wordNameWeight"))
-                    wordNameWeight = value;
-                else if (name.equals("stringNameWeight"))
-                    stringNameWeight = value;
-                else if (name.equals("maxCommonSubStringWeight"))
-                    maxCommonSubStringWeight = value;
-                else if (name.equals("nGramWeight"))
-                    nGramWeight = value;
-                else if (name.equals("jaroWinklerWeight"))
-					jaroWinklerWeight=value;
+            switch (name) {
+                case "symmetric":
+                case "useThesaurus":
+                case "useSoundex":
+                case "useAverage": {
+                    boolean value = Boolean.parseBoolean(parameterElement.getChild("value").getText());
+                    if (name.equals("symmetric") && value)
+                        mode += TermAlgorithmFlagsEnum.SYMMETRIC_FLAG.getValue();
+                    else if (name.equals("useThesaurus") && value)
+                        mode += TermAlgorithmFlagsEnum.USE_THESAURUS_FLAG.getValue();
+                    else if (name.equals("useSoundex") && value)
+                        mode += TermAlgorithmFlagsEnum.USE_SOUNDEX_FLAG.getValue();
+                    break;
+                }
+                case "wordLabelWeight":
+                case "stringLabelWeight":
+                case "wordNameWeight":
+                case "stringNameWeight":
+                case "maxCommonSubStringWeight":
+                case "nGramWeight":
+                case "jaroWinklerWeight": {
+                    double value = Double.parseDouble(parameterElement.getChild("value").getText());
+                    switch (name) {
+                        case "wordLabelWeight":
+                            wordLabelWeight = value;
+                            break;
+                        case "stringLabelWeight":
+                            stringLabelWeight = value;
+                            break;
+                        case "wordNameWeight":
+                            wordNameWeight = value;
+                            break;
+                        case "stringNameWeight":
+                            stringNameWeight = value;
+                            break;
+                        case "maxCommonSubStringWeight":
+                            maxCommonSubStringWeight = value;
+                            break;
+                        case "nGramWeight":
+                            nGramWeight = value;
+                            break;
+                        case "jaroWinklerWeight":
+                            jaroWinklerWeight = value;
+                            break;
+                    }
+                    break;
+                }
+                case "nGram":
+                    nGram = Integer.parseInt(parameterElement.getChild("value").getText());
+
+                    break;
             }
 
-            else if (name.equals("nGram") || name.equals("useAverage"))
-            {
-                int value = Integer.parseInt(parameterElement.getChild("value").getText());
-                if (name.equals("nGram"))
-                    nGram = value;
-                if (name.equals("useAverage"))
-                	useAverage = value;
-            }
-            
         }
     }
 
@@ -449,7 +452,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
     /**
      * Checks whether a Thesaurus is in use
      * 
-     * @return <code>true</code> is is to use {@link Thesaurus_}
+     * @return <code>true</code> is is to use Thesaurus
      */
     public boolean usesThesaurus()
     {
@@ -479,7 +482,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
 
         // Word matching
         double wordEffectiveness_label;
-        double nGramEffectiveness_label = 0;
+        double nGramEffectiveness_label;
         if ((mode & TermAlgorithmFlagsEnum.SYMMETRIC_FLAG.getValue()) != 0)
             wordEffectiveness_label = StringUtilities.getSymmetricSubstringEffectivity(targetLabel,
                 candidateLabel, (mode & TermAlgorithmFlagsEnum.USE_THESAURUS_FLAG.getValue()) != 0 ? thesaurus : null,
@@ -613,7 +616,7 @@ public class TermAlgorithm extends AbstractAlgorithm implements MatchComparator
      *
      * @param string the first value
      * @param word the second value
-     * @throws AlgorithmException
+     * @throws AlgorithmException if the weight sum is not 1.0
      */
     public void setLabelWeights(double string, double word) throws AlgorithmException
     {

@@ -1,24 +1,13 @@
 package ac.technion.iem.ontobuilder.core.ontology;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
+import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelEvent;
+import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelListener;
+import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
+import ac.technion.iem.ontobuilder.core.utils.dom.DOMUtilities;
+import ac.technion.iem.ontobuilder.core.utils.graphs.*;
+import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
+import ac.technion.iem.ontobuilder.core.utils.network.NetworkUtilities;
+import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
 import org.jdom2.DocType;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -29,18 +18,10 @@ import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelEvent;
-import ac.technion.iem.ontobuilder.core.ontology.event.OntologyModelListener;
-import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
-import ac.technion.iem.ontobuilder.core.utils.dom.DOMUtilities;
-import ac.technion.iem.ontobuilder.core.utils.graphs.Connections;
-import ac.technion.iem.ontobuilder.core.utils.graphs.Graph;
-import ac.technion.iem.ontobuilder.core.utils.graphs.GraphCell;
-import ac.technion.iem.ontobuilder.core.utils.graphs.GraphPort;
-import ac.technion.iem.ontobuilder.core.utils.graphs.OrderedGraphPort;
-import ac.technion.iem.ontobuilder.core.utils.network.NetworkEntityResolver;
-import ac.technion.iem.ontobuilder.core.utils.network.NetworkUtilities;
-import ac.technion.iem.ontobuilder.core.utils.properties.PropertiesHandler;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * <p>Title: Ontology</p>
@@ -75,19 +56,18 @@ public class Ontology extends OntologyObject
     public Ontology()
     {
         super();
-        terms = new ArrayList<Term>();
+        terms = new ArrayList<>();
         if (!isLight)
         {
-            classes = new ArrayList<OntologyClass>();
+            classes = new ArrayList<>();
         }
-        listeners = new ArrayList<OntologyModelListener>();
+        listeners = new ArrayList<>();
     }
 
     /**
      * Constructs a Ontology
      * 
      * @param name the OntologyModel name
-     * @param title the OntologyModel title
      */
     public Ontology(String name)
     {
@@ -122,9 +102,7 @@ public class Ontology extends OntologyObject
     public void fireModelChangedEvent(OntologyObject object)
     {
         OntologyModelEvent event = new OntologyModelEvent(this, object);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.modelChanged(event);
         }
     }
@@ -132,9 +110,7 @@ public class Ontology extends OntologyObject
     protected void fireObjectChangedEvent(OntologyObject object)
     {
         OntologyModelEvent event = new OntologyModelEvent(this, object);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.objectChanged(event);
             l.modelChanged(event);
         }
@@ -150,9 +126,7 @@ public class Ontology extends OntologyObject
         OntologyModelEvent event = new OntologyModelEvent(this, parent, term);
         event.setObject(parent);
         event.setPosition(position);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.termAdded(event);
             l.modelChanged(event);
         }
@@ -162,9 +136,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, parent, term);
         event.setObject(parent);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.termDeleted(event);
             l.modelChanged(event);
         }
@@ -174,9 +146,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, superClass, ontologyClass);
         event.setObject(superClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.classAdded(event);
             l.modelChanged(event);
         }
@@ -186,9 +156,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, superClass, ontologyClass);
         event.setObject(superClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.classDeleted(event);
             l.modelChanged(event);
         }
@@ -198,9 +166,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, ontologyClass, attribute);
         event.setObject(ontologyClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.attributeAdded(event);
             l.modelChanged(event);
         }
@@ -210,9 +176,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, ontologyClass, attribute);
         event.setObject(ontologyClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.attributeDeleted(event);
             l.modelChanged(event);
         }
@@ -222,9 +186,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, ontologyClass, axiom);
         event.setObject(ontologyClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.axiomAdded(event);
             l.modelChanged(event);
         }
@@ -234,9 +196,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, ontologyClass, axiom);
         event.setObject(ontologyClass);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.axiomDeleted(event);
             l.modelChanged(event);
         }
@@ -246,9 +206,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, term, relationship);
         event.setObject(term);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.relationshipAdded(event);
             l.modelChanged(event);
         }
@@ -258,9 +216,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, term, relationship);
         event.setObject(term);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.relationshipDeleted(event);
             l.modelChanged(event);
         }
@@ -270,9 +226,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, domain, entry);
         event.setObject(domain);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.domainEntryAdded(event);
             l.modelChanged(event);
         }
@@ -282,9 +236,7 @@ public class Ontology extends OntologyObject
     {
         OntologyModelEvent event = new OntologyModelEvent(this, domain, entry);
         event.setObject(domain);
-        for (Iterator<OntologyModelListener> i = listeners.iterator(); i.hasNext();)
-        {
-            OntologyModelListener l = (OntologyModelListener) i.next();
+        for (OntologyModelListener l : listeners) {
             l.domainEntryDeleted(event);
             l.modelChanged(event);
         }
@@ -348,6 +300,7 @@ public class Ontology extends OntologyObject
         }
         catch (MalformedURLException e)
         {
+            e.printStackTrace();
         }
     }
 
@@ -385,20 +338,12 @@ public class Ontology extends OntologyObject
     public Term resolveTerm(Term t)
     {
         int cnt = 0;
-        for (Iterator<Term> it = terms.iterator(); it.hasNext();)
-        {
-            Term _t = (Term) it.next();
+        for (Term _t : terms) {
             if (t.getName().equals(_t.getName()))
                 cnt++;
         }
 
-        String head = "";
-        for (int i = 0; i < cnt; i++)
-        {
-            head += "_";
-        }
-
-        t.setName(head + t.getName());
+        t.setName("_".repeat(Math.max(0, cnt)) + t.getName());
 
         return t;
     }
@@ -450,7 +395,7 @@ public class Ontology extends OntologyObject
     {
         if (index < 0 || index >= terms.size())
             return null;
-        return (Term) terms.get(index);
+        return terms.get(index);
     }
 
     public void addClass(final OntologyClass ontologyClass)
@@ -499,7 +444,7 @@ public class Ontology extends OntologyObject
     {
         if (isLight || index < 0 || index >= classes.size())
             return null;
-        return (OntologyClass) classes.get(index);
+        return classes.get(index);
     }
 
     public int compare(Object o1, Object o2)
@@ -537,14 +482,12 @@ public class Ontology extends OntologyObject
         if (!isLight)
         {
             Element classesElement = new Element("classes");
-            for (Iterator<OntologyClass> i = classes.iterator(); i.hasNext();)
-                classesElement.addContent(((OntologyClass) i.next()).getXMLRepresentation());
+            for (OntologyClass aClass : classes) classesElement.addContent(aClass.getXMLRepresentation());
             ontologyElement.addContent(classesElement);
         }
 
         Element termsElement = new Element("terms");
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-            termsElement.addContent(((Term) i.next()).getXMLRepresentation());
+        for (Term term : terms) termsElement.addContent(term.getXMLRepresentation());
         ontologyElement.addContent(termsElement);
 
         return ontologyElement;
@@ -565,8 +508,7 @@ public class Ontology extends OntologyObject
             ontologyElement.setAttribute(new org.jdom2.Attribute("site", siteURL.toExternalForm()));
 
         Element termsElement = new Element("terms");
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-            termsElement.addContent(((Term) i.next()).getXMLRepresentation());
+        for (Term term : terms) termsElement.addContent(term.getXMLRepresentation());
         ontologyElement.addContent(termsElement);
 
         return ontologyElement;
@@ -604,10 +546,8 @@ public class Ontology extends OntologyObject
         e.setAttribute(new org.jdom2.Attribute("model", "closed"));
         e.addContent(new Element("RecordInfo", b));
 
-        ArrayList<Object> names = new ArrayList<Object>();
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-        {
-            Term term = (Term) i.next();
+        ArrayList<Object> names = new ArrayList<>();
+        for (Term term : terms) {
             term.getBizTalkRepresentation(schemaElement, e, def, b, d, names);
         }
 
@@ -639,8 +579,8 @@ public class Ontology extends OntologyObject
         {
             model.setLight(false);
             List<?> classElements = ontologyElement.getChild("classes").getChildren();
-            for (Iterator<?> i = classElements.iterator(); i.hasNext();)
-                model.addClass(OntologyClass.getClassFromXML((Element) i.next(), model));
+            for (Object classElement : classElements)
+                model.addClass(OntologyClass.getClassFromXML((Element) classElement, model));
         }
         else
         {
@@ -649,11 +589,9 @@ public class Ontology extends OntologyObject
 
         List<?> termsElements = ontologyElement.getChild("terms").getChildren();
         Term prevTerm = null;
-        for (Iterator<?> i = termsElements.iterator(); i.hasNext();)
-        {
-            Term t = Term.getTermFromXML((Element) i.next(), model);
-            if (prevTerm != null)
-            {
+        for (Object element : termsElements) {
+            Term t = Term.getTermFromXML((Element) element, model);
+            if (prevTerm != null) {
                 prevTerm.setSucceed(t);
                 t.setPrecede(prevTerm);
             }
@@ -661,12 +599,9 @@ public class Ontology extends OntologyObject
             prevTerm = t;
         }
 
-        for (Iterator<Term> i = model.terms.iterator(); i.hasNext();)
-        {
-            Term term = (Term) i.next();
-            for (Iterator<?> j = termsElements.iterator(); j.hasNext();)
-            {
-                Element termElement = (Element) j.next();
+        for (Term term : model.terms) {
+            for (Object termsElement : termsElements) {
+                Element termElement = (Element) termsElement;
                 if (termElement.getAttributeValue("name").equals(term.getName()))
                     term.solveRelationshipsFromXML(termElement);
             }
@@ -680,9 +615,7 @@ public class Ontology extends OntologyObject
         if (name == null || isLight)
             return null;
         Vector<OntologyClass> classes = getClasses(true);
-        for (Iterator<OntologyClass> i = classes.iterator(); i.hasNext();)
-        {
-            OntologyClass ontologyClass = (OntologyClass) i.next();
+        for (OntologyClass ontologyClass : classes) {
             if (ontologyClass.getName().equals(name))
                 return ontologyClass;
         }
@@ -691,10 +624,8 @@ public class Ontology extends OntologyObject
 
     public Vector<OntologyClass> getClasses(boolean includeSubClasses)
     {
-        Vector<OntologyClass> cs = new Vector<OntologyClass>();
-        for (Iterator<OntologyClass> i = classes.iterator(); i.hasNext();)
-        {
-            OntologyClass c = (OntologyClass) i.next();
+        Vector<OntologyClass> cs = new Vector<>();
+        for (OntologyClass c : classes) {
             cs.add(c);
             if (includeSubClasses) getClassesRec(c, cs);
         }
@@ -726,9 +657,7 @@ public class Ontology extends OntologyObject
         if (name == null)
             return null;
         Vector<Term> terms = getTerms(true);
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-        {
-            Term term = (Term) i.next();
+        for (Term term : terms) {
             if (term.getName().equals(name))
                 return term;
         }
@@ -744,9 +673,9 @@ public class Ontology extends OntologyObject
     public Term getTermByID(long id)
     {
         Vector<Term> tmpTerms = this.getTerms(true);
-        for (int i = 0; i < tmpTerms.size(); i++)
-            if (((Term) tmpTerms.get(i)).getId() == id)
-                return (Term) tmpTerms.get(i);
+        for (Term tmpTerm : tmpTerms)
+            if (tmpTerm.getId() == id)
+                return tmpTerm;
         return null;
     }
 
@@ -784,10 +713,8 @@ public class Ontology extends OntologyObject
      */
     public Vector<Term> getTerms(boolean includeSubTerms)
     {
-        Vector<Term> ts = new Vector<Term>();
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-        {
-            Term t = (Term) i.next();
+        Vector<Term> ts = new Vector<>();
+        for (Term t : terms) {
             ts.add(t);
             if (includeSubTerms) getTermsRec(t, ts);
         }
@@ -806,11 +733,9 @@ public class Ontology extends OntologyObject
 
     public Vector<Relationship> getRelationships()
     {
-        Vector<Relationship> rs = new Vector<Relationship>();
+        Vector<Relationship> rs = new Vector<>();
         Vector<Term> terms = getTerms(true);
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-        {
-            Term t = (Term) i.next();
+        for (Term t : terms) {
             for (int j = 0; j < t.getRelationshipsCount(); j++)
                 rs.add(t.getRelationship(j));
         }
@@ -845,8 +770,7 @@ public class Ontology extends OntologyObject
         if (isLight)
             return;
 
-        for (Iterator<Term> i = terms.iterator(); i.hasNext();)
-            ((Term) i.next()).normalize();
+        for (Term term : terms) term.normalize();
     }
     
     /**
@@ -972,7 +896,7 @@ public class Ontology extends OntologyObject
      * Open an ontology from an XML file
      * 
      * @param file the {@link File} to read from
-     * @return an {@link OntologyGui}
+     * @return an {@link Ontology}
      * @throws IOException
      */
     public static Ontology openFromXML(File file) throws IOException
@@ -1019,8 +943,8 @@ public class Ontology extends OntologyObject
     /**
      * Generate an ontology from a URL
      * 
-     * @param url the {@link OntologyGui}
-     * @return an {@link OntologyGui}
+     * @param url the {@link Ontology}
+     * @return an {@link Ontology}
      * @throws IOException
      */
     public static OntologyGenerateHelper generateOntology(URL url) throws IOException
@@ -1034,7 +958,7 @@ public class Ontology extends OntologyObject
         NodeList titles = document.getElementsByTagName("title");
         for (int i = 0; i < titles.getLength(); i++)
         {
-            Node titleNode = (((org.w3c.dom.Element) titles.item(i)).getFirstChild());
+            Node titleNode = (titles.item(i).getFirstChild());
             if (titleNode != null)
             {
                 ontologyTitle = titleNode.getNodeValue();
@@ -1178,11 +1102,11 @@ public class Ontology extends OntologyObject
     public Graph getGraph()
     {
     	Graph graph = new Graph();
-        ArrayList<GraphCell> cells = new ArrayList<GraphCell>();
+        ArrayList<GraphCell> cells = new ArrayList<>();
         // ConnectionSet for the Insert method
         Connections cs = new Connections();
         // Hashtable for Attributes (Vertex to Map)
-        Hashtable<GraphCell, Map<?, ?>> attributes = new Hashtable<GraphCell, Map<?, ?>>();
+        Hashtable<GraphCell, Map<?, ?>> attributes = new Hashtable<>();
 
         GraphCell vertex = new GraphCell(getName());
         cells.add(vertex);
@@ -1191,16 +1115,12 @@ public class Ontology extends OntologyObject
         {
             GraphPort toChildPort = new OrderedGraphPort("toChild");
             vertex.addChild(toChildPort);
-            for (Iterator<Term> i = this.getTerms(true).iterator(); i.hasNext();)
-            {
-                Term term = (Term) i.next();
+            for (Term term : this.getTerms(true)) {
                 term.buildGraphHierarchy(toChildPort, cells, attributes, cs);
             }
 //            if (GraphUtilities.getShowPrecedenceLinks())
             {
-                for (Iterator<Term> i = this.getTerms(true).iterator(); i.hasNext();)
-                {
-                    Term term = (Term) i.next();
+                for (Term term : this.getTerms(true)) {
                     term.buildPrecedenceRelationships(cells, attributes, cs);
                 }
             }
@@ -1228,7 +1148,7 @@ public class Ontology extends OntologyObject
     /**
      * Returns a term according to the provenence supplied.
      * Assumes provenence is of form: root.node.  ...etc...  .node.term 
-     * @param provenenace
+     * @param provenance path to root of term
      * @return Term is found null otherwise
      */
 	public Term getTermByProvenance(String provenance)
@@ -1238,14 +1158,14 @@ public class Ontology extends OntologyObject
 	
 	/**
 	 * Returns a term according to the provenence supplied.
-	 * @param provenance
+	 * @param provenance path to root of term
 	 * @param seperator Char which seperates between provenance elements (e.g. '.' or '/')
 	 * @return Term if found, null otherwise
 	 */
 	public Term getTermByProvenance(String provenance,char seperator)
     {
     	StringBuffer sb = new StringBuffer();
-    	ArrayList<String> prov = new ArrayList<String>(); 
+    	ArrayList<String> prov = new ArrayList<>();
     	for (char c: provenance.toCharArray())
     	{
     		if (c != seperator)
