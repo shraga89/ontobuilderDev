@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE importers SYSTEM "dtds/import.dtd">
 <importers>
-        <importer>
-                <classpath>ac.technion.iem.ontobuilder.io.imports.WSDLImporter</classpath>
-                <type>WSDL</type>
-                <extension>wsdl</extension>
-		<shortDescription>WSDL</shortDescription>
-		<longDescription>Import WSDL file and generate ontology</longDescription>
-                <icon>wsdl.gif</icon>
-        </importer>
 	<importer>
                 <classpath>ac.technion.iem.ontobuilder.io.imports.HTMLImporter</classpath>
                 <type>HTML</type>

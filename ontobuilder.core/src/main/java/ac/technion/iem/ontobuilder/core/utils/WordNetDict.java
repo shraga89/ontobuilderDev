@@ -38,7 +38,7 @@ public class WordNetDict  {
 	/**
 	 * This method check that given word is not a single letter<br>
 	 * If it's a single letter it returns an empty Set;<br>
-	 * otherwise it calls JAWJAW <i>findDefinitions</i>
+	 * otherwise it calls WS4J <i>findDefinitions</i>
 	 * @param word to check
 	 * @param pos word part of speech
 	 * @return list of concepts the word matches

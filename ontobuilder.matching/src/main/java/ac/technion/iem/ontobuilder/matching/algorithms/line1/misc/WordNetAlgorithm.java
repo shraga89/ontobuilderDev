@@ -14,11 +14,13 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ac.technion.iem.ontobuilder.core.utils.WordNetDict;
+import edu.uniba.di.lacam.kdde.lexical_db.data.Concept;
+import edu.uniba.di.lacam.kdde.lexical_db.item.POS;
 import org.jdom2.Element;
 
 import ac.technion.iem.ontobuilder.core.ontology.Ontology;
 import ac.technion.iem.ontobuilder.core.ontology.Term;
-import ac.technion.iem.ontobuilder.core.utils.JAWJAWWrapper;
 import ac.technion.iem.ontobuilder.core.utils.StringUtilities;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.AbstractAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.common.Algorithm;
@@ -26,11 +28,10 @@ import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.Tok
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithm;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordAlgorithmFactory;
 import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
-import edu.cmu.lti.jawjaw.pobj.POS;
-import edu.cmu.lti.ws4j.WS4J;
+import edu.uniba.di.lacam.kdde.ws4j.WS4J;
 
 public class WordNetAlgorithm extends AbstractAlgorithm {
-	Map<String,Map<String,Double>> simCache = new HashMap<String,Map<String,Double>>();
+	Map<String,Map<String,Double>> simCache = new HashMap<>();
 
 	public WordNetAlgorithm(){
 
@@ -82,9 +83,9 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		long calcSimStoreTime = 0;
 		long updateMatchTime = 0;
 		
-		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<Term, TermTokenized>();
-		HashMap<Term, TermTokenized> targetTermsTokenizedMap = new HashMap<Term, TermTokenized>();
-		HashMap<Term, TermSimilarity> termsSimilarityMap = new HashMap<Term, TermSimilarity>();
+		HashMap<Term, TermTokenized> candidateTermsTokenizedMap = new HashMap<>();
+		HashMap<Term, TermTokenized> targetTermsTokenizedMap = new HashMap<>();
+		HashMap<Term, TermSimilarity> termsSimilarityMap = new HashMap<>();
 
 		ArrayList<Term> cands = getTerms(mi.getCandidateOntology());
 		ArrayList<Term> targs = getTerms(mi.getTargetOntology());
@@ -119,8 +120,8 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 					List<String> candidateTokens = candidateTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
 					List<String> targetTokens = targetTokenized.getTokenizedWordsByAlgorithmAndToken(algorithmType);
 
-					List<String> candTokenAbbred = new ArrayList<String>();
-					List<String> targTokenAbbred = new ArrayList<String>();
+					List<String> candTokenAbbred = new ArrayList<>();
+					List<String> targTokenAbbred = new ArrayList<>();
 					for (String candStr: candidateTokens) {
 						candTokenAbbred.add(ae.expandAbbreviation(candStr));
 					}
@@ -221,7 +222,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		double avgSim = 0.0;
 		int validCandidateWords = 0;
 		for (String candidateWord : candidateWords) {
-			Map<String,Double> candSimCache = (simCache.containsKey(candidateWord) ? simCache.get(candidateWord) : new HashMap<String,Double>());
+			Map<String,Double> candSimCache = (simCache.containsKey(candidateWord) ? simCache.get(candidateWord) : new HashMap<>());
 			//get the Singularize form of a word so it will be found in the Diction
 			String singCandidateWord = StringUtilities.getSingularize(candidateWord);
 			if ( StringUtilities.isWordInDiction(singCandidateWord) ) {
@@ -283,21 +284,17 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @param word to be checked
 	 */
 	public static boolean isWordInDiction(String word) {
-		Set<String> defs = new HashSet<String>();
+		Set<Concept> defs = new HashSet<>();
 		POS[] partsOfSpeech = POS.values();
-		for (int i = 0; i < partsOfSpeech.length; i++) {
-			POS pos = partsOfSpeech[i];
-			defs.addAll(JAWJAWWrapper.findDefinitions(word, pos));
+		for (POS pos : partsOfSpeech) {
+			defs.addAll(WordNetDict.getMe().findDefinitions(word, pos));
 		}
-		if ( defs.isEmpty() ) {
-			return false;
-		}
-		return true;
+		return !defs.isEmpty();
 	}
 
 	private ArrayList<Term> getTerms(Ontology o) {
 		Vector<Term> terms = o.getTerms(true);
-		ArrayList<Term> result = new ArrayList<Term>();
+		ArrayList<Term> result = new ArrayList<>();
 		for (int i = 0; i < terms.size(); i++)
 		{
 			result.add(i, terms.get(i).copy());
@@ -318,7 +315,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 
 		public AbbrExpand() {
 			this.wordList = loadFile(WORD_LIST_PATH);
-			this.abbrCache = new HashMap<String, String>();
+			this.abbrCache = new HashMap<>();
 		}
 
 		/* 
@@ -369,7 +366,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		 * return all phrases that match the rule.
 		 */
 		public String[] getMatchingPhrases(Pattern pattern, boolean returnPhrase) {
-			Map<String, String> resultArr = new HashMap<String,String>();
+			Map<String, String> resultArr = new HashMap<>();
 			Matcher matcher;
 			for (String phrase: this.wordList) {
 				matcher = pattern.matcher(phrase);
@@ -391,7 +388,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 		 * Construct the pattern of a word
 		 */
 		public String[] getWordPattern(String abbr, String phrase) {
-			ArrayList<String> patterns = new ArrayList<String>();
+			ArrayList<String> patterns = new ArrayList<>();
 			abbr = abbr.toLowerCase();
 			phrase = phrase.toLowerCase();
 			getAllPatterns(patterns, abbr, phrase, "");

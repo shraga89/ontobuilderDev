@@ -1,7 +1,7 @@
 package ac.technion.iem.ontobuilder.io.imports;
 
 import ac.technion.iem.ontobuilder.core.ontology.*;
-import com.sun.org.apache.xerces.internal.util.DraconianErrorHandler;
+import org.xml.sax.helpers.DefaultHandler;
 import org.apache.xerces.impl.dv.XSSimpleType;
 import org.apache.xerces.impl.xs.XSComplexTypeDecl;
 import org.apache.xerces.impl.xs.XSElementDecl;
@@ -21,10 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static com.sun.org.apache.xerces.internal.xs.XSConstants.DERIVATION_EXTENSION;
-import static com.sun.org.apache.xerces.internal.xs.XSConstants.ELEMENT_DECLARATION;
-import static com.sun.org.apache.xerces.internal.xs.XSTypeDefinition.COMPLEX_TYPE;
-import static com.sun.org.apache.xerces.internal.xs.XSTypeDefinition.SIMPLE_TYPE;
+import static org.apache.xerces.xs.XSConstants.DERIVATION_EXTENSION;
+import static org.apache.xerces.xs.XSConstants.ELEMENT_DECLARATION;
+import static org.apache.xerces.xs.XSTypeDefinition.COMPLEX_TYPE;
+import static org.apache.xerces.xs.XSTypeDefinition.SIMPLE_TYPE;
+
 
 /**
  * <p>Title: XSDImporter Using XSOM </p>
@@ -191,7 +192,7 @@ public class XSDImporterUsingXerces implements Importer
 			factory.setSchema(schemaFactory.newSchema(
 				    new Source[] {new StreamSource(schema)}));
 		DocumentBuilder builder = factory.newDocumentBuilder();
-		builder.setErrorHandler(DraconianErrorHandler.theInstance);
+		builder.setErrorHandler(new DefaultHandler());
 		HashMap<String,ArrayList<String>> provMap = new HashMap<>();
 		if (instances.isDirectory())
 		{
@@ -297,7 +298,7 @@ public class XSDImporterUsingXerces implements Importer
 		
 		
 		//Make OntologyClass object for each simple type
-		XSNamedMap simpleTypes = result.getComponents(XSTypeDefinition.SIMPLE_TYPE);
+		XSNamedMap simpleTypes = result.getComponents(SIMPLE_TYPE);
 		OntologyClass ontologyClass;
 		for (int i=0; i<simpleTypes.getLength() ;i++) {
 			XSSimpleType newType = (XSSimpleType)simpleTypes.item(i);
@@ -642,6 +643,6 @@ public class XSDImporterUsingXerces implements Importer
 	        System.out.println("Use: Required");
 	    else
 	        System.out.println("Use: Optional");
-	    System.out.println("Actual value: " + attributeDecl.getActualVC());
+	    System.out.println("Actual value: " + attributeDecl.getValueConstraintValue());
 	}
 }
