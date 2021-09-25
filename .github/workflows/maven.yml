@@ -22,8 +22,6 @@ jobs:
         java-version: 11
     - name: Build core with Maven
       run: mvn -B install --file ontobuilder.core/pom.xml
-    - name: Install missing libs
-      run: mvn -B clean --file ontobuilder.matching/pom.xml
     - name: Build matching with Maven
       run: mvn -B install --file ontobuilder.matching/pom.xml
     - name: Build io with Maven
