@@ -69,5 +69,10 @@
             <artifactId>ws4j</artifactId>
             <version>1.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.dmeoli</groupId>
+            <artifactId>WS4J</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

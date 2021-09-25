@@ -205,7 +205,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * 
 	 * <p>Each word is transformed to its Singular form and then it's checked if in the diction</p>
 	 * 
-	 * <p> JiangConrath distance is calculated in {@link WS4J#calcDistanceByJiangConrath(String, String)}, by using
+	 * <p> JiangConrath distance is calculated in WS4J#calcDistanceByJiangConrath(String, String), by using
 	 * the following formula: 
 	 * <blockquote><code>dist<sub>JS</sub>(c<sub>1</sub>, c<sub>2</sub>) = 2 * log( p(lso(c<sub>1</sub>, c<sub>2</sub>)) ) - ( log(p(c<sub>1</sub>))+log(p(c<sub>2</sub>) ) ).</blockquote>
 	 * Jiang-Conrath similarity: <i>Negative reciprocal distance</i>,
@@ -215,7 +215,7 @@ public class WordNetAlgorithm extends AbstractAlgorithm {
 	 * @param candidateWords List of words that represents the candidate term
 	 * @param targetWords List of words that represents the target term
 	 * @return a similarity measurement in the range [0.0,1.0]
-	 * @see {@link WS4J#calcDistanceByJiangConrath(String, String)}
+	 * @see WS4J calcDistanceByJiangConrath(String, String)
 	 */
 	private Double calcSimilarity(List<String> candidateWords, List<String> targetWords) {
 		double avgSim = 0.0;

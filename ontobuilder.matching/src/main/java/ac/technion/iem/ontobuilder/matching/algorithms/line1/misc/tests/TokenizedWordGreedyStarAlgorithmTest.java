@@ -1,11 +1,7 @@
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
-import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +9,8 @@ import org.junit.Test;
 
 import ac.technion.iem.ontobuilder.core.ontology.Term;
 import ac.technion.iem.ontobuilder.matching.algorithms.line1.misc.algorithms.TokenizedWordGreedyStarAlgorithm;
+
+import static org.junit.Assert.*;
 
 public class TokenizedWordGreedyStarAlgorithmTest {
 	
@@ -24,7 +22,7 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 	}
 
 	@Test
@@ -43,11 +41,11 @@ public class TokenizedWordGreedyStarAlgorithmTest {
 	@Test
 	public void tokenizeTermsNullAndEmptyTest() {
 		List<String> tokenizeTerms = classUndetTest.tokenizeTerms(null);
-		Assert.assertNotNull(tokenizeTerms);
-		assertTrue(tokenizeTerms.size() == 0);
+		assertNotNull(tokenizeTerms);
+		assertEquals(0, tokenizeTerms.size());
 		Term term = new Term();
 		tokenizeTerms = classUndetTest.tokenizeTerms(term);
-		assertTrue(tokenizeTerms.size() == 0);
+		assertEquals(0, tokenizeTerms.size());
 	}
 	
 	@Test

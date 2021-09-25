@@ -1,16 +1,11 @@
 package ac.technion.iem.ontobuilder.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import ac.technion.iem.ontobuilder.core.ontology.operator.NGramStringOperator;
 import ac.technion.iem.ontobuilder.core.thesaurus.Thesaurus;
-import edu.cmu.lti.jawjaw.pobj.POS;
+import edu.uniba.di.lacam.kdde.lexical_db.data.Concept;
+import edu.uniba.di.lacam.kdde.lexical_db.item.POS;
+
+import java.util.*;
 
 /**
  * <p>Title: StringUtilities</p>
@@ -24,16 +19,15 @@ public class StringUtilities
     private static boolean thesaurusUsed = false;
     private static boolean soundexUsed = false;
 
-    private static NGramStringOperator nGramOpr = new NGramStringOperator();
+    private static final NGramStringOperator nGramOpr = new NGramStringOperator();
 
     public static boolean hasLetterOrDigit(String text)
     {
         if (text == null)
             return false;
-        char characters[] = text.toCharArray();
-        for (int i = 0; i < characters.length; i++)
-        {
-            if (Character.isLetterOrDigit(characters[i]))
+        char[] characters = text.toCharArray();
+        for (char character : characters) {
+            if (Character.isLetterOrDigit(character))
                 return true;
         }
         return false;
@@ -43,13 +37,13 @@ public class StringUtilities
 
     public static String getReplacedString(String text, String[] replacements)
     {
-        StringBuffer result = new StringBuffer("");
+        StringBuilder result = new StringBuilder();
         int replacement = 0;
         int prevIndex = 0;
         int index = text.indexOf(REPLACEMENT_STRING);
         while (index != -1)
         {
-            result.append(text.substring(prevIndex, index));
+            result.append(text, prevIndex, index);
             result.append(replacements[replacement++]);
             prevIndex = index + REPLACEMENT_STRING.length();
             index = text.indexOf(REPLACEMENT_STRING, prevIndex);
@@ -70,7 +64,7 @@ public class StringUtilities
         while (index != -1)
         {
             String prev = s.substring(previndex, index);
-            String next = s.substring(index + s1.length(), s.length());
+            String next = s.substring(index + s1.length());
             s = prev + s2 + next;
             previndex = index;
             index = s.indexOf(s1, previndex);
@@ -83,14 +77,11 @@ public class StringUtilities
         if (text == null)
             return null;
         ArrayList<String> words = breakTextIntoWords(text);
-        ArrayList<String> result = new ArrayList<String>();
-        for (Iterator<String> i = words.iterator(); i.hasNext();)
-        {
-            String word = i.next();
-            StringBuffer resultWord = new StringBuffer("");
+        ArrayList<String> result = new ArrayList<>();
+        for (String word : words) {
+            StringBuilder resultWord = new StringBuilder();
             int length = word.length();
-            for (int j = 0; j < length; j++)
-            {
+            for (int j = 0; j < length; j++) {
                 char c = word.charAt(j);
                 if (Character.isJavaIdentifierPart(c) || c == '-')
                     resultWord.append(c);
@@ -104,7 +95,7 @@ public class StringUtilities
     {
         if (merge)
         {
-            StringBuffer result = new StringBuffer("");
+            StringBuilder result = new StringBuilder();
             StringTokenizer st = new StringTokenizer(text, "-");
             while (st.hasMoreTokens())
                 result.append(st.nextToken());
@@ -117,10 +108,8 @@ public class StringUtilities
     public static String removeWords(String text, ArrayList<String> words)
     {
         ArrayList<String> textWords = breakTextIntoWords(text);
-        ArrayList<String> result = new ArrayList<String>();
-        for (Iterator<String> i = textWords.iterator(); i.hasNext();)
-        {
-            String word = (String) i.next();
+        ArrayList<String> result = new ArrayList<>();
+        for (String word : textWords) {
             if (!words.contains(word))
                 result.add(word);
         }
@@ -134,7 +123,7 @@ public class StringUtilities
 
     public static ArrayList<String> breakTextIntoWords(String text, String separators)
     {
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
         if (text == null || text.length() == 0)
             return words;
         StringTokenizer st = new StringTokenizer(text, separators);
@@ -145,10 +134,8 @@ public class StringUtilities
 
     public static String buildTextFromWords(ArrayList<String> words)
     {
-        StringBuffer textBuffer = new StringBuffer("");
-        for (Iterator<String> i = words.iterator(); i.hasNext();)
-        {
-            String word = (String) i.next();
+        StringBuilder textBuffer = new StringBuilder();
+        for (String word : words) {
             if (!word.equals(""))
                 textBuffer.append(word).append(" ");
         }
@@ -199,24 +186,16 @@ public class StringUtilities
         if (words2.size() == 0)
             return 0;
         int totalSubstrings = 0;
-        for (Iterator<String> i = words2.iterator(); i.hasNext();)
-        {
-            String word = (String) i.next();
-            if (s1.indexOf(word) != -1)
+        for (String word : words2) {
+            if (s1.contains(word))
                 totalSubstrings++;
-            else if (thesaurus != null || useSoundex)
-            {
-                for (Iterator<String> j = words1.iterator(); j.hasNext();)
-                {
-                    String word1 = (String) j.next();
-                    if ((thesaurus != null && thesaurus.isSynonym(word, word1)))
-                    {
+            else if (thesaurus != null || useSoundex) {
+                for (String word1 : words1) {
+                    if ((thesaurus != null && thesaurus.isSynonym(word, word1))) {
                         thesaurusUsed = true;
                         totalSubstrings++;
                         break;
-                    }
-                    else if (useSoundex && getSoundexEffectivity(word, word1) >= 0.75)
-                    {
+                    } else if (useSoundex && getSoundexEffectivity(word, word1) >= 0.75) {
                         if (thesaurus != null && thesaurus.isHomonym(word, word1))
                             continue;
                         soundexUsed = true;
@@ -245,12 +224,9 @@ public class StringUtilities
                                              // is not added
         {
             boolean add = true;
-            for (Iterator<String> i = set.iterator(); i.hasNext();)
-            {
-                String setWord = (String) i.next();
+            for (String setWord : set) {
                 if ((thesaurus != null && thesaurus.isSynonym(word, setWord)) ||
-                    (useSoundex && getSoundexEffectivity(word, setWord) >= .75))
-                {
+                        (useSoundex && getSoundexEffectivity(word, setWord) >= .75)) {
                     add = false;
                     break;
                 }
@@ -272,16 +248,11 @@ public class StringUtilities
                                              // a word that sounds the same, in which case the word
                                              // is not added
         {
-            for (Iterator<String> i = set.iterator(); i.hasNext();)
-            {
-                String setWord = (String) i.next();
-                if ((thesaurus != null && thesaurus.isSynonym(word, setWord)))
-                {
+            for (String setWord : set) {
+                if ((thesaurus != null && thesaurus.isSynonym(word, setWord))) {
                     thesaurusUsed = true;
                     return true;
-                }
-                else if ((useSoundex && getSoundexEffectivity(word, setWord) >= .75))
-                {
+                } else if ((useSoundex && getSoundexEffectivity(word, setWord) >= .75)) {
                     if (thesaurus != null && thesaurus.isHomonym(word, setWord))
                         continue;
                     soundexUsed = true;
@@ -318,19 +289,15 @@ public class StringUtilities
         thesaurusUsed = false;
         soundexUsed = false;
 
-        ArrayList<String> intersection = new ArrayList<String>();
-        ArrayList<String> union = new ArrayList<String>();
+        ArrayList<String> intersection = new ArrayList<>();
+        ArrayList<String> union = new ArrayList<>();
 
-        for (Iterator<String> i = words1.iterator(); i.hasNext();)
-        {
-            String word1 = (String) i.next();
+        for (String word1 : words1) {
             addWordToSet(union, thesaurus, useSoundex, word1);
         }
 
         int unionSize = union.size();
-        for (Iterator<String> i = words2.iterator(); i.hasNext();)
-        {
-            String word2 = (String) i.next();
+        for (String word2 : words2) {
             //TODO fix bug caused by use of soundex where intersection can be larger than union
             if (isWordInSet(union.subList(0, unionSize), thesaurus, useSoundex, word2))
                 addWordToSet(intersection, thesaurus, useSoundex, word2);
@@ -359,7 +326,7 @@ public class StringUtilities
         for (int i = 0; i < possibleSubstrings; i++)
         {
             String partialString = s2.substring(i, i + characters);
-            if (s1.indexOf(partialString) != -1)
+            if (s1.contains(partialString))
                 match++;
         }
         return match / (double) possibleSubstrings;
@@ -372,8 +339,8 @@ public class StringUtilities
         if (s1.length() < characters || s2.length() < characters)
             return 0;
 
-        ArrayList<String> intersection = new ArrayList<String>();
-        ArrayList<String> union = new ArrayList<String>();
+        ArrayList<String> intersection = new ArrayList<>();
+        ArrayList<String> union = new ArrayList<>();
 
         int possibleSubstrings = s1.length() - characters + 1;
         for (int i = 0; i < possibleSubstrings; i++)
@@ -418,7 +385,7 @@ public class StringUtilities
 
     public static String buildString(char c, int length)
     {
-        StringBuffer bf = new StringBuffer("");
+        StringBuilder bf = new StringBuilder();
         for (int i = 0; i < length; i++)
             bf.append(c);
         return bf.toString();
@@ -473,43 +440,39 @@ public class StringUtilities
 //        return bf.toString();
 //    }
     
-    public static String getTableStringRepresentation(String[] columnNames, int propsCnt, Object data[][])
+    public static String getTableStringRepresentation(String[] columnNames, int propsCnt, Object[][] data)
     {
-        StringBuffer bf = new StringBuffer("");
+        StringBuilder bf = new StringBuilder();
 
-        ArrayList<Integer> columnsWidths = new ArrayList<Integer>();
+        ArrayList<Integer> columnsWidths = new ArrayList<>();
         for (int i = 0; i < columnNames.length; i++)
         {
             int width = columnNames[i].length();
-            for (int j = 0; j < data.length; j++)
-            {
-                Object o = data[j][i];
+            for (Object[] datum : data) {
+                Object o = datum[i];
                 if (o == null)
                     continue;
                 width = Math.max(width, o.toString().length());
             }
-            columnsWidths.add(new Integer(width));
+            columnsWidths.add(width);
         }
         for (int i = 0; i < columnNames.length; i++)
         {
             String columnName = columnNames[i];
-            int width = ((Integer) columnsWidths.get(i)).intValue();
+            int width = columnsWidths.get(i);
             bf.append(columnName).append(buildString(' ', width - columnName.length() + 1));
         }
         bf.append("\n");
-        for (int i = 0; i < columnsWidths.size(); i++)
-        {
-            int width = ((Integer) columnsWidths.get(i)).intValue();
+        for (Integer columnsWidth : columnsWidths) {
+            int width = columnsWidth;
             bf.append(buildString('-', width)).append(" ");
         }
         bf.append("\n");
 
-        for (int i = 0; i < data.length; i++)
-        {
-            for (int j = 0; j < columnNames.length; j++)
-            {
-                int width = ((Integer) columnsWidths.get(j)).intValue();
-                Object o = data[i][j];
+        for (Object[] datum : data) {
+            for (int j = 0; j < columnNames.length; j++) {
+                int width = columnsWidths.get(j);
+                Object o = datum[j];
                 if (o == null)
                     continue;
                 String cell = o.toString();
@@ -547,7 +510,7 @@ public class StringUtilities
 
     static public String cleanText(String text)
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < text.length(); i++)
         {
             char c = text.charAt(i);
@@ -579,7 +542,7 @@ public class StringUtilities
         if (text.trim().length() == 0)
             return "";
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         text = normalizeSpaces(text);
         if (checkFirst &&
@@ -613,7 +576,7 @@ public class StringUtilities
             for (int j = 0; j < possibleSubstrings; j++)
             {
                 String partialString = s1.substring(j, j + i);
-                if (s2.indexOf(partialString) != -1)
+                if (s2.contains(partialString))
                 {
                     return partialString;
                 }
@@ -639,7 +602,7 @@ public class StringUtilities
             return "";
         }
         text = text.replace('_', ' ');
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
 
         int index = 0;
         for (int i = 0; i < text.length(); i++)
@@ -657,8 +620,8 @@ public class StringUtilities
 
         for (int i = 0; i < words.size();)
         {
-            String word = (String) words.get(i);
-            String next = i + 1 >= words.size() ? null : (String) words.get(i + 1);
+            String word = words.get(i);
+            String next = i + 1 >= words.size() ? null : words.get(i + 1);
             if (next != null && isUpperCase(word) && next.trim().length() == 1 &&
                 Character.isUpperCase(next.charAt(0)))
             {
@@ -753,7 +716,7 @@ public class StringUtilities
 	} 
 
     
-    public static void main(String args[])
+    public static void main(String[] args)
     {
         // Max common substring
         // System.out.println("Max common substring between '" + args[0] + "' and '" + args[1] + "'"
@@ -787,11 +750,8 @@ public class StringUtilities
 		if (singularize.toLowerCase().equalsIgnoreCase(word)) {
 			return false;
 		}
-		if (!isWordInDiction(singularize)) {
-			return false;
-		}
-		return true;
-	}
+        return isWordInDiction(singularize);
+    }
 	
 	/**
 	 * Returns the singular form of the word in the string
@@ -800,8 +760,7 @@ public class StringUtilities
 	 * @see {@link Inflector#singularize(Object)}
 	 */
 	public static String getSingularize(String word){
-		String singularize = Inflector.getInstance().singularize(word);
-		return singularize;
+        return Inflector.getInstance().singularize(word);
 	}
 	
 	/**
@@ -809,15 +768,11 @@ public class StringUtilities
 	 * @param word to be checked
 	 */
 	public static boolean isWordInDiction(String word) {
-		Set<String> defs = new HashSet<String>();
+		List<Concept> defs = new ArrayList<>();
 		POS[] partsOfSpeech = POS.values();
-		for (int i = 0; i < partsOfSpeech.length; i++) {
-			POS pos = partsOfSpeech[i];
-			defs.addAll(JAWJAWWrapper.findDefinitions(word, pos));
-		}
-		if ( defs.isEmpty() ) {
-			return false;
-		}
-		return true;
-	}
+        for (POS pos : partsOfSpeech) {
+            defs.addAll(WordNetDict.getMe().findDefinitions(word, pos));
+        }
+        return !defs.isEmpty();
+    }
 }
