@@ -26,9 +26,9 @@ public enum MatchingAlgorithmsNamesEnum
     WordNet("WordNet Match"),
     CONTEND_BASED("ContentBasedAlgorithm");
 
-    private String _name;
+    private final String _name;
 
-    private MatchingAlgorithmsNamesEnum(String name)
+    MatchingAlgorithmsNamesEnum(String name)
     {
         _name = name;
     }
@@ -40,13 +40,11 @@ public enum MatchingAlgorithmsNamesEnum
 
     public static String[] getAllNames()
     {
-        String[] allNames =
-        {
+        return new String[]{
             TERM.getName(), VALUE.getName(), TERM_VALUE_COMBINED.getName(),
             TERM_VALUE_PRECEDENCE_COMPOSITION_COMBINED.getName(), PRECEDENCE.getName(),
             COMPOSITION.getName(), SIMILARITY_FLOODING.getName(),DOMAIN.getName(),WordNet.getName()
-            
+
         };
-        return allNames;
     };
 }

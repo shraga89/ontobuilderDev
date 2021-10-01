@@ -12,41 +12,41 @@ import ac.technion.iem.ontobuilder.matching.match.MatchInformation;
  */
 public interface Algorithm
 {
-    public static final String MATCH_THRESHOLD_PROPERTY = "matchThreshold";
+    String MATCH_THRESHOLD_PROPERTY = "matchThreshold";
 
-    public MatchInformation match(Ontology targetOntology, Ontology candidateOntology);
+    MatchInformation match(Ontology targetOntology, Ontology candidateOntology);
 
-    public void setMode(int mode);
+    void setMode(int mode);
 
-    public int getMode();
+    int getMode();
 
-    public String getPluginName();
+    String getPluginName();
 
-    public void setPluginName(String pluginName);
+    void setPluginName(String pluginName);
 
-    public String getName();
+    String getName();
 
-    public String getDescription();
+    String getDescription();
 
-    public void configure(Element element);
+    void configure(Element element);
 
-    public void setThreshold(double threshold);
+    void setThreshold(double threshold);
 
-    public double getThreshold();
+    double getThreshold();
 
-    public boolean usesThesaurus();
+    boolean usesThesaurus();
 
-    public void setThesaurus(Thesaurus thesaurus);
+    void setThesaurus(Thesaurus thesaurus);
 
-    public Thesaurus getThesaurus();
+    Thesaurus getThesaurus();
 
-    public void setTermPreprocessor(TermPreprocessor termPreprocessor);
+    void setTermPreprocessor(TermPreprocessor termPreprocessor);
 
-    public TermPreprocessor getTermPreprocessor();
+    TermPreprocessor getTermPreprocessor();
 
-    public boolean implementsEffectiveness();
+    boolean implementsEffectiveness();
 
-    public double getEffectiveness();
+    double getEffectiveness();
 
-    public Algorithm makeCopy();
+    Algorithm makeCopy();
 }

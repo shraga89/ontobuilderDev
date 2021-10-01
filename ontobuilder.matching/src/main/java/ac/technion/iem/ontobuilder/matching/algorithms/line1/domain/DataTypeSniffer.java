@@ -4,8 +4,8 @@ import ac.technion.iem.ontobuilder.core.ontology.Domain;
 
 public interface DataTypeSniffer {
 	
-	public boolean sniff(Domain d);
+	boolean sniff(Domain d);
 	
-	public String name();
+	String name();
 
 }

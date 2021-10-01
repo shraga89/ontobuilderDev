@@ -10,11 +10,11 @@ public class DaySniffer implements DataTypeSniffer {
 		boolean flag = true;
 		try{
 			for (DomainEntry de : d.getEntries()){
-				Integer x = new Integer(de.toString());
+				int x = Integer.parseInt(de.toString());
 				
 				if (x<1 || x>31){
 					flag = false;
-					return flag;
+					return false;
 				}
 			}
 		}

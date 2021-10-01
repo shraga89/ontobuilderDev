@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ac.technion.iem.ontobuilder.matching.algorithms.line1.domain;
 
 import java.util.regex.Matcher;
@@ -28,12 +25,8 @@ public class DaysOfWeekSniffer implements DataTypeSniffer {
 			Pattern p = Pattern.compile("[a-zA-z0-9]*");
 			if ( p.matcher(entryVal).matches()){
 			
-				if (isContainsOnlyDaysWeek(entryVal)==false)
+				if (isContainsOnlyDaysWeek(entryVal))
 				{
-					//return false;
-					continue;
-				}
-				else{
 					flag=true;
 					break;
 				}
@@ -63,35 +56,28 @@ public class DaysOfWeekSniffer implements DataTypeSniffer {
 										"TR"};
 	
 	public static String buildExpression(){
-		String expression ="("; 
+		StringBuilder expression = new StringBuilder("(");
 		for (int i=0;  i <= DaysOfWeek.length-2; i++){
-			expression+=DaysOfWeek[i];
-			expression+="|";	    	
+			expression.append(DaysOfWeek[i]);
+			expression.append("|");
 		}
 
-		expression+=DaysOfWeek[DaysOfWeek.length-1]+")";
-		return expression;
+		expression.append(DaysOfWeek[DaysOfWeek.length - 1]).append(")");
+		return expression.toString();
 
 	}
 
 	public static boolean isContainsOnlyDaysWeek(String str) {
 	//boolean isValid = false;
-	
-		if (bySpace(str) || byUpCase(str)){
-			return true;
-		}
-		
-		return false;
-	
-	
+
+		return bySpace(str) || byUpCase(str);
+
+
 	}
 
 	public static boolean bySpace(String str) {
-	
-		String expression=buildExpression();
-		String clearString = expression;
-		
-		String[] splitArrayBySpace = {};
+
+		String[] splitArrayBySpace;
 		
 		try {
 			splitArrayBySpace = str.split("\\s+");
@@ -100,14 +86,13 @@ public class DaysOfWeekSniffer implements DataTypeSniffer {
 		}
 		
 		for ( String word :splitArrayBySpace){
-		
-			CharSequence inputStr = word;
+
 			if (  word.matches(".*\\w.*")){
 
-				Pattern patternClearString = Pattern.compile(clearString, Pattern.CASE_INSENSITIVE);
-				Matcher matcherClearString = patternClearString.matcher(inputStr);
+				Pattern patternClearString = Pattern.compile(buildExpression(), Pattern.CASE_INSENSITIVE);
+				Matcher matcherClearString = patternClearString.matcher(word);
 				
-				if (matcherClearString.matches()==false )
+				if (!matcherClearString.matches())
 				{
 					return false;
 				}
@@ -123,12 +108,9 @@ public class DaysOfWeekSniffer implements DataTypeSniffer {
 	}
 
 	public static boolean byUpCase(String str) {
-	
-		String expression=buildExpression();
-		String clearString = expression;
-		
-		
-		String[] splitArrayBySpace = {};
+
+
+		String[] splitArrayBySpace;
 		
 		try {
 			splitArrayBySpace = str.split("(?=\\p{Lu})");
@@ -137,15 +119,13 @@ public class DaysOfWeekSniffer implements DataTypeSniffer {
 		}
 		
 		for ( String word :splitArrayBySpace){
-		
-			CharSequence inputStr = word;
-			
+
 			if (  word.matches(".*\\w.*")){
-				Pattern patternClearString = Pattern.compile(clearString, Pattern.CASE_INSENSITIVE);
-				Matcher matcherClearString = patternClearString.matcher(inputStr);
+				Pattern patternClearString = Pattern.compile(buildExpression(), Pattern.CASE_INSENSITIVE);
+				Matcher matcherClearString = patternClearString.matcher(word);
 				
 				
-				if (matcherClearString.matches()==false )
+				if (!matcherClearString.matches())
 				{
 				return false;
 				}

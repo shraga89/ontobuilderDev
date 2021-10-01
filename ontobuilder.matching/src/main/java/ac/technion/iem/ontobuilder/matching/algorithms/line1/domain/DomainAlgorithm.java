@@ -69,9 +69,8 @@ public class DomainAlgorithm extends TermAlgorithm {
      * @param element the {@link Element} with the parameters to configure
      */
     public void configure(Element element)
-    {    
-    	return;
-    }
+    {
+	}
 
     /**
      * Get the terms/domains to match
@@ -90,7 +89,7 @@ public class DomainAlgorithm extends TermAlgorithm {
         }
         else
         {
-            originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
+            originalTargetTerms = new ArrayList<>(targetOntology.getTerms(true));
         }
 
         if (!candidateOntology.isLight())
@@ -100,7 +99,7 @@ public class DomainAlgorithm extends TermAlgorithm {
         }
         else
         {
-            originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
+            originalCandidateTerms = new ArrayList<>(candidateOntology.getTerms(true));
         }
 
     }
@@ -129,11 +128,11 @@ public class DomainAlgorithm extends TermAlgorithm {
      * @val - returns the similarity between 0 to 1 
      */
     public Double getDistance(Domain cDomain,Domain tDomain){
-    	Double val = 0.0;
+    	double val;
 
     	DomainDataTypeNew[] ddts = DomainDataTypeNew.values();
-     	Integer orInt = 0;
-     	Integer andInt = 0;
+     	int orInt = 0;
+     	int andInt = 0;
      	Boolean c;
      	Boolean t;
      	
@@ -180,8 +179,8 @@ public class DomainAlgorithm extends TermAlgorithm {
      		List<Integer> cDomainLengthByDigits = getDomainLengthByDigits(cDomain);
      		List<Integer> tDomainLengthByDigits = getDomainLengthByDigits(tDomain);
      		
-     		List<Integer> cDomainLengthByLetters=new ArrayList<Integer>();
-     		List<Integer> tDomainLengthByLetters=new ArrayList<Integer>();
+     		List<Integer> cDomainLengthByLetters= new ArrayList<>();
+     		List<Integer> tDomainLengthByLetters= new ArrayList<>();
      		
      		//if ( cDomainLength.size()>0 && tDomainLength.size()>0){
 	     		for ( int i=0; i<cDomainLength.size();i++){
@@ -196,11 +195,11 @@ public class DomainAlgorithm extends TermAlgorithm {
      		
      		// Calculating the distance
      		
-     		Double cMeanDigits = StatMethods.mean(cDomainLengthByDigits);
-     		Double tMeanDigits = StatMethods.mean(tDomainLengthByDigits);
+     		double cMeanDigits = StatMethods.mean(cDomainLengthByDigits);
+     		double tMeanDigits = StatMethods.mean(tDomainLengthByDigits);
      		
-     		Double cMeanLetters = StatMethods.mean(cDomainLengthByLetters);
-     		Double tMeanLetters = StatMethods.mean(tDomainLengthByLetters);
+     		double cMeanLetters = StatMethods.mean(cDomainLengthByLetters);
+     		double tMeanLetters = StatMethods.mean(tDomainLengthByLetters);
 
      		
      		if (cMeanDigits==0 && tMeanDigits==0) {     			
@@ -230,7 +229,7 @@ public class DomainAlgorithm extends TermAlgorithm {
     
     /* returns a list with length of the Domain Entries*/
 	public List<Integer> getDomainLength(Domain d){
-		List<Integer> entriesLength = new ArrayList<Integer>();
+		List<Integer> entriesLength = new ArrayList<>();
 		for (DomainEntry de : d.getEntries()){
 			entriesLength.add(de.toString().length());
 		}
@@ -239,7 +238,7 @@ public class DomainAlgorithm extends TermAlgorithm {
 	
 	/* returns a list with length of digit substrings the Domain Entries*/
 	public List<Integer> getDomainLengthByDigits(Domain d){
-		List<Integer> entriesLength = new ArrayList<Integer>();
+		List<Integer> entriesLength = new ArrayList<>();
 		String entryVal;
 		int counter;
 		for (DomainEntry de : d.getEntries()){
@@ -259,7 +258,7 @@ public class DomainAlgorithm extends TermAlgorithm {
 	
 	public double calcDistBetweenMeans( double cMean, double tMean){
 		
-		return Math.abs(cMean-tMean)/(Math.max(cMean,tMean)*1.0);
+		return Math.abs(cMean-tMean)/(Math.max(cMean, tMean));
 		
 		//return Math.abs(cMean-tMean+1)/((Math.max(cMean,tMean)+1)*1.0);
 		

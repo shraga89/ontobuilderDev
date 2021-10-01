@@ -19,7 +19,7 @@ public class DateTimeSniffer implements DataTypeSniffer {
 		
 		boolean flag = false;
 		for(String currDate :  datesarray){
-			Date date = new Date();
+			Date date;
 			
 			for (DomainEntry de : d.getEntries()){
 				String entryVal = de.toString();
@@ -32,11 +32,10 @@ public class DateTimeSniffer implements DataTypeSniffer {
 					}
 					} catch (ParseException e) {
 					// TODO Auto-generated catch block
-					flag = false ;
 					//e.printStackTrace();
 				}
 			}
-			if(flag == true){
+			if(flag){
 				break;
 			}
 			

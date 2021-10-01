@@ -74,8 +74,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
      * @param element the {@link Element} with the parameters to configure
      */
     public void configure(Element element)
-    {    
-    	return;
+    {
     }
 
 
@@ -95,7 +94,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         }
         else
         {
-            originalTargetTerms = new ArrayList<Term>(targetOntology.getTerms(true));
+            originalTargetTerms = new ArrayList<>(targetOntology.getTerms(true));
         }
 
         if (!candidateOntology.isLight())
@@ -105,7 +104,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         }
         else
         {
-            originalCandidateTerms = new ArrayList<Term>(candidateOntology.getTerms(true));
+            originalCandidateTerms = new ArrayList<>(candidateOntology.getTerms(true));
         }
 
     }
@@ -123,7 +122,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         Domain tDom = targetTerm.getDomain();
         Domain cDom = candidateTerm.getDomain();    
         for (int k = 0; k < tDom.getEntries().size() && !tDom.getEntries().isEmpty() ; k++){
-        	ArrayList<Double> maxBetweenInstancesTarget2Candidate = new  ArrayList<Double>();
+        	ArrayList<Double> maxBetweenInstancesTarget2Candidate = new ArrayList<>();
     		for (int m = 0; m < cDom.getEntries().size() && !cDom.getEntries().isEmpty() ; m++){
     			Double result = getSimilarity(tDom.getEntries().get(k), cDom.getEntries().get(m));
     			maxBetweenInstancesTarget2Candidate.add(result);
@@ -134,7 +133,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     		}
     	}
     	for (int k = 0; k < cDom.getEntries().size() && !cDom.getEntries().isEmpty() ; k++){
-    		ArrayList<Double> maxBetweenInstancesCandidate2Target = new  ArrayList<Double>();
+    		ArrayList<Double> maxBetweenInstancesCandidate2Target = new ArrayList<>();
     		for (int m = 0; m < tDom.getEntries().size() && !tDom.getEntries().isEmpty() ; m++){
     			Double result = getSimilarity(cDom.getEntries().get(k), tDom.getEntries().get(m));
     			maxBetweenInstancesCandidate2Target.add(result);
@@ -144,8 +143,7 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
     			total += maxCandidateList;
     		}
     	}
-    	double similarityBetweenElements = total/(cDom.getEntries().size()+tDom.getEntries().size());
-    	effectiveness = similarityBetweenElements;
+        effectiveness = total/(cDom.getEntries().size()+tDom.getEntries().size());
         return effectiveness > threshold;
 
     }
@@ -166,15 +164,13 @@ public class ContentBasedAlgorithm extends TermAlgorithm{
         // JaroWinkler matching
         double jaroWinklerEffectiveness = StringUtilities.getHybridJaroWinklerDistance(targetName, candidateName);
 
-		double res = (nGramEffectiveness * nGramWeight + jaroWinklerEffectiveness * jaroWinklerWeight) /(nGramWeight + jaroWinklerWeight);
-		
-		return res;
+        return (nGramEffectiveness * nGramWeight + jaroWinklerEffectiveness * jaroWinklerWeight) /(nGramWeight + jaroWinklerWeight);
     }
     
     
 /* returns a list with length of the Domain Entries*/
 	public List<Integer> getDomainLength(Domain d){
-		List<Integer> entriesLength = new ArrayList<Integer>();
+		List<Integer> entriesLength = new ArrayList<>();
 		for (DomainEntry de : d.getEntries()){
 			entriesLength.add(de.toString().length());
 		}

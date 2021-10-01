@@ -7,13 +7,13 @@ public class CurrencySniffer implements DataTypeSniffer {
 
 	@Override
 	public boolean sniff(Domain d) {
-		String currChar = new String("$") ;
+		String currChar = "$";
 		boolean flag = true;
 		for (DomainEntry de : d.getEntries()){
 			
 			String entryVal = de.toString();
 
-			if (entryVal.indexOf(currChar) == -1){
+			if (!entryVal.contains(currChar)){
 				flag = false;
 				break;
 			}

@@ -23,8 +23,7 @@ public class DateSniffer implements DataTypeSniffer {
 					
 				}
 			}
-			catch (NullPointerException e){
-				flag = true;
+			catch (NullPointerException ignored){
 			}
 				
 		}

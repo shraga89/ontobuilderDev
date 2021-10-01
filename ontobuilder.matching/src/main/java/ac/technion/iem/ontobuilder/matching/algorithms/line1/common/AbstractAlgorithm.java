@@ -32,10 +32,10 @@ abstract public class AbstractAlgorithm implements Algorithm
     protected double threshold;
     protected double effectiveness = -1;
 
-    protected ArrayList<Term> originalTargetTerms = new ArrayList<Term>();
-    protected ArrayList<Term> originalCandidateTerms = new ArrayList<Term>();
-    protected ArrayList<Term> targetTerms = new ArrayList<Term>();
-    protected ArrayList<Term> candidateTerms = new ArrayList<Term>();
+    protected ArrayList<Term> originalTargetTerms = new ArrayList<>();
+    protected ArrayList<Term> originalCandidateTerms = new ArrayList<>();
+    protected ArrayList<Term> targetTerms = new ArrayList<>();
+    protected ArrayList<Term> candidateTerms = new ArrayList<>();
 
     /**
      * Constructs a default AbstractAlgorithm
@@ -209,7 +209,7 @@ abstract public class AbstractAlgorithm implements Algorithm
      * @param matchMatrix the match matrix
      * @return {@link MatchInformation}
      */
-    protected MatchInformation buildMatchInformation(double matchMatrix[][],Ontology candidate, Ontology target) //TODO replace this with MatchMatrix object
+    protected MatchInformation buildMatchInformation(double[][] matchMatrix, Ontology candidate, Ontology target) //TODO replace this with MatchMatrix object
     {
         MatchInformation matchInformation = new MatchInformation(candidate, target);
 
@@ -217,12 +217,12 @@ abstract public class AbstractAlgorithm implements Algorithm
         {
         	for (int j = 0; j < candidateTerms.size(); j++)
 	        {
-	            Term originalCandidateTerm = (Term) originalCandidateTerms.get(j);
+	            Term originalCandidateTerm = originalCandidateTerms.get(j);
 	            Term maxTargetTerm = null;
 	            double maxEffectiveness = -1;
 	            for (int i = 0; i < targetTerms.size(); i++)
 	            {
-	                Term originalTargetTerm = (Term) originalTargetTerms.get(i);
+	                Term originalTargetTerm = originalTargetTerms.get(i);
 	                if (matchMatrix[j][i] >= threshold && matchMatrix[j][i] >= maxEffectiveness)
 	                {
 	                	assert(maxEffectiveness<=1.0);
@@ -236,10 +236,10 @@ abstract public class AbstractAlgorithm implements Algorithm
         } else {//no FLM
         	for (int j = 0; j < candidateTerms.size(); j++)
 	        {
-	            Term originalCandidateTerm = (Term) originalCandidateTerms.get(j);
+	            Term originalCandidateTerm = originalCandidateTerms.get(j);
 	            for (int i = 0; i < targetTerms.size(); i++)
 	            {
-	                Term originalTargetTerm = (Term) originalTargetTerms.get(i);
+	                Term originalTargetTerm = originalTargetTerms.get(i);
 	                if (matchMatrix[j][i] >= threshold)
 	                {
 	                	assert(matchMatrix[j][i]<=1.0);
