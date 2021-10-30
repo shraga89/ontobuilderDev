@@ -21,7 +21,7 @@ public class BestMatchingExporter implements Exporter
     public void export(HashMap<?, ?> params, File file) throws ExportException
     {
         MatchInformation st = (MatchInformation) params.get("Matching");
-        int index = ((Integer) params.get("index")).intValue();
+        int index = (Integer) params.get("index");
         String candName = (String) params.get("candName");
         String targetName = (String) params.get("targetName");
         String filepath = (String) params.get("filepath");
