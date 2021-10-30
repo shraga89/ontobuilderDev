@@ -24,3 +24,7 @@ ontobuilder.io/target/
 ontobuilder.matching/target/
 .idea
 *.iml
+ontobuilder.core/${project.build.directory}
+ontobuilder.io/${project.build.directory}
+ontobuilder.gui/${project.build.directory}
+ontobuilder.matching/${project.build.directory}
