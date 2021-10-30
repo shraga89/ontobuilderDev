@@ -14,9 +14,9 @@ public enum ExportersTypeEnum
     ONTOLOGY("Ontology"), 
     MATCHING("Matching");
     
-    private String _name;
+    private final String _name;
 
-    private ExportersTypeEnum(String name)
+    ExportersTypeEnum(String name)
     {
         _name = name;
     }
